@@ -265,3 +265,16 @@ body {
 .flash-active {
     opacity: 1;
 }
+
+
+/* Контейнер ігрової зони (кружечки + кнопка Back) */
+.game-area {
+    position: absolute;
+    bottom: 30px;           /* відступ від низу екрану */
+    left: 50%;
+    transform: translateX(-50%); /* щоб по центру */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 35px;              /* відстань між трикутником і Back */
+}
