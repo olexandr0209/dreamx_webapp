@@ -26,13 +26,16 @@ body.start-screen {
 }
 
 
+
+
 .container {
-    text-align: center;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 22px;   /* трохи приємніша відстань */
+    text-align: center;
 }
+
 
 .play-btn,
 .channel-btn {
