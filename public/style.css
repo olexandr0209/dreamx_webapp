@@ -85,13 +85,19 @@ body {
 
 /* Верхня панель гри: Coins (ліворуч) + DreamX (праворуч) */
 .top-bar {
+    position: absolute;
+    top: 12px;
+    left: 0;
+    width: 100%;
+    padding: 0 22px;
+
     display: flex;
     justify-content: space-between;
-    padding: 10px 20px;
-    width: 100%;
-    box-sizing: border-box;
-}
+    align-items: center;
 
+    font-size: 20px;
+    font-weight: 700;
+}
 
 /* Текст Coins */
 .coins-label {
@@ -152,10 +158,9 @@ body {
 }
 
 
-
 .game-container {
     text-align: center;
-    padding-top: 40px; /* відступ від верхнього бару */
+    padding-top: 80px; /* відступ вниз від top-bar */
 }
 
 
