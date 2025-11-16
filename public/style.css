@@ -177,7 +177,7 @@ body.start-screen {
 
 .game-area {
     position: absolute;
-    bottom: 34px;
+    bottom: 110px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
@@ -243,8 +243,13 @@ body.start-screen {
    BACK BUTTON
    ========================== */
 
+
 .back-btn {
-    margin-top: 0;
+    position: absolute;
+    bottom: 24px;           /* відступ від низу екрана */
+    left: 50%;
+    transform: translateX(-50%);
+    
     padding: 10px 30px;
     background: transparent;
     border: 1px solid #3a4fff;
@@ -252,6 +257,7 @@ body.start-screen {
     border-radius: 10px;
     font-size: 16px;
 }
+
 
 
 
