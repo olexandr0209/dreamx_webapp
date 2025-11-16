@@ -83,6 +83,25 @@ body {
    GAME SCREEN
    ========================== */
 
+/* Верхня панель гри: Coins (ліворуч) + DreamX (праворуч) */
+.top-bar {
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 6px;
+    margin-bottom: 10px;
+}
+
+/* Текст Coins */
+.coins-label {
+    font-size: 20px;
+    font-weight: 600;
+    color: #ffffffd0;
+}
+
+
 /* ===== ПІДСВІТКА ЧЕРЕЗ ФОН ЕКРАНУ ===== */
 
 .game-body {
