@@ -51,6 +51,8 @@ body {
    GAME SCREEN
    ========================== */
 
+/* ===== ПІДСВІТКА ЧЕРЕЗ ФОН ЕКРАНУ ===== */
+
 .game-body {
     background: #0A0A0A;
     margin: 0;
@@ -60,7 +62,24 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    transition: background 0.35s ease;
 }
+
+/* При перемозі — легкий зелений відтінок */
+.game-body.glow-win {
+    background: radial-gradient(circle at center, rgba(76, 175, 80, 0.35), #0A0A0A);
+}
+
+/* При програші — мʼякий червоний */
+.game-body.glow-lose {
+    background: radial-gradient(circle at center, rgba(255, 82, 82, 0.35), #0A0A0A);
+}
+
+/* При нічиї — теплий жовтий */
+.game-body.glow-draw {
+    background: radial-gradient(circle at center, rgba(255, 202, 64, 0.35), #0A0A0A);
+}
+
 
 .game-container {
     text-align: center;
