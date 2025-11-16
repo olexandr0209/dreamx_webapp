@@ -3,47 +3,42 @@
 <head>
     <meta charset="UTF-8">
     <title>DreamX — Game</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
     <link rel="stylesheet" href="style.css" />
 </head>
 
 <body class="game-body">
     <div class="game-container">
 
-    <div class="logo">DreamX</div>
+        <div class="logo">DreamX</div>
 
-    <div class="players">
-        <span class="p1">You</span>
-        <span class="vs">VS</span>
-        <span class="p2">Gamer1</span>
+        <div class="players">
+            <span class="p1">You</span>
+            <span class="vs">VS</span>
+            <span class="p2">Gamer1</span>
+        </div>
+
+        <!-- Текст над кружечками -->
+        <div class="result" id="result">Choose</div>
+
+        <!-- Трикутник з трьох кружечків -->
+        <div class="triangle">
+            <div class="choice" data-choice="scissors">
+                <img src="icons/scissors.png" />
+            </div>
+
+            <div class="choice" data-choice="stone">
+                <img src="icons/stone.png" />
+            </div>
+
+            <div class="choice" data-choice="paper">
+                <img src="icons/scroll.png" />
+            </div>
+        </div>
+
+        <button class="back-btn" onclick="window.location.href='index.html'">BACK</button>
     </div>
-
-    <!-- ТУТ результат -->
-    <div class="result" id="result">Choose</div>
-
-    <!-- Трикутник з іконками -->
-    <div class="triangle">
-        <div class="choice" data-choice="scissors">
-            <img src="icons/scissors.png" />
-        </div>
-
-        <div class="choice" data-choice="stone">
-            <img src="icons/stone.png" />
-        </div>
-
-        <div class="choice" data-choice="paper">
-            <img src="icons/scroll.png" />
-        </div>
-    </div>
-
-    <button class="back-btn" onclick="window.location.href='index.html'">BACK</button>
-</div>
-
-        
-
-        
-
-     
 
     <script src="game.js"></script>
 </body>
