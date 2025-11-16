@@ -98,6 +98,8 @@ choices.forEach(choice => {
 
             // +1 монета
             coins += 1;
+            animateCoinToBalance();
+
             if (coinValue) {
                 coinValue.textContent = coins;
             }
