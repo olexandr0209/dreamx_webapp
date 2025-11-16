@@ -4,6 +4,8 @@ const body = document.querySelector(".game-body"); // вся сторінка г
 
 const options = ["stone", "scissors", "paper"];
 let locked = false;
+let coins = 0;
+const coinValue = document.getElementById("coin-value");
 
 function getBotChoice() {
     return options[Math.floor(Math.random() * options.length)];
@@ -72,6 +74,8 @@ choices.forEach(choice => {
             resultEl.textContent = "You WIN! 🔥";
             resultEl.classList.add("result-win");
             if (body) body.classList.add("glow-win");
+            coins += 1;
+            coinValue.textContent = coins;
         } 
         else if (final === "YOU LOSE") {
             resultEl.textContent = "You lose ❌";
