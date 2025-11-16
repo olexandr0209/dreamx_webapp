@@ -3,7 +3,6 @@ const choices = document.querySelectorAll(".choice");
 const body = document.querySelector(".game-body"); // вся сторінка гри
 
 const coinValue = document.getElementById("coin-value");
-const plusOneEl = document.getElementById("plus-one");
 
 const options = ["stone", "scissors", "paper"];
 let locked = false;
@@ -38,11 +37,6 @@ function resetState() {
         body.classList.remove("glow-win", "glow-lose", "glow-draw");
     }
 
-    // ховаємо +1
-    if (plusOneEl) {
-        plusOneEl.classList.remove("plus-visible");
-    }
-
     // базовий текст
     resultEl.textContent = "Choose";
 
@@ -70,16 +64,17 @@ choices.forEach(choice => {
         const botChoice = getBotChoice();
         const final = getResult(playerChoice, botChoice);
 
-        // очищаємо попередні анімації
+        // очищаємо попередні анімації + glow
         resultEl.classList.remove("result-win", "result-lose", "result-draw");
         if (body) {
             body.classList.remove("glow-win", "glow-lose", "glow-draw");
-    }
+        }
 
         // --- ЛОГІКА РЕЗУЛЬТАТУ + МОНЕТИ ---
 
         if (final === "YOU WIN") {
-            resultEl.textContent = "You WIN! 🔥";
+            // ТУТ +1 ПРЯМО В РЕЗУЛЬТІ
+            resultEl.innerHTML = 'You WIN! 🔥<br><span class="plus-one-inline">+1</span>';
             resultEl.classList.add("result-win");
             if (body) body.classList.add("glow-win");
 
@@ -87,11 +82,6 @@ choices.forEach(choice => {
             coins += 1;
             if (coinValue) {
                 coinValue.textContent = coins;
-            }
-
-            // показати +1
-            if (plusOneEl) {
-                plusOneEl.classList.add("plus-visible");
             }
 
         } else if (final === "YOU LOSE") {
