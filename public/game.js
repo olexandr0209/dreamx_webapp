@@ -96,9 +96,17 @@ choices.forEach(choice => {
         }
 
         // через 1 секунду повертаємо все назад
+        let delay = 600; // базово — 0.6 секунди
+
+        if (final === "YOU WIN") {
+            delay = 1000; // 1 секунда для перемоги
+        }
+
+        // через delay повертаємо все назад
         setTimeout(() => {
             resetState();
-        }, 1000);
+        }, delay);
+
     });
 });
 
