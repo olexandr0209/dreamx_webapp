@@ -17,7 +17,12 @@ body {
 /* Центр стартового екрану */
 .container {
     text-align: center;
+    display: flex;
+    flex-direction: column;   /* ставить кнопки вертикально */
+    align-items: center;
+    gap: 16px;                /* відстань між кнопками */
 }
+
 
 /* Великий логотип на першому екрані */
 .logo-main {
@@ -64,6 +69,11 @@ body {
 .channel-btn:hover {
     background: #2a2a2a;
     transform: scale(1.05);
+}
+
+.play-btn,
+.channel-btn {
+    width: 240px;   /* однакова ширина */
 }
 
 
