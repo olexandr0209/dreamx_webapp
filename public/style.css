@@ -106,14 +106,13 @@ body.start-screen {
     top: 14px;
     left: 0;
     width: 100%;
-    padding: 0 22px;
-
+    padding: 0 34px;   /* було 22px — замало */
     display: flex;
     justify-content: space-between;
     align-items: center;
-
     z-index: 100;
 }
+
 
 .logo {
     color: #d4a037;
@@ -178,7 +177,7 @@ body.start-screen {
     opacity: 0;
     pointer-events: none;
     transition: transform 0.65s ease, opacity 0.65s ease;
-    z-index: 9999;
+    z-index: 1000000;
 }
 
 
