@@ -17,6 +17,7 @@ function resetFlash() {
 function animateCoinToBalance() {
     const flying = document.getElementById("flying-coin");
     const coinsDisplay = document.getElementById("coin-value");
+    if (!flying || !coinsDisplay) return;
     const rect = coinsDisplay.getBoundingClientRect();
 
     // Початкове положення — строго центр екрана
