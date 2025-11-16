@@ -4,8 +4,11 @@ const body = document.querySelector(".game-body"); // вся сторінка г
 
 const options = ["stone", "scissors", "paper"];
 let locked = false;
+
+// MONETI
+const coinsValue = document.getElementById("coins-count");
 let coins = 0;
-const coinValue = document.getElementById("coin-value");
+
 
 function getBotChoice() {
     return options[Math.floor(Math.random() * options.length)];
@@ -76,6 +79,15 @@ choices.forEach(choice => {
             if (body) body.classList.add("glow-win");
             coins += 1;
             coinValue.textContent = coins;
+            // показуємо "+1"
+            const plusOne = document.getElementById("plus-one");
+            plusOne.classList.add("plus-visible");
+
+            // ховаємо через 1 сек
+            setTimeout(() => {
+            plusOne.classList.remove("plus-visible");
+            }, 900);
+
         } 
         else if (final === "YOU LOSE") {
             resultEl.textContent = "You lose ❌";
