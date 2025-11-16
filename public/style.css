@@ -85,14 +85,13 @@ body {
 
 /* Верхня панель гри: Coins (ліворуч) + DreamX (праворуч) */
 .top-bar {
-    width: 100%;
-    max-width: 420px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    padding: 0 6px;
-    margin-bottom: 10px;
+    padding: 10px 20px;
+    width: 100%;
+    box-sizing: border-box;
 }
+
 
 /* Текст Coins */
 .coins-label {
@@ -156,11 +155,9 @@ body {
 
 .game-container {
     text-align: center;
-    padding: 30px 15px;
-    color: white;
-    width: 100%;
-    max-width: 420px;
+    padding-top: 40px; /* відступ від верхнього бару */
 }
+
 
 /* Логотип вгорі гри (маленький) */
 .logo {
