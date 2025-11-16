@@ -329,3 +329,18 @@ body.start-screen {
 .flash-active {
     opacity: 1;
 }
+/* Підсвітка фону при результаті */
+.game-body.glow-win {
+    background: radial-gradient(circle at center, rgba(76, 175, 80, 0.22), #0a0a0a 60%);
+    box-shadow: 0 0 40px rgba(76, 175, 80, 0.7) inset;
+}
+
+.game-body.glow-lose {
+    background: radial-gradient(circle at center, rgba(255, 82, 82, 0.22), #0a0a0a 60%);
+    box-shadow: 0 0 40px rgba(255, 82, 82, 0.7) inset;
+}
+
+.game-body.glow-draw {
+    background: radial-gradient(circle at center, rgba(255, 202, 40, 0.22), #0a0a0a 60%);
+    box-shadow: 0 0 40px rgba(255, 202, 40, 0.7) inset;
+}
