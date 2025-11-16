@@ -360,3 +360,8 @@ body.start-screen {
 .game-body.glow-draw {
     box-shadow: 0 0 80px rgba(255, 202, 40, 0.85) inset;
 }
+.plus-one-inline {
+    color: #f0b43a;   /* золотий колір монет */
+    font-weight: 800;
+    font-size: 26px;
+}
