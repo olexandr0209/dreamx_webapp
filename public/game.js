@@ -8,6 +8,24 @@ const options = ["stone", "scissors", "paper"];
 let locked = false;
 let coins = 0;
 
+function animateCoinToBalance() {
+    const flying = document.getElementById("flying-coin");
+    const coinsDisplay = document.getElementById("coin-value");
+
+    // початкове положення — центр
+    flying.style.opacity = "1";
+    flying.style.transform = "translate(-50%, -50%) scale(1)";
+
+    // кінцеве положення — до монетки
+    const coinRect = coinsDisplay.getBoundingClientRect();
+
+    setTimeout(() => {
+        flying.style.transform = `translate(${coinRect.left - 10}px, ${coinRect.top - 10}px) scale(0.3)`;
+        flying.style.opacity = "0";
+    }, 50);
+}
+
+
 function getBotChoice() {
     return options[Math.floor(Math.random() * options.length)];
 }
