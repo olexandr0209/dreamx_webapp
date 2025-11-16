@@ -1,67 +1,44 @@
-/* Основний стиль */
+/* Основні стилі */
 body {
     margin: 0;
     padding: 0;
     background: #0a0a0a;
-    color: #ffffff;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: white;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
 }
 
-/* Центрування всього контенту */
-.app {
+/* Центр */
+.container {
     text-align: center;
-    width: 100%;
-    max-width: 400px;
 }
 
-/* Золотий логотип */
+/* Логотип */
 .logo {
-    font-size: 42px;
-    font-weight: 700;
-    color: #f0b43a;   /* золото */
-    margin-bottom: 20px;
-    letter-spacing: 1px;
+    font-size: 48px;
+    font-weight: 800;
+    color: #f0b43a; /* золото */
+    margin-bottom: 40px;
+    letter-spacing: 1.5px;
 }
 
-/* Підзаголовок */
-.subtitle {
-    font-size: 20px;
-    font-weight: 400;
-    color: #cccccc;
-    margin-bottom: 30px;
-}
-
-/* Кнопки */
-.buttons {
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
-.choice {
-    padding: 14px 20px;
-    border-radius: 12px;
+/* Кнопка Play */
+.play-btn {
+    background: #f0b43a;
     border: none;
-    background: #1c1c1e;
-    color: #ffffff;
-    font-size: 18px;
-    cursor: pointer;
-    transition: 0.15s;
-}
-
-.choice:hover {
-    background: #2a2a2c;
-    transform: scale(1.03);
-}
-
-/* Результат гри */
-.result {
+    color: #0a0a0a;
     font-size: 22px;
-    margin-top: 10px;
-    min-height: 40px;
+    padding: 16px 40px;
+    border-radius: 14px;
+    cursor: pointer;
+    font-weight: 700;
+    transition: 0.2s;
+}
+
+.play-btn:hover {
+    transform: scale(1.05);
+    background: #ffcc55;
 }
