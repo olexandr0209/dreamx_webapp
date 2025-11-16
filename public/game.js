@@ -1,79 +1,70 @@
-const resultBox = document.getElementById("result");
+const resultEl = document.getElementById("result");
 const choices = document.querySelectorAll(".choice");
 
 const options = ["stone", "scissors", "paper"];
-let locked = false; // щоб не клікали, поки йде анімація
 
-const DEFAULT_TEXT = "Choose";
-resultBox.textContent = DEFAULT_TEXT;
-
-choices.forEach(btn => {
-    btn.addEventListener("click", () => {
-        if (locked) return;   // якщо ще не закінчився попередній раунд
-        locked = true;
-
-        const player = btn.dataset.choice;
-
-        // 1) Анімація вибору
-        setActive(btn);
-
-        // 2) Генеруємо хід бота + показуємо результат
-        const bot = options[Math.floor(Math.random() * options.length)];
-        showResult(player, bot);
-
-        // 3) Через 1 секунду все скидаємо
-        setTimeout(() => {
-            resetIcons();
-            resultBox.textContent = DEFAULT_TEXT;
-            locked = false;
-        }, 1000);
-    });
-});
-
-function setActive(activeBtn) {
-    choices.forEach(btn => {
-        if (btn === activeBtn) {
-            btn.classList.add("active");
-            btn.classList.remove("small");
-        } else {
-            btn.classList.add("small");
-            btn.classList.remove("active");
-        }
-    });
+function getBotChoice() {
+    return options[Math.floor(Math.random() * options.length)];
 }
 
-function resetIcons() {
-    choices.forEach(btn => {
-        btn.classList.remove("active");
-        btn.classList.remove("small");
-        btn.style.transform = "";
-        btn.style.opacity = "";
-    });
-}
-
-function showResult(player, bot) {
-    let text = "";
-
-    if (player === bot) {
-        text = "Draw 🤝";
-    } else if (
+function getResult(player, bot) {
+    if (player === bot) return "DRAW";
+    if (
         (player === "stone" && bot === "scissors") ||
         (player === "scissors" && bot === "paper") ||
         (player === "paper" && bot === "stone")
-    ) {
-        text = "You WIN! 🔥";
-    } else {
-        text = "You lose ❌";
-    }
-
-    resultBox.innerHTML = `
-        <div>You: ${icon(player)} &nbsp;&nbsp; Gamer1: ${icon(bot)}</div>
-        <div style="margin-top:6px; font-size:24px;">${text}</div>
-    `;
+    ) return "YOU WIN";
+    return "YOU LOSE";
 }
 
-function icon(name) {
-    if (name === "stone") return "🪨";
-    if (name === "scissors") return "✂️";
-    if (name === "paper") return "📜";
+function resetState() {
+    // скидаємо розміри кружечків
+    choices.forEach(c => {
+        c.classList.remove("active");
+        c.classList.remove("small");
+    });
+
+    // скидаємо класи анімацій + текст
+    resultEl.classList.remove("result-win", "result-lose", "result-draw");
+    resultEl.textContent = "Choose";
 }
+
+// клік по кружечку
+choices.forEach(choice => {
+    choice.addEventListener("click", () => {
+        const playerChoice = choice.dataset.choice;
+
+        // вибраний — великий
+        choice.classList.add("active");
+
+        // інші — менші
+        choices.forEach(c => {
+            if (c !== choice) c.classList.add("small");
+        });
+
+        // хід бота + результат
+        const botChoice = getBotChoice();
+        const final = getResult(playerChoice, botChoice);
+
+        // спочатку приберемо старі анімаційні класи
+        resultEl.classList.remove("result-win", "result-lose", "result-draw");
+
+        // встановлюємо текст і клас під анімацію
+        if (final === "YOU WIN") {
+            resultEl.textContent = "You WIN! 🔥";
+            resultEl.classList.add("result-win");
+        } else if (final === "YOU LOSE") {
+            resultEl.textContent = "You lose ❌";
+            resultEl.classList.add("result-lose");
+        } else { // DRAW
+            resultEl.textContent = "Draw 🤝";
+            resultEl.classList.add("result-draw");
+        }
+
+        // через 1 секунду все назад у базовий стан
+        setTimeout(resetState, 1000);
+    });
+});
+
+// початковий стан при завантаженні
+resetState();
