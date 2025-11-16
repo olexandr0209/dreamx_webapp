@@ -110,8 +110,10 @@ body {
     position: absolute;
     top: 0;
     left: 50%;
-    transform: translateX(-50%);
+    /* замість transform використовуємо margin-left */
+    margin-left: -55px; /* половина ширини 110px */
 }
+
 
 /* Ліво-низ — камінь */
 .triangle .choice[data-choice="stone"] {
