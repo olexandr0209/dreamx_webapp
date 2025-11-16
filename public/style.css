@@ -333,3 +333,18 @@ body.start-screen {
 .flash-active {
     opacity: 1;
 }
+/* =========================
+   EDGE GLOW ПО КРАЯХ
+   ========================== */
+
+.game-body.glow-win {
+    box-shadow: 0 0 80px rgba(76, 175, 80, 0.85) inset;
+}
+
+.game-body.glow-lose {
+    box-shadow: 0 0 80px rgba(255, 82, 82, 0.85) inset;
+}
+
+.game-body.glow-draw {
+    box-shadow: 0 0 80px rgba(255, 202, 40, 0.85) inset;
+}
