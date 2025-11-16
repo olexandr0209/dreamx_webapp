@@ -211,3 +211,33 @@ body {
     color: #ffca28;
     animation: resultDraw 0.6s ease;
 }
+
+/* ===== ПІДСВІТКА ЕКРАНУ ===== */
+#flash-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+    z-index: 10; /* поверх всього */
+}
+
+/* Кольори підсвітки */
+.flash-win {
+    background: rgba(76, 175, 80, 0.18); /* зелена мʼяка */
+}
+
+.flash-lose {
+    background: rgba(255, 82, 82, 0.18); /* червона */
+}
+
+.flash-draw {
+    background: rgba(255, 202, 40, 0.18); /* жовта */
+}
+
+.flash-active {
+    opacity: 1;
+}
