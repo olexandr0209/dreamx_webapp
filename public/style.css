@@ -166,3 +166,48 @@ body {
     border-radius: 10px;
     font-size: 16px;
 }
+
+/* ===== Анімації результату ===== */
+
+.result {
+    margin-top: 30px;
+    font-size: 22px;
+    min-height: 32px;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+/* WIN: зелений стрибок */
+@keyframes resultWin {
+    0%   { transform: scale(1);   }
+    40%  { transform: scale(1.25);}
+    100% { transform: scale(1);   }
+}
+
+.result-win {
+    color: #4caf50;
+    animation: resultWin 0.6s ease;
+}
+
+/* LOSE: червоний шейк */
+@keyframes resultLose {
+    0%, 100% { transform: translateX(0); }
+    20%, 60% { transform: translateX(-4px); }
+    40%, 80% { transform: translateX(4px); }
+}
+
+.result-lose {
+    color: #ff5252;
+    animation: resultLose 0.6s ease;
+}
+
+/* DRAW: жовтий пульс */
+@keyframes resultDraw {
+    0%   { transform: scale(1);   }
+    50%  { transform: scale(1.15);}
+    100% { transform: scale(1);   }
+}
+
+.result-draw {
+    color: #ffca28;
+    animation: resultDraw 0.6s ease;
+}
