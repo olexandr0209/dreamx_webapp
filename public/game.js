@@ -1,9 +1,9 @@
 const resultEl = document.getElementById("result");
 const choices = document.querySelectorAll(".choice");
-const flash = document.getElementById("flash-overlay");
+const flash = document.getElementById("flash-overlay"); // може бути null
 
 const options = ["stone", "scissors", "paper"];
-let locked = false; // щоб не клікали, поки йде анімація
+let locked = false; // блокуємо повторні кліки на час анімації
 
 function getBotChoice() {
     return options[Math.floor(Math.random() * options.length)];
@@ -28,8 +28,11 @@ function resetState() {
 
     // прибираємо анімації результату
     resultEl.classList.remove("result-win", "result-lose", "result-draw");
-    // прибираємо підсвітку екрану
-    flash.className = "";
+
+    // прибираємо підсвітку екрану, якщо вона є
+    if (flash) {
+        flash.className = "";
+    }
 
     // базовий текст
     resultEl.textContent = "Choose";
@@ -62,21 +65,23 @@ choices.forEach(choice => {
 
         // очищаємо старі класи
         resultEl.classList.remove("result-win", "result-lose", "result-draw");
-        flash.className = "";
+        if (flash) {
+            flash.className = "";
+        }
 
         // встановлюємо текст + анімацію + підсвітку
         if (final === "YOU WIN") {
             resultEl.textContent = "You WIN! 🔥";
             resultEl.classList.add("result-win");
-            flash.classList.add("flash-win", "flash-active");
+            if (flash) flash.classList.add("flash-win", "flash-active");
         } else if (final === "YOU LOSE") {
             resultEl.textContent = "You lose ❌";
             resultEl.classList.add("result-lose");
-            flash.classList.add("flash-lose", "flash-active");
+            if (flash) flash.classList.add("flash-lose", "flash-active");
         } else {
             resultEl.textContent = "Draw 🤝";
             resultEl.classList.add("result-draw");
-            flash.classList.add("flash-draw", "flash-active");
+            if (flash) flash.classList.add("flash-draw", "flash-active");
         }
 
         // через 1 секунду повертаємо все назад
