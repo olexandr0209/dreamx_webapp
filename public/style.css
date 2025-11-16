@@ -123,3 +123,63 @@ body {
     font-size: 16px;
 }
 
+
+/* TRIANGLE POSITION */
+.triangle {
+    position: relative;
+    width: 260px;
+    height: 260px;
+    margin: 70px auto 0;
+}
+
+/* Верх — ножиці */
+.triangle .choice[data-choice="scissors"] {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Ліво-низ — камінь */
+.triangle .choice[data-choice="stone"] {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+}
+
+/* Право-низ — бумага */
+.triangle .choice[data-choice="paper"] {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+/* Анімації вибору */
+.choice {
+    width: 110px;
+    height: 110px;
+    border-radius: 100%;
+    border: 2px solid #2f5aff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #121212;
+    transition: 0.25s ease;
+}
+
+.choice img {
+    width: 60px;
+}
+
+/* Збільшений вибраний */
+.choice.active {
+    transform: scale(1.25);
+    background: #1a1a1a;
+}
+
+/* Зменшені решта */
+.choice.small {
+    transform: scale(0.8);
+    opacity: 0.6;
+}
+
