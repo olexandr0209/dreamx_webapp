@@ -23,6 +23,12 @@ body {
     gap: 16px;                /* відстань між кнопками */
 }
 
+.play-btn,
+.channel-btn {
+    width: 240px;
+    display: block;
+    box-sizing: border-box;
+}
 
 /* Великий логотип на першому екрані */
 .logo-main {
@@ -71,10 +77,6 @@ body {
     transform: scale(1.05);
 }
 
-.play-btn,
-.channel-btn {
-    width: 240px;   /* однакова ширина */
-}
 
 
 /* =========================
