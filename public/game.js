@@ -2,13 +2,12 @@ const resultEl = document.getElementById("result");
 const choices = document.querySelectorAll(".choice");
 const body = document.querySelector(".game-body"); // вся сторінка гри
 
+const coinValue = document.getElementById("coin-value");
+const plusOneEl = document.getElementById("plus-one");
+
 const options = ["stone", "scissors", "paper"];
 let locked = false;
-
-// MONETI
-const coinsValue = document.getElementById("coins-count");
 let coins = 0;
-
 
 function getBotChoice() {
     return options[Math.floor(Math.random() * options.length)];
@@ -37,6 +36,11 @@ function resetState() {
     // прибираємо glow з фону
     if (body) {
         body.classList.remove("glow-win", "glow-lose", "glow-draw");
+    }
+
+    // ховаємо +1
+    if (plusOneEl) {
+        plusOneEl.classList.remove("plus-visible");
     }
 
     // базовий текст
@@ -70,31 +74,32 @@ choices.forEach(choice => {
         resultEl.classList.remove("result-win", "result-lose", "result-draw");
         if (body) {
             body.classList.remove("glow-win", "glow-lose", "glow-draw");
-        }
+    }
 
-        // встановлюємо текст + анімацію + glow фону
+        // --- ЛОГІКА РЕЗУЛЬТАТУ + МОНЕТИ ---
+
         if (final === "YOU WIN") {
             resultEl.textContent = "You WIN! 🔥";
             resultEl.classList.add("result-win");
             if (body) body.classList.add("glow-win");
+
+            // +1 монета
             coins += 1;
-            coinValue.textContent = coins;
-            // показуємо "+1"
-            const plusOne = document.getElementById("plus-one");
-            plusOne.classList.add("plus-visible");
+            if (coinValue) {
+                coinValue.textContent = coins;
+            }
 
-            // ховаємо через 1 сек
-            setTimeout(() => {
-            plusOne.classList.remove("plus-visible");
-            }, 900);
+            // показати +1
+            if (plusOneEl) {
+                plusOneEl.classList.add("plus-visible");
+            }
 
-        } 
-        else if (final === "YOU LOSE") {
+        } else if (final === "YOU LOSE") {
             resultEl.textContent = "You lose ❌";
             resultEl.classList.add("result-lose");
             if (body) body.classList.add("glow-lose");
-        } 
-        else {
+
+        } else {
             resultEl.textContent = "Draw 🤝";
             resultEl.classList.add("result-draw");
             if (body) body.classList.add("glow-draw");
@@ -107,5 +112,5 @@ choices.forEach(choice => {
     });
 });
 
-// початковий стан при завантаженні
+// початковий стан
 resetState();
