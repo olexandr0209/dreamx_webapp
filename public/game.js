@@ -1,9 +1,9 @@
 const resultEl = document.getElementById("result");
 const choices = document.querySelectorAll(".choice");
-const flash = document.getElementById("flash-overlay"); // може бути null
+const flash = document.getElementById("flash-overlay");
 
 const options = ["stone", "scissors", "paper"];
-let locked = false; // блокуємо повторні кліки на час анімації
+let locked = false;
 
 function getBotChoice() {
     return options[Math.floor(Math.random() * options.length)];
@@ -20,27 +20,19 @@ function getResult(player, bot) {
 }
 
 function resetState() {
-    // скидаємо розміри кружечків
     choices.forEach(c => {
         c.classList.remove("active");
         c.classList.remove("small");
     });
 
-    // прибираємо анімації результату
     resultEl.classList.remove("result-win", "result-lose", "result-draw");
 
-    // прибираємо підсвітку екрану, якщо вона є
-    if (flash) {
-        flash.className = "";
-    }
+    if (flash) flash.className = "";
 
-    // базовий текст
     resultEl.textContent = "Choose";
-
     locked = false;
 }
 
-// клік по кружечку
 choices.forEach(choice => {
     choice.addEventListener("click", () => {
         if (locked) return;
@@ -48,7 +40,6 @@ choices.forEach(choice => {
 
         const playerChoice = choice.dataset.choice;
 
-        // вибраний — великий, інші — маленькі
         choices.forEach(c => {
             if (c === choice) {
                 c.classList.add("active");
@@ -59,37 +50,32 @@ choices.forEach(choice => {
             }
         });
 
-        // хід бота + результат
         const botChoice = getBotChoice();
         const final = getResult(playerChoice, botChoice);
 
-        // очищаємо старі класи
         resultEl.classList.remove("result-win", "result-lose", "result-draw");
-        if (flash) {
-            flash.className = "";
-        }
+        if (flash) flash.className = "";
 
-        // встановлюємо текст + анімацію + підсвітку
         if (final === "YOU WIN") {
             resultEl.textContent = "You WIN! 🔥";
             resultEl.classList.add("result-win");
             if (flash) flash.classList.add("flash-win", "flash-active");
-        } else if (final === "YOU LOSE") {
+        } 
+        else if (final === "YOU LOSE") {
             resultEl.textContent = "You lose ❌";
             resultEl.classList.add("result-lose");
             if (flash) flash.classList.add("flash-lose", "flash-active");
-        } else {
+        } 
+        else {
             resultEl.textContent = "Draw 🤝";
             resultEl.classList.add("result-draw");
             if (flash) flash.classList.add("flash-draw", "flash-active");
         }
 
-        // через 1 секунду повертаємо все назад
         setTimeout(() => {
             resetState();
         }, 1000);
     });
 });
 
-// початковий стан при завантаженні
 resetState();
