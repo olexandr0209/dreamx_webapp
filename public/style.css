@@ -104,7 +104,7 @@ body.start-screen {
 .top-bar {
     position: absolute;
     top: 14px;
-    left: 0;
+    left: 30;
     width: 100%;
     padding: 0 34px;   /* було 22px — замало */
     display: flex;
