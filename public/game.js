@@ -2,27 +2,26 @@ const resultBox = document.getElementById("result");
 const choices = document.querySelectorAll(".choice");
 
 const options = ["stone", "scissors", "paper"];
-let locked = false; // блокуємо повторні кліки під час анімації
+let locked = false; // щоб не клікали, поки йде анімація
 
-// Початковий текст
 const DEFAULT_TEXT = "Choose";
 resultBox.textContent = DEFAULT_TEXT;
 
 choices.forEach(btn => {
     btn.addEventListener("click", () => {
-        if (locked) return;   // не даємо клікати поки йде раунд
+        if (locked) return;   // якщо ще не закінчився попередній раунд
         locked = true;
 
         const player = btn.dataset.choice;
 
-        // 1) Анімація: обраний великий, інші маленькі
+        // 1) Анімація вибору
         setActive(btn);
 
-        // 2) Рахуємо результат
-        const bot = options[Math.floor(Math.random() * 3)];
+        // 2) Генеруємо хід бота + показуємо результат
+        const bot = options[Math.floor(Math.random() * options.length)];
         showResult(player, bot);
 
-        // 3) Через 1 секунду все повертаємо назад
+        // 3) Через 1 секунду все скидаємо
         setTimeout(() => {
             resetIcons();
             resultBox.textContent = DEFAULT_TEXT;
@@ -47,7 +46,6 @@ function resetIcons() {
     choices.forEach(btn => {
         btn.classList.remove("active");
         btn.classList.remove("small");
-        // на всякий випадок скидаємо inline-стилі, якщо будуть
         btn.style.transform = "";
         btn.style.opacity = "";
     });
