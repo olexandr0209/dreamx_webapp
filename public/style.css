@@ -1,5 +1,5 @@
 /* =========================
-   START SCREEN
+   GLOBAL
    ========================== */
 
 body {
@@ -8,19 +8,27 @@ body {
     background: #0a0a0a;
     color: white;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+
+
+/* =========================
+   START SCREEN
+   ========================== */
+
+body.start-screen {
     display: flex;
     justify-content: center;
     align-items: center;
     height: 100vh;
 }
 
-/* Центр стартового екрану */
 .container {
     text-align: center;
     display: flex;
-    flex-direction: column;   /* ставить кнопки вертикально */
+    flex-direction: column;
     align-items: center;
-    gap: 16px;                /* відстань між кнопками */
+    gap: 16px;
 }
 
 .play-btn,
@@ -30,16 +38,16 @@ body {
     box-sizing: border-box;
 }
 
-/* Великий логотип на першому екрані */
+/* Лого */
 .logo-main {
     font-size: 48px;
     font-weight: 800;
-    color: #f0b43a; /* золото */
+    color: #f0b43a;
     margin-bottom: 40px;
     letter-spacing: 1.5px;
 }
 
-/* Кнопка Play */
+/* Play */
 .play-btn {
     background: #f0b43a;
     border: none;
@@ -57,10 +65,9 @@ body {
     background: #ffcc55;
 }
 
-/* Кнопка каналу */
+/* Channel */
 .channel-btn {
     margin-top: 18px;
-    display: inline-block;
     text-decoration: none;
     background: #1a1a1a;
     border: 1px solid #f0b43a;
@@ -83,10 +90,20 @@ body {
    GAME SCREEN
    ========================== */
 
-/* Верхня панель гри: Coins (ліворуч) + DreamX (праворуч) */
+.game-body {
+    background: #0A0A0A;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    transition: background 0.35s ease, box-shadow 0.5s ease;
+    overflow: hidden;
+}
+
+/* —— TOP BAR —— */
 .top-bar {
     position: absolute;
-    top: 12px;
+    top: 14px;
     left: 0;
     width: 100%;
     padding: 0 22px;
@@ -95,87 +112,37 @@ body {
     justify-content: space-between;
     align-items: center;
 
-    font-size: 20px;
-    font-weight: 700;
+    z-index: 100;
 }
 
-/* Текст Coins */
+.logo {
+    color: #d4a037;
+    font-size: 22px;
+    font-weight: 800;
+}
+
 .coins-label {
     font-size: 20px;
     font-weight: 600;
     color: #ffffffd0;
 }
+
 .coins-label span {
-    color: #f0b43a;    /* золото для числа */
+    color: #f0b43a;
     font-weight: 700;
 }
-/* "+1" під текстом You WIN */
-.result .plus-one-inline {
-    display: block;
-    font-size: 20px;
-    font-weight: 700;
-    color: #f0b43a;   /* золото */
-    margin-top: 6px;
-}
-
-.plus-visible {
-    opacity: 1;
-    transform: translateY(0);
-}
 
 
 
-/* ===== ПІДСВІТКА ЧЕРЕЗ ФОН ЕКРАНУ ===== */
-
-.game-body {
-    background: #0A0A0A;
-    margin: 0;
-    padding: 0;
-    font-family: system-ui, sans-serif;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    height: 100vh;
-    padding-top: 24px;
-    transition: background 0.35s ease, box-shadow 0.5s ease;
-}
-
-
-/* При перемозі — легкий зелений відтінок */
-/* WIN – зелена підсвітка з країв */
-.game-body.glow-win {
-    box-shadow: inset 0 0 120px 40px rgba(76, 175, 80, 0.4);
-}
-
-/* LOSE – червона */
-.game-body.glow-lose {
-    box-shadow: inset 0 0 120px 40px rgba(255, 82, 82, 0.45);
-}
-
-/* DRAW – жовта */
-.game-body.glow-draw {
-    box-shadow: inset 0 0 120px 40px rgba(255, 202, 64, 0.45);
-}
-
+/* —— MAIN GAME LAYOUT —— */
 
 .game-container {
     text-align: center;
-    padding-top: 80px; /* відступ вниз від top-bar */
+    padding-top: 90px; /* Щоб You VS Gamer1 був нижче top-bar */
 }
 
-
-/* Логотип вгорі гри (маленький) */
-.logo {
-    color: #d4a037; /* золото */
-    font-size: 22px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-
-/* You  VS  Gamer1 */
 .players {
-    margin-top: 20px;
+    margin-top: 8px;
     display: flex;
     justify-content: center;
     gap: 40px;
@@ -186,77 +153,110 @@ body {
     color: #ffffff99;
 }
 
-/* Результат над кружечками */
+/* Результат */
 .result {
-    margin-top: 30px;
+    margin-top: 26px;
     font-size: 22px;
     min-height: 32px;
+    transition: opacity 0.2s ease, transform 0.2s ease;
 }
 
-/* Трикутник з трьох кнопок */
+
+
+/* =========================
+   FLYING COIN
+   ========================== */
+
+#flying-coin {
+    position: fixed;
+    top: 48%;             /* запускається в центрі */
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #f0b43a;
+    font-size: 22px;
+    font-weight: 800;
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 0.65s ease, opacity 0.65s ease;
+    z-index: 9999;
+}
+
+
+
+/* =========================
+   TRIANGLE BUTTONS
+   ========================== */
+
+.game-area {
+    position: absolute;
+    bottom: 32px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 35px;
+}
+
 .triangle {
     position: relative;
     width: 260px;
     height: 260px;
-    margin: 40px auto 0;
 }
 
-/* Верх — ножиці */
 .triangle .choice[data-choice="scissors"] {
     position: absolute;
     top: 0;
     left: 50%;
-    /* замість transform використовуємо margin-left */
-    margin-left: -55px; /* половина ширини 110px */
+    margin-left: -55px;
 }
 
-
-/* Ліво-низ — камінь */
 .triangle .choice[data-choice="stone"] {
     position: absolute;
     bottom: 0;
     left: 0;
 }
 
-/* Право-низ — бумага */
 .triangle .choice[data-choice="paper"] {
     position: absolute;
     bottom: 0;
     right: 0;
 }
 
-/* Базовий стиль кружечків */
 .choice {
     width: 110px;
     height: 110px;
     border-radius: 100%;
     border: 2px solid #2f5aff;
+    background: #121212;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: #121212;
-    transition: transform 0.25s ease, opacity 0.25s ease, background 0.25s ease;
+
+    transition: transform 0.25s ease, opacity 0.25s ease;
 }
 
 .choice img {
     width: 60px;
 }
 
-/* Вибраний — +70% */
 .choice.active {
     transform: scale(1.7);
-    background: #1a1a1a;
 }
 
-/* Інші — -50% */
 .choice.small {
     transform: scale(0.5);
     opacity: 0.6;
 }
 
-/* Кнопка BACK */
+
+
+/* =========================
+   BACK BUTTON
+   ========================== */
+
 .back-btn {
-    margin-top: 40px;
+    margin-top: 0;
     padding: 10px 30px;
     background: transparent;
     border: 1px solid #3a4fff;
@@ -265,20 +265,16 @@ body {
     font-size: 16px;
 }
 
-/* ===== Анімації результату ===== */
 
-.result {
-    margin-top: 30px;
-    font-size: 22px;
-    min-height: 32px;
-    transition: opacity 0.2s ease, transform 0.2s ease;
-}
 
-/* WIN: зелений стрибок */
+/* =========================
+   RESULT ANIMATIONS
+   ========================== */
+
 @keyframes resultWin {
-    0%   { transform: scale(1);   }
-    40%  { transform: scale(1.25);}
-    100% { transform: scale(1);   }
+    0% { transform: scale(1); }
+    40% { transform: scale(1.25); }
+    100% { transform: scale(1); }
 }
 
 .result-win {
@@ -286,7 +282,6 @@ body {
     animation: resultWin 0.6s ease;
 }
 
-/* LOSE: червоний шейк */
 @keyframes resultLose {
     0%, 100% { transform: translateX(0); }
     20%, 60% { transform: translateX(-4px); }
@@ -298,11 +293,10 @@ body {
     animation: resultLose 0.6s ease;
 }
 
-/* DRAW: жовтий пульс */
 @keyframes resultDraw {
-    0%   { transform: scale(1);   }
-    50%  { transform: scale(1.15);}
-    100% { transform: scale(1);   }
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
 }
 
 .result-draw {
@@ -310,7 +304,12 @@ body {
     animation: resultDraw 0.6s ease;
 }
 
-/* ===== ПІДСВІТКА ЕКРАНУ ===== */
+
+
+/* =========================
+   BACKGROUND FLASH
+   ========================== */
+
 #flash-overlay {
     position: fixed;
     top: 0;
@@ -319,50 +318,14 @@ body {
     height: 100%;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.4s ease;
-    z-index: 10; /* поверх всього */
+    transition: opacity 0.45s ease;
+    z-index: 10;
 }
 
-/* Кольори підсвітки */
-.flash-win {
-    background: rgba(76, 175, 80, 0.18); /* зелена мʼяка */
-}
-
-.flash-lose {
-    background: rgba(255, 82, 82, 0.18); /* червона */
-}
-
-.flash-draw {
-    background: rgba(255, 202, 40, 0.18); /* жовта */
-}
+.flash-win  { background: rgba(76, 175, 80, 0.18); }
+.flash-lose { background: rgba(255, 82, 82, 0.18); }
+.flash-draw { background: rgba(255, 202, 40, 0.18); }
 
 .flash-active {
     opacity: 1;
-}
-
-
-/* Контейнер ігрової зони (кружечки + кнопка Back) */
-.game-area {
-    position: absolute;
-    bottom: 30px;           /* відступ від низу екрану */
-    left: 50%;
-    transform: translateX(-50%); /* щоб по центру */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 35px;              /* відстань між трикутником і Back */
-}
-
-#flying-coin {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    color: #f0b43a;
-    font-size: 20px;
-    font-weight: 800;
-    opacity: 0;
-    pointer-events: none;
-    transition: transform 0.7s ease, opacity 0.7s ease;
-    z-index: 9999;
 }
