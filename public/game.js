@@ -11,18 +11,20 @@ let coins = 0;
 function animateCoinToBalance() {
     const flying = document.getElementById("flying-coin");
     const coinsDisplay = document.getElementById("coin-value");
+    const rect = coinsDisplay.getBoundingClientRect();
 
-    // початкове положення — центр
-    flying.style.opacity = "1";
+    // Початкове положення — строго центр екрана
+    flying.style.left = "50%";
+    flying.style.top = "50%";
     flying.style.transform = "translate(-50%, -50%) scale(1)";
+    flying.style.opacity = "1";
 
-    // кінцеве положення — до монетки
-    const coinRect = coinsDisplay.getBoundingClientRect();
-
-    setTimeout(() => {
-        flying.style.transform = `translate(${coinRect.left - 10}px, ${coinRect.top - 10}px) scale(0.3)`;
+    // Даємо браузеру 1 кадр, щоб зафіксувати старт
+    requestAnimationFrame(() => {
+        flying.style.transform = `translate(${rect.left - window.innerWidth/2 + rect.width/2}px,
+                                            ${rect.top - window.innerHeight/2 + rect.height/2}px) scale(0.3)`;
         flying.style.opacity = "0";
-    }, 50);
+    });
 }
 
 
