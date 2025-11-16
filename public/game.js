@@ -1,6 +1,6 @@
 const resultEl = document.getElementById("result");
 const choices = document.querySelectorAll(".choice");
-const flash = document.getElementById("flash-overlay");
+const body = document.querySelector(".game-body"); // вся сторінка гри
 
 const options = ["stone", "scissors", "paper"];
 let locked = false;
@@ -20,16 +20,23 @@ function getResult(player, bot) {
 }
 
 function resetState() {
+    // скидаємо розміри кружечків
     choices.forEach(c => {
         c.classList.remove("active");
         c.classList.remove("small");
     });
 
+    // прибираємо анімації результату
     resultEl.classList.remove("result-win", "result-lose", "result-draw");
 
-    if (flash) flash.className = "";
+    // прибираємо glow з фону
+    if (body) {
+        body.classList.remove("glow-win", "glow-lose", "glow-draw");
+    }
 
+    // базовий текст
     resultEl.textContent = "Choose";
+
     locked = false;
 }
 
@@ -40,6 +47,7 @@ choices.forEach(choice => {
 
         const playerChoice = choice.dataset.choice;
 
+        // вибраний — великий, інші — маленькі
         choices.forEach(c => {
             if (c === choice) {
                 c.classList.add("active");
@@ -53,29 +61,35 @@ choices.forEach(choice => {
         const botChoice = getBotChoice();
         const final = getResult(playerChoice, botChoice);
 
+        // очищаємо попередні анімації
         resultEl.classList.remove("result-win", "result-lose", "result-draw");
-        if (flash) flash.className = "";
+        if (body) {
+            body.classList.remove("glow-win", "glow-lose", "glow-draw");
+        }
 
+        // встановлюємо текст + анімацію + glow фону
         if (final === "YOU WIN") {
             resultEl.textContent = "You WIN! 🔥";
             resultEl.classList.add("result-win");
-            if (flash) flash.classList.add("flash-win", "flash-active");
+            if (body) body.classList.add("glow-win");
         } 
         else if (final === "YOU LOSE") {
             resultEl.textContent = "You lose ❌";
             resultEl.classList.add("result-lose");
-            if (flash) flash.classList.add("flash-lose", "flash-active");
+            if (body) body.classList.add("glow-lose");
         } 
         else {
             resultEl.textContent = "Draw 🤝";
             resultEl.classList.add("result-draw");
-            if (flash) flash.classList.add("flash-draw", "flash-active");
+            if (body) body.classList.add("glow-draw");
         }
 
+        // через 1 секунду повертаємо все назад
         setTimeout(() => {
             resetState();
         }, 1000);
     });
 });
 
+// початковий стан при завантаженні
 resetState();
