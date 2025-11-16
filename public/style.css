@@ -112,7 +112,7 @@ body.start-screen {
     top: 14px;
     left: 0;
     right: 0;
-    padding: 0 50px;    /* автоматичний відступ від країв */
+    padding: 0 35px;    /* автоматичний відступ від країв */
     display: flex;
     justify-content: space-between;
     align-items: center;
