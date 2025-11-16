@@ -1,29 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>DreamX Game</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
+    <meta charset="UTF-8">
+    <title>DreamX — Game</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css" />
 </head>
 
-<body>
-    <div class="app">
-        <div class="logo">DreamX</div>
+<body class="game-body">
+    <div class="game-container">
+        
+        <div class="game-header">
+            <span class="logo">DreamX</span>
 
-        <div class="subtitle">Choose your move</div>
-
-        <div class="buttons">
-            <button class="choice" data-choice="rock">🪨 Rock</button>
-            <button class="choice" data-choice="scissors">✂️ Scissors</button>
-            <button class="choice" data-choice="paper">📄 Paper</button>
+            <div class="players">
+                <span class="p1">You</span>
+                <span class="vs">VS</span>
+                <span class="p2">Gamer1</span>
+            </div>
         </div>
 
-        <div id="result" class="result"></div>
+        <div class="choices">
+            <div class="choice" data-choice="scissors">
+                <img src="icons/scissors.png" />
+            </div>
+
+            <div class="choice" data-choice="stone">
+                <img src="icons/stone.png" />
+            </div>
+
+            <div class="choice" data-choice="paper">
+                <img src="icons/scroll.png" />
+            </div>
+        </div>
+
+        <div class="result" id="result"></div>
+
+        <button class="back-btn" onclick="window.location.href='index.html'">BACK</button>
+
     </div>
 
-    <script src="app.js"></script>
+    <script src="game.js"></script>
 </body>
 </html>
-
