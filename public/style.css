@@ -104,14 +104,15 @@ body.start-screen {
 .top-bar {
     position: absolute;
     top: 14px;
-    left: 30;
-    width: 100%;
-    padding: 0 34px;   /* було 22px — замало */
+    left: 0;
+    right: 0;
+    padding: 0 50px;    /* автоматичний відступ від країв */
     display: flex;
     justify-content: space-between;
     align-items: center;
     z-index: 100;
 }
+
 
 
 .logo {
