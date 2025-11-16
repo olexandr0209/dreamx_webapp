@@ -67,19 +67,21 @@ body {
 }
 
 /* При перемозі — легкий зелений відтінок */
+/* WIN – зелена підсвітка з країв */
 .game-body.glow-win {
-    background: radial-gradient(circle at center, rgba(76, 175, 80, 0.35), #0A0A0A);
+    box-shadow: inset 0 0 120px 40px rgba(76, 175, 80, 0.4);
 }
 
-/* При програші — мʼякий червоний */
+/* LOSE – червона */
 .game-body.glow-lose {
-    background: radial-gradient(circle at center, rgba(255, 82, 82, 0.35), #0A0A0A);
+    box-shadow: inset 0 0 120px 40px rgba(255, 82, 82, 0.45);
 }
 
-/* При нічиї — теплий жовтий */
+/* DRAW – жовта */
 .game-body.glow-draw {
-    background: radial-gradient(circle at center, rgba(255, 202, 64, 0.35), #0A0A0A);
+    box-shadow: inset 0 0 120px 40px rgba(255, 202, 64, 0.45);
 }
+
 
 
 .game-container {
