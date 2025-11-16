@@ -1,4 +1,7 @@
-/* Основні стилі */
+/* =========================
+   START SCREEN
+   ========================== */
+
 body {
     margin: 0;
     padding: 0;
@@ -11,13 +14,13 @@ body {
     height: 100vh;
 }
 
-/* Центр */
+/* Центр стартового екрану */
 .container {
     text-align: center;
 }
 
-/* Логотип */
-.logo {
+/* Великий логотип на першому екрані */
+.logo-main {
     font-size: 48px;
     font-weight: 800;
     color: #f0b43a; /* золото */
@@ -44,29 +47,37 @@ body {
 }
 
 
-/* Second screen — Game */
-
-
+/* =========================
+   GAME SCREEN
+   ========================== */
 
 .game-body {
     background: #0A0A0A;
     margin: 0;
     padding: 0;
     font-family: system-ui, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 .game-container {
     text-align: center;
     padding: 30px 15px;
     color: white;
+    width: 100%;
+    max-width: 420px;
 }
 
+/* Логотип вгорі гри (маленький) */
 .logo {
     color: #d4a037; /* золото */
     font-size: 22px;
     font-weight: bold;
 }
 
+/* You  VS  Gamer1 */
 .players {
     margin-top: 20px;
     display: flex;
@@ -79,59 +90,19 @@ body {
     color: #ffffff99;
 }
 
-.choices {
-    margin-top: 60px;
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-}
-
-.choice {
-    width: 110px;
-    height: 110px;
-    border-radius: 100%;
-    border: 2px solid #2f5aff;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: #121212;
-    transition: 0.25s ease;
-}
-
-.choice img {
-    width: 60px;
-}
-
-
-.choice.active {
-    transform: scale(1.7);
-    background: #1a1a1a;
-}
-
+/* Результат над кружечками */
 .result {
     margin-top: 30px;
     font-size: 22px;
     min-height: 32px;
 }
 
-
-.back-btn {
-    margin-top: 50px;
-    padding: 10px 30px;
-    background: transparent;
-    border: 1px solid #3a4fff;
-    color: #3a4fff;
-    border-radius: 10px;
-    font-size: 16px;
-}
-
-
-/* TRIANGLE POSITION */
+/* Трикутник з трьох кнопок */
 .triangle {
     position: relative;
     width: 260px;
     height: 260px;
-    margin: 70px auto 0;
+    margin: 40px auto 0;
 }
 
 /* Верх — ножиці */
@@ -156,7 +127,7 @@ body {
     right: 0;
 }
 
-/* Анімації вибору */
+/* Базовий стиль кружечків */
 .choice {
     width: 110px;
     height: 110px;
@@ -166,21 +137,32 @@ body {
     justify-content: center;
     align-items: center;
     background: #121212;
-    transition: 0.25s ease;
+    transition: transform 0.25s ease, opacity 0.25s ease, background 0.25s ease;
 }
 
 .choice img {
     width: 60px;
 }
 
-/* Збільшений вибраний */
+/* Вибраний — +70% */
 .choice.active {
-    transform: scale(1.25);
+    transform: scale(1.7);
     background: #1a1a1a;
 }
 
-/* Зменшені решта */
+/* Інші — -50% */
 .choice.small {
     transform: scale(0.5);
     opacity: 0.6;
+}
+
+/* Кнопка BACK */
+.back-btn {
+    margin-top: 40px;
+    padding: 10px 30px;
+    background: transparent;
+    border: 1px solid #3a4fff;
+    color: #3a4fff;
+    border-radius: 10px;
+    font-size: 16px;
 }
