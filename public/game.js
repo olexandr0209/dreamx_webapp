@@ -9,30 +9,7 @@ let locked = false;
 let coins = 0;
 
 // ✅ Безпечна анімація монетки
-function animateCoinToBalance() {
-    const flying = document.getElementById("flying-coin");
-    const coinsDisplay = document.getElementById("coin-value");
 
-    // Якщо чогось немає — просто не анімуємо, але гра не ламається
-    if (!flying || !coinsDisplay) return;
-
-    const rect = coinsDisplay.getBoundingClientRect();
-
-    // Початкове положення — строго центр екрана
-    flying.style.left = "50%";
-    flying.style.top = "50%";
-    flying.style.transform = "translate(-50%, -50%) scale(1)";
-    flying.style.opacity = "1";
-
-    // Даємо браузеру 1 кадр, щоб зафіксувати старт
-    requestAnimationFrame(() => {
-        const targetX = rect.left - window.innerWidth / 2 + rect.width / 2;
-        const targetY = rect.top - window.innerHeight / 2 + rect.height / 2;
-
-        flying.style.transform = `translate(${targetX}px, ${targetY}px) scale(0.3)`;
-        flying.style.opacity = "0";
-    });
-}
 
 // ✅ окрема функція для скидання флеша
 function resetFlash() {
@@ -124,7 +101,6 @@ choices.forEach(choice => {
             }
 
             coins += 1;
-            animateCoinToBalance();
             if (coinValue) {
                 coinValue.textContent = coins;
             }
