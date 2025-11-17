@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>DreamX — Tournaments</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+
+<body class="tournament-screen">
+    <div class="top-bar-home">
+        <div class="logo-main-top">DreamX</div>
+    </div>
+
+    <div class="tournament-container">
+        <h1 class="tournament-title">Tournaments</h1>
+
+        <!-- Головна велика кнопка режиму -->
+        <button class="mode-card" id="mode-vs-computer">
+            <div class="mode-title">Play vs Computer</div>
+            <div class="mode-sub">Fast game • Earn coins</div>
+        </button>
+
+        <!-- Потім тут додамо:
+        <button class="mode-card mode-disabled">Online Game (soon)</button>
+        <button class="mode-card mode-disabled">1v1 Room (soon)</button>
+        -->
+    </div>
+
+    <div class="bottom-nav">
+        <button class="bottom-btn bottom-btn-secondary" id="back-home">
+            Back
+        </button>
+    </div>
+
+    <script>
+        // Кнопка "Play vs Computer" -> game.html + збережені ?points=...
+        document.getElementById("mode-vs-computer").addEventListener("click", () => {
+            const qs = window.location.search;
+            window.location.href = "game.html" + qs;
+        });
+
+        document.getElementById("back-home").addEventListener("click", () => {
+            const qs = window.location.search;
+            window.location.href = "index.html" + qs;
+        });
+    </script>
+</body>
+</html>
