@@ -113,12 +113,14 @@ body.tournament-screen {
    ========================== */
 
 .hero-section {
-    padding: 12px 20px 0;
-    flex: 1;                  /* розтягуємо по висоті між топом і низом */
+    padding: 10px 20px 0;
+    flex: 1;
     display: flex;
-    justify-content: center;  /* по вертикалі приблизно центр */
+    justify-content: flex-start;   /* було center */
     align-items: center;
+    margin-top: 20px;              /* піднімаємо */
 }
+
 
 .promo-card {
     width: 100%;
