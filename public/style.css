@@ -246,6 +246,7 @@ body.start-screen {
     right: 0;
 }
 
+
 .choice {
     width: 110px;
     height: 110px;
@@ -255,12 +256,8 @@ body.start-screen {
     display: flex;
     justify-content: center;
     align-items: center;
-
+    font-size: 48px;        /* emoji розмір */
     transition: transform 0.25s ease, opacity 0.25s ease;
-}
-
-.choice img {
-    width: 60px;
 }
 
 .choice.active {
@@ -270,6 +267,11 @@ body.start-screen {
 .choice.small {
     transform: scale(0.5);
     opacity: 0.6;
+}
+
+
+.choice img {
+    width: 60px;
 }
 
 
