@@ -7,6 +7,7 @@ const flashOverlay = document.getElementById("flash-overlay"); // ✅ нове
 const options = ["stone", "scissors", "paper"];
 let locked = false;
 let coins = 0;
+let pendingPoints = 0;
 
 function sendWinToBot(delta = 1) {
     // Працює тільки всередині Telegram WebApp
@@ -119,10 +120,11 @@ choices.forEach(choice => {
             }
 
             coins += 1;
+            pendingPoints += 1;
             if (coinValue) {
                 coinValue.textContent = coins;
             }
-            sendWinToBot(1)
+            
 
             delay = 1000; // трошки довше показуємо перемогу
 
@@ -155,6 +157,38 @@ choices.forEach(choice => {
         }, delay);
     });
 });
+
+function sendPointsToBot() {
+    if (pendingPoints <= 0) {
+        console.log("Немає очок для відправки");
+        return;
+    }
+
+    if (window.Telegram && window.Telegram.WebApp) {
+        try {
+            window.Telegram.WebApp.sendData(
+                JSON.stringify({
+                    type: "WIN",
+                    delta: pendingPoints
+                })
+            );
+            console.log("Sent POINTS to bot:", pendingPoints);
+            pendingPoints = 0; // обнуляємо локальний лічильник
+        } catch (e) {
+            console.log("Error sending points to bot", e);
+        }
+    } else {
+        console.log("Telegram WebApp API not available");
+    }
+}
+
+// Викликається з HTML-кнопки
+function saveAndExit() {
+    sendPointsToBot();
+    // Повертаємось на стартовий екран WebApp
+    window.location.href = "index.html";
+}
+
 
 // початковий стан
 resetState();
