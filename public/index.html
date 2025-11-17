@@ -10,34 +10,69 @@
 </head>
 
 <body class="start-screen">
-    <!-- Верхня панель з логотипом -->
+    <!-- Верхня панель -->
     <div class="top-bar-home">
         <div class="logo-main-top">DreamX</div>
     </div>
 
-    <!-- (Середину поки залишаємо пустою, потім тут буде Hero / новини) -->
-    <div class="home-center-spacer"></div>
+    <!-- HERO-КАРТКА СПОНСОРА -->
+    <div class="hero-section">
+        <div class="promo-card">
+            <!-- Верхній рядок: лейбл + приз -->
+            <div class="promo-card-header">
+                <div class="promo-card-meta">
+                    <div class="promo-label">TELEGRAM CHANNEL</div>
+                    <div class="promo-name">Sport Ukraine</div>
+                </div>
+                <div class="promo-prize-badge">
+                    <span class="promo-prize-value">150$</span>
+                </div>
+            </div>
+
+            <!-- Низ картки: аватар + інформація + кнопка -->
+            <div class="promo-card-body">
+                <div class="promo-avatar"></div>
+
+                <div class="promo-info">
+                    <div class="promo-channel-title">Sport Ukraine</div>
+                    <div class="promo-subs">
+                        <span class="promo-subs-icon">👥</span>
+                        <span class="promo-subs-count">230 000</span>
+                    </div>
+                    <div class="promo-desc">
+                        The best sport channel of Ukrainian sport.
+                        We always know who will win and how.
+                    </div>
+                    <a href="https://t.me/dreamxofficial" 
+                       target="_blank" 
+                       class="promo-btn">
+                       JOIN FREE
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <!-- Нижній банер з кнопками -->
     <div class="bottom-nav">
+        <button id="tournament-btn" class="bottom-btn bottom-btn-primary">
+            Tournament
+        </button>
+
         <a class="bottom-btn bottom-btn-secondary" 
            href="https://t.me/dreamxofficial" 
            target="_blank">
            Channel
         </a>
-        <button id="tournament-btn" class="bottom-btn bottom-btn-primary">
-            Tournament
-        </button>
-
-        
     </div>
 
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script>
-        // При натисканні "Tournament" — йдемо на сторінку вибору режиму
         document.getElementById("tournament-btn").addEventListener("click", () => {
             const qs = window.location.search;  // зберігаємо ?points=...
             window.location.href = "tournaments.html" + qs;
         });
     </script>
 </body>
+
 </html>
