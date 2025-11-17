@@ -20,10 +20,12 @@
     </a>
     </div>
 
-
     <script>
         document.getElementById("play-btn").addEventListener("click", () => {
-            window.location.href = "game.html";
+            // беремо всі параметри з поточного урла (?points=12)
+            const qs = window.location.search;   // наприклад, "?points=12"
+            // передаємо їх далі в game.html
+            window.location.href = "game.html" + qs;
         });
     </script>
 </body>
