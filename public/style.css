@@ -114,11 +114,11 @@ body.tournament-screen {
 
 .hero-section {
     padding: 10px 20px 0;
-    flex: 1;
+    /* flex: 1;  можна прибрати, щоб не розтягувало */
     display: flex;
-    justify-content: flex-start;   /* було center */
-    align-items: center;
-    margin-top: 20px;              /* піднімаємо */
+    justify-content: center;
+    align-items: flex-start;
+    margin-top: 10px;
 }
 
 
@@ -258,14 +258,17 @@ body.start-screen {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
-    justify-content: space-between;  /* верх + низ */
+    /* justify-content: space-between;  прибираємо */
     background: #0a0a0a;
     margin: 0;
 }
 
-
-
-
+.bottom-nav {
+    margin-top: auto;              /* ⬅️ нове */
+    padding: 12px 20px 24px;
+    display: flex;
+    gap: 12px;
+}
 
 .container {
     display: flex;
