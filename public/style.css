@@ -108,6 +108,144 @@ body.tournament-screen {
     cursor: default;
 }
 
+/* =========================
+   HERO CARD (MAIN SCREEN)
+   ========================== */
+
+.hero-section {
+    padding: 12px 20px 0;
+    flex: 1;                  /* розтягуємо по висоті між топом і низом */
+    display: flex;
+    justify-content: center;  /* по вертикалі приблизно центр */
+    align-items: center;
+}
+
+.promo-card {
+    width: 100%;
+    max-width: 380px;
+    background: radial-gradient(circle at top left, #181818, #101010);
+    border-radius: 20px;
+    padding: 18px 18px 16px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55);
+    box-sizing: border-box;
+}
+
+/* Верхній рядок: лейбл + приз */
+.promo-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.promo-card-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.promo-label {
+    font-size: 11px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: #b0b0b0;
+}
+
+.promo-name {
+    font-size: 16px;
+    font-weight: 600;
+    color: #efefef;
+}
+
+/* Бейдж призу */
+.promo-prize-badge {
+    background: rgba(240, 180, 58, 0.08);
+    border: 1px solid #f0b43a;
+    border-radius: 999px;
+    padding: 6px 12px;
+}
+
+.promo-prize-value {
+    font-size: 15px;
+    font-weight: 700;
+    color: #f7c051;
+}
+
+/* Нижня частина картки */
+.promo-card-body {
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+}
+
+/* Аватар каналу */
+.promo-avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 30% 20%, #7a6cff, #3b32b8);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
+    flex-shrink: 0;
+}
+
+/* Текстова частина справа */
+.promo-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.promo-channel-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: #2f5aff;
+}
+
+.promo-subs {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: #9a9a9a;
+}
+
+.promo-subs-icon {
+    font-size: 12px;
+}
+
+.promo-desc {
+    font-size: 11px;
+    line-height: 1.4;
+    color: #a5a5a5;
+    margin-top: 4px;
+    max-height: 3.2em; /* 2-3 рядки */
+    overflow: hidden;
+}
+
+/* Кнопка JOIN FREE */
+.promo-btn {
+    margin-top: 8px;
+    align-self: flex-start;
+    padding: 8px 20px;
+    border-radius: 999px;
+    border: 1px solid #2f5aff;
+    background: #050608;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    letter-spacing: 0.4px;
+    transition: background 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.promo-btn:hover {
+    background: #0b1020;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
+}
+
+
 
 
 /* =========================
