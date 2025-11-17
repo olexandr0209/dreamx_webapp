@@ -212,7 +212,7 @@ body.start-screen {
 
 .game-area {
     position: absolute;
-    bottom: 110px;
+    bottom: 115px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
