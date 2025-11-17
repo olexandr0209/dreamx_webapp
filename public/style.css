@@ -144,16 +144,21 @@ body.start-screen {
 
 .game-container {
     text-align: center;
-    padding-top: 90px; /* Щоб You VS Gamer1 був нижче top-bar */
+    padding-top: 50px; /* Щоб You VS Gamer1 був нижче top-bar */
 }
 
+
+
 .players {
-    margin-top: 8px;
+    margin-top: 4px;          /* підняли ближче до верху */
     display: flex;
     justify-content: center;
-    gap: 40px;
-    font-size: 18px;
+    gap: 28px;                /* трошки менший відступ */
+    font-size: 14px;          /* було 18px — тепер мініатюрніше */
+    opacity: 0.75;            /* легка м’якість */
+    letter-spacing: 0.5px;    /* легка "ігрова" стилістика */
 }
+
 
 .vs {
     color: #ffffff99;
