@@ -8,7 +8,25 @@ const options = ["stone", "scissors", "paper"];
 let locked = false;
 let coins = 0;
 
-// ✅ Безпечна анімація монетки
+function sendWinToBot(delta = 1) {
+    // Працює тільки всередині Telegram WebApp
+    if (window.Telegram && window.Telegram.WebApp) {
+        try {
+            window.Telegram.WebApp.sendData(
+                JSON.stringify({
+                    type: "WIN",
+                    delta: delta
+                })
+            );
+            console.log("Sent WIN to bot");
+        } catch (e) {
+            console.log("Error sending WIN to bot", e);
+        }
+    } else {
+        console.log("Telegram WebApp API not available (локальний запуск)");
+    }
+}
+
 
 
 // ✅ окрема функція для скидання флеша
@@ -104,6 +122,7 @@ choices.forEach(choice => {
             if (coinValue) {
                 coinValue.textContent = coins;
             }
+            sendWinToBot(1)
 
             delay = 1000; // трошки довше показуємо перемогу
 
