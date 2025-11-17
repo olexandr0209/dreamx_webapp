@@ -4,6 +4,19 @@ const body = document.querySelector(".game-body"); // вся сторінка г
 const coinValue = document.getElementById("coin-value");
 const flashOverlay = document.getElementById("flash-overlay"); // ✅ нове
 
+async function loadPoints() {
+    const user = Telegram.WebApp.initDataUnsafe.user;
+    if (!user) return;
+
+    const url = `https://dreamx-webapp.onrender.com=${user.id}`;
+
+    const res = await fetch(url);
+    const data = await res.json();
+
+    coins = data.points;
+    document.getElementById("coin-value").textContent = coins;
+}
+
 
 function getInitialCoinsFromUrl() {
     const params = new URLSearchParams(window.location.search);
@@ -199,7 +212,9 @@ function saveAndExit() {
     // Повертаємось на стартовий екран WebApp
     window.location.href = "index.html";
 }
-
+window.onload = () => {
+    loadPoints();
+};
 
 // початковий стан
 resetState();
