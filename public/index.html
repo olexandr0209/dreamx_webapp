@@ -10,22 +10,32 @@
 </head>
 
 <body class="start-screen">
-    <div class="container">
-        <div class="logo-main">DreamX</div>
-        <button id="play-btn" class="play-btn">Play</button>
-        <a class="channel-btn" 
+    <!-- Верхня панель з логотипом -->
+    <div class="top-bar-home">
+        <div class="logo-main-top">DreamX</div>
+    </div>
+
+    <!-- (Середину поки залишаємо пустою, потім тут буде Hero / новини) -->
+    <div class="home-center-spacer"></div>
+
+    <!-- Нижній банер з кнопками -->
+    <div class="bottom-nav">
+        <button id="tournament-btn" class="bottom-btn bottom-btn-primary">
+            Tournament
+        </button>
+
+        <a class="bottom-btn bottom-btn-secondary" 
            href="https://t.me/dreamxofficial" 
            target="_blank">
-           DreamX Channel
-    </a>
+           Channel
+        </a>
     </div>
 
     <script>
-        document.getElementById("play-btn").addEventListener("click", () => {
-            // беремо всі параметри з поточного урла (?points=12)
-            const qs = window.location.search;   // наприклад, "?points=12"
-            // передаємо їх далі в game.html
-            window.location.href = "game.html" + qs;
+        // При натисканні "Tournament" — йдемо на сторінку вибору режиму
+        document.getElementById("tournament-btn").addEventListener("click", () => {
+            const qs = window.location.search;  // зберігаємо ?points=...
+            window.location.href = "tournaments.html" + qs;
         });
     </script>
 </body>
