@@ -74,6 +74,24 @@ function getResult(player, bot) {
     return "YOU LOSE";
 }
 
+function showComputerPick(choice) {
+    const circle = document.getElementById("computer-pick-circle");
+    const symbol = document.getElementById("computer-pick-symbol");
+
+    const icons = {
+        stone: "✊",
+        paper: "✋",
+        scissors: "✌️"
+    };
+
+    symbol.textContent = icons[choice];
+
+    // Анімація
+    circle.style.opacity = "1";
+    circle.style.transform = "scale(1)";
+}
+
+
 function resetState() {
     // скидаємо розміри кружечків
     choices.forEach(c => {
@@ -94,7 +112,13 @@ function resetState() {
 
     // ✅ прибираємо флеш-підсвітку
     resetFlash();
-
+    
+    const circle = document.getElementById("computer-pick-circle");
+    if (circle) {
+    circle.style.opacity = "0";        
+    circle.style.transform = "scale(0.7)";
+    }
+    
     locked = false;
 }
 
@@ -118,6 +142,10 @@ choices.forEach(choice => {
         });
 
         const botChoice = getBotChoice();
+
+        // показати вибір комп’ютера
+        showComputerPick(botChoice);
+        
         const final = getResult(playerChoice, botChoice);
 
         // очищаємо попередні анімації + glow
@@ -174,6 +202,7 @@ choices.forEach(choice => {
                 flashOverlay.classList.add("flash-draw", "flash-active");
             }
         }
+        
 
         // через delay повертаємо все назад
         setTimeout(() => {
