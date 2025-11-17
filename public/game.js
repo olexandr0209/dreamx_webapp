@@ -4,10 +4,21 @@ const body = document.querySelector(".game-body"); // вся сторінка г
 const coinValue = document.getElementById("coin-value");
 const flashOverlay = document.getElementById("flash-overlay"); // ✅ нове
 
+
+function getInitialCoinsFromUrl() {
+    const params = new URLSearchParams(window.location.search);
+    const p = parseInt(params.get("points"), 10);
+    return isNaN(p) ? 0 : p;
+}
+
 const options = ["stone", "scissors", "paper"];
 let locked = false;
-let coins = 0;
-let pendingPoints = 0;
+let coins = getInitialCoinsFromUrl();  // стартові монети з URL (?points=...)
+let pendingPoints = 0;                 // те, що заробиш у ЦІЙ грі
+if (coinValue) {
+    coinValue.textContent = coins;
+}
+
 
 function sendWinToBot(delta = 1) {
     // Працює тільки всередині Telegram WebApp
