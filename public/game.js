@@ -25,6 +25,8 @@ async function loadPoints() {
 
         if (!res.ok) return;
 
+        
+        
         const data = await res.json();
         console.log("Data from server:", data);
 
@@ -32,6 +34,11 @@ async function loadPoints() {
         if (coinValue) {
             coinValue.textContent = coins;
         }
+        
+        if (resultEl) {
+            resultEl.textContent = "Loaded: " + coins; // тимчасовий дебаг
+        }
+
     } catch (e) {
         console.log("Помилка loadPoints:", e);
     }
@@ -271,9 +278,9 @@ async function saveAndExit() {
     }
 }
 
-window.addEventListener("load", () => {
-    resetState();   // щоб усе було в стартовому стані
-    loadPoints();   // тягнемо актуальні бали з Postgres
-});
+
+resetState();   // щоб усе було в стартовому стані
+loadPoints();   // тягнемо актуальні бали з Postgres
+
 
 
