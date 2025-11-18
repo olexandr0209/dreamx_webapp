@@ -33,24 +33,7 @@ if (coinValue) {
 }
 
 
-function sendWinToBot(delta = 1) {
-    // Працює тільки всередині Telegram WebApp
-    if (window.Telegram && window.Telegram.WebApp) {
-        try {
-            window.Telegram.WebApp.sendData(
-                JSON.stringify({
-                    type: "WIN",
-                    delta: delta
-                })
-            );
-            console.log("Sent WIN to bot");
-        } catch (e) {
-            console.log("Error sending WIN to bot", e);
-        }
-    } else {
-        console.log("Telegram WebApp API not available (локальний запуск)");
-    }
-}
+
 
 
 
@@ -211,39 +194,58 @@ choices.forEach(choice => {
     });
 });
 
-function sendPointsToBot() {
+async function savePointsToServer() {
     if (pendingPoints <= 0) {
-        console.log("Немає очок для відправки");
+        console.log("Немає очок для збереження");
         return;
     }
 
-    if (window.Telegram && window.Telegram.WebApp) {
-        try {
-            window.Telegram.WebApp.sendData(
-                JSON.stringify({
-                    type: "WIN",
-                    delta: pendingPoints
-                })
-            );
-            console.log("Sent POINTS to bot:", pendingPoints);
+    const tg = window.Telegram && window.Telegram.WebApp;
+    const user = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
+
+    if (!user) {
+        console.log("Немає даних користувача з Telegram WebApp");
+        return;
+    }
+
+    try {
+        // 🚨 ТУТ ТИ СТАВИШ СВІЙ SPЕЦІАЛЬНИЙ URL для збереження очок
+        const res = await fetch("https://dreamx-webapp.onrender.com/api/add_points", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                user_id: user.id,
+                delta: pendingPoints
+            })
+        });
+
+        if (!res.ok) {
+            console.log("Помилка при збереженні поінтів:", res.status);
+        } else {
+            console.log("Поінти успішно збережені:", pendingPoints);
             pendingPoints = 0; // обнуляємо локальний лічильник
-        } catch (e) {
-            console.log("Error sending points to bot", e);
         }
-    } else {
-        console.log("Telegram WebApp API not available");
+    } catch (e) {
+        console.log("Помилка при запиті до сервера:", e);
     }
 }
 
+
 // Викликається з HTML-кнопки
-function saveAndExit() {
-    sendPointsToBot();
-    // Повертаємось на стартовий екран WebApp
-    window.location.href = "index.html";
+async function saveAndExit() {
+    // 1. Зберегти очки на сервер
+    await savePointsToServer();
+
+    // 2. Акуратно закрити WebApp
+    const tg = window.Telegram && window.Telegram.WebApp;
+    if (tg && tg.close) {
+        tg.close(); // закриває вікно WebApp в Telegram без sendData і без повідомлення
+    } else {
+        // fallback — якщо WebApp API недоступний
+        window.location.href = "index.html";
+    }
 }
-window.onload = () => {
-    loadPoints();
-};
+
 
 // початковий стан
 resetState();
