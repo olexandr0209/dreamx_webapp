@@ -5,17 +5,34 @@ const coinValue = document.getElementById("coin-value");
 const flashOverlay = document.getElementById("flash-overlay"); // ✅ нове
 
 async function loadPoints() {
-    const user = Telegram.WebApp.initDataUnsafe.user;
-    if (!user) return;
+    const tg = window.Telegram && window.Telegram.WebApp;
+    const user = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
+    if (!user) {
+        console.log("Немає user в initDataUnsafe");
+        return;
+    }
 
-    const url = `https://dreamx-webapp.onrender.com=${user.id}`;
+    try {
+        const url = `/api/get_points?user_id=${user.id}`;
+        console.log("GET points from:", url);
 
-    const res = await fetch(url);
-    const data = await res.json();
+        const res = await fetch(url);
+        console.log("Status get_points:", res.status);
 
-    coins = data.points;
-    document.getElementById("coin-value").textContent = coins;
+        if (!res.ok) return;
+
+        const data = await res.json();
+        console.log("Data from server:", data);
+
+        coins = data.points ?? 0;
+        if (coinValue) {
+            coinValue.textContent = coins;
+        }
+    } catch (e) {
+        console.log("Помилка loadPoints:", e);
+    }
 }
+
 
 
 function getInitialCoinsFromUrl() {
@@ -204,47 +221,50 @@ async function savePointsToServer() {
     const user = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
 
     if (!user) {
-        console.log("Немає даних користувача з Telegram WebApp");
+        console.log("Немає user в initDataUnsafe");
         return;
     }
 
     try {
-        // 🚨 ТУТ ТИ СТАВИШ СВІЙ SPЕЦІАЛЬНИЙ URL для збереження очок
-        const res = await fetch("https://dreamx-webapp.onrender.com/api/add_points", {
+        const url = `/api/add_points`;
+        console.log("POST points to:", url, "delta:", pendingPoints);
+
+        const res = await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
                 user_id: user.id,
-                delta: pendingPoints
-            })
+                delta: pendingPoints,
+            }),
         });
 
-        if (!res.ok) {
-            console.log("Помилка при збереженні поінтів:", res.status);
-        } else {
-            console.log("Поінти успішно збережені:", pendingPoints);
-            pendingPoints = 0; // обнуляємо локальний лічильник
-        }
+        console.log("Status add_points:", res.status);
+
+        if (!res.ok) return;
+
+        const data = await res.json();
+        console.log("Response add_points:", data);
+
+        pendingPoints = 0;
     } catch (e) {
-        console.log("Помилка при запиті до сервера:", e);
+        console.log("Помилка savePointsToServer:", e);
     }
 }
+
 
 
 // Викликається з HTML-кнопки
 async function saveAndExit() {
-    // 1. Зберегти очки на сервер
     await savePointsToServer();
 
-    // 2. Акуратно закрити WebApp
     const tg = window.Telegram && window.Telegram.WebApp;
     if (tg && tg.close) {
-        tg.close(); // закриває вікно WebApp в Telegram без sendData і без повідомлення
+        tg.close();
     } else {
-        // fallback — якщо WebApp API недоступний
         window.location.href = "index.html";
     }
 }
+
 
 
 // початковий стан
