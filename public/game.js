@@ -54,7 +54,7 @@ function getInitialCoinsFromUrl() {
 
 const options = ["stone", "scissors", "paper"];
 let locked = false;
-let coins = 0;  // стартові монети з URL (?points=...)
+let coins = getInitialCoinsFromUrl(); // беремо з параметра ?points=X
 let pendingPoints = 0;                 // те, що заробиш у ЦІЙ грі
 if (coinValue) {
     coinValue.textContent = coins;
