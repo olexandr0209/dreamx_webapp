@@ -47,7 +47,7 @@ function getInitialCoinsFromUrl() {
 
 const options = ["stone", "scissors", "paper"];
 let locked = false;
-let coins = getInitialCoinsFromUrl();  // стартові монети з URL (?points=...)
+let coins = 0;  // стартові монети з URL (?points=...)
 let pendingPoints = 0;                 // те, що заробиш у ЦІЙ грі
 if (coinValue) {
     coinValue.textContent = coins;
@@ -259,6 +259,7 @@ async function savePointsToServer() {
 
 
 // Викликається з HTML-кнопки
+// Викликається з HTML-кнопки
 async function saveAndExit() {
     await savePointsToServer();
 
@@ -270,11 +271,9 @@ async function saveAndExit() {
     }
 }
 
-
-
-// початковий стан
 window.addEventListener("load", () => {
-    loadPoints();
-    resetState();
+    resetState();   // щоб усе було в стартовому стані
+    loadPoints();   // тягнемо актуальні бали з Postgres
 });
+
 
