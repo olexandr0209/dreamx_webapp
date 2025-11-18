@@ -3,6 +3,9 @@ const choices = document.querySelectorAll(".choice");
 const body = document.querySelector(".game-body"); // вся сторінка гри
 const coinValue = document.getElementById("coin-value");
 const flashOverlay = document.getElementById("flash-overlay"); // ✅ нове
+// Адреса сервісу, де працює main.py (бот + PointsAPI)
+const API_BASE = "https://dreamx-bot.onrender.com";
+
 
 async function loadPoints() {
     const tg = window.Telegram && window.Telegram.WebApp;
@@ -13,7 +16,8 @@ async function loadPoints() {
     }
 
     try {
-        const url = `/api/get_points?user_id=${user.id}`;
+        const url = `${API_BASE}/api/get_points?user_id=${user.id}`;
+
         console.log("GET points from:", url);
 
         const res = await fetch(url);
@@ -226,7 +230,8 @@ async function savePointsToServer() {
     }
 
     try {
-        const url = `/api/add_points`;
+        const url = `${API_BASE}/api/add_points`;
+
         console.log("POST points to:", url, "delta:", pendingPoints);
 
         const res = await fetch(url, {
@@ -268,4 +273,8 @@ async function saveAndExit() {
 
 
 // початковий стан
-resetState();
+window.addEventListener("load", () => {
+    loadPoints();
+    resetState();
+});
+
