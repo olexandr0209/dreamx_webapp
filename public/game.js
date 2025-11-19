@@ -50,29 +50,6 @@ async function loadPoints() {
 }
 
 
-function getInitialCoinsFromUrl() {
-    const params = new URLSearchParams(window.location.search);
-    const p = parseInt(params.get("points"), 10);
-    return isNaN(p) ? 0 : p;
-}
-
-function getInitialCoins() {
-    // 1) Пробуємо взяти з localStorage (останнє відоме значення)
-    try {
-        const stored = localStorage.getItem("dreamx_points");
-        const parsed = parseInt(stored, 10);
-        if (!isNaN(parsed)) {
-            return parsed;
-        }
-    } catch (e) {
-        console.log("Не вдалося прочитати dreamx_points з localStorage:", e);
-    }
-
-    // 2) Якщо в localStorage нічого немає — пробуємо з URL (?points=ХХ)
-    return getInitialCoinsFromUrl();
-}
-
-
 const options = ["stone", "scissors", "paper"];
 let locked = false;
 let coins = 0;
@@ -249,7 +226,6 @@ async function savePointsToServer() {
         return;
     }
 
-    // ✅ Беремо user_id через наш спільний core (Telegram + localStorage)
     const userId = window.DreamX && window.DreamX.getUserId
         ? window.DreamX.getUserId()
         : null;
@@ -259,42 +235,37 @@ async function savePointsToServer() {
         return;
     }
 
+    const delta = pendingPoints;
+    pendingPoints = 0; // одразу обнуляємо буфер, щоб не подвоїти
+
     try {
         const url = `${API_BASE}/api/add_points`;
 
-        console.log("POST points to:", url, "delta:", pendingPoints);
+        console.log("POST points to:", url, "delta:", delta);
 
         const res = await fetch(url, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                user_id: userId,      // 👈 тут уже userId, а не user.id
-                delta: pendingPoints,
+                user_id: userId,
+                delta: delta,
             }),
         });
 
         console.log("Status add_points:", res.status);
-
         if (!res.ok) return;
 
         const data = await res.json();
         console.log("Response add_points:", data);
 
-        // якщо бекенд повернув актуальні points — оновлюємо локально
+        // можемо просто оновити кеш, але НЕ перезаписувати локальний coins
         if (data && typeof data.points === "number") {
-            coins = data.points;
-            if (coinValue) {
-                coinValue.textContent = coins;
-            }
             try {
-                localStorage.setItem("dreamx_points", String(coins));
+                localStorage.setItem("dreamx_points", String(data.points));
             } catch (e) {
                 console.log("Не вдалося зберегти dreamx_points після POST:", e);
             }
         }
-        
-        // Можемо залишити просто обнулення буферу
-        pendingPoints = 0;
     } catch (e) {
         console.log("Помилка savePointsToServer:", e);
     }
@@ -309,8 +280,3 @@ function exitGame() {
 
 resetState();   // щоб усе було в стартовому стані
 loadPoints();   // тягнемо актуальні бали з Postgres
-
-setInterval(() => {
-    loadPoints();
-}, 1000);
-
