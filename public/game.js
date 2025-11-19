@@ -8,10 +8,10 @@ const API_BASE = "https://dreamx-bot.onrender.com";
 
 
 async function loadPoints() {
-    const tg = window.Telegram && window.Telegram.WebApp;
-    const user = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
-    if (!user) {
-        console.log("Немає user в initDataUnsafe");
+    const userId = window.DreamX.getUserId();  // 👈 беремо з нашого core
+
+    if (!userId) {
+        console.log("Немає user_id (ані з Telegram, ані з localStorage)");
         return;
     }
 
@@ -59,11 +59,6 @@ let pendingPoints = 0;                 // те, що заробиш у ЦІЙ г
 if (coinValue) {
     coinValue.textContent = coins;
 }
-
-
-
-
-
 
 // ✅ окрема функція для скидання флеша
 function resetFlash() {
@@ -230,11 +225,13 @@ async function savePointsToServer() {
         return;
     }
 
-    const tg = window.Telegram && window.Telegram.WebApp;
-    const user = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
+    // ✅ Беремо user_id через наш спільний core (Telegram + localStorage)
+    const userId = window.DreamX && window.DreamX.getUserId
+        ? window.DreamX.getUserId()
+        : null;
 
-    if (!user) {
-        console.log("Немає user в initDataUnsafe");
+    if (!userId) {
+        console.log("Немає user_id (ані з Telegram, ані з localStorage)");
         return;
     }
 
@@ -247,7 +244,7 @@ async function savePointsToServer() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-                user_id: user.id,
+                user_id: userId,      // 👈 тут уже userId, а не user.id
                 delta: pendingPoints,
             }),
         });
@@ -259,6 +256,7 @@ async function savePointsToServer() {
         const data = await res.json();
         console.log("Response add_points:", data);
 
+        // Можемо залишити просто обнулення буферу
         pendingPoints = 0;
     } catch (e) {
         console.log("Помилка savePointsToServer:", e);
