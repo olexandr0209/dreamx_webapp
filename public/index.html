@@ -79,6 +79,51 @@
             window.location.href = "tournaments.html" + qs;
         });
     </script>
+
+
+    <!-- DEV Badge -->
+    <div id="env-badge" class="env-badge env-badge-hidden">
+        DEV DreamX
+    </div>
+    
+    <style>
+        .env-badge {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+            padding: 5px 12px;
+            font-size: 10px;
+            font-weight: 600;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            border-radius: 999px;
+            background: rgba(255, 0, 80, 0.15);
+            border: 1px solid rgba(255, 0, 80, 0.6);
+            color: #ff6b9b;
+            backdrop-filter: blur(6px);
+            z-index: 9999;
+        }
+        .env-badge-hidden {
+            display: none;
+        }
+    </style>
+    
+    <script>
+        (function () {
+            const badge = document.getElementById("env-badge");
+            if (!badge) return;
+    
+            const host = window.location.hostname;
+    
+            // Показуємо бейдж ТІЛЬКИ на dev-домені
+            if (host.includes("dreamx-webapp-dev")) {
+                badge.classList.remove("env-badge-hidden");
+            }
+        })();
+    </script>
+
+
+    
 </body>
 
 </html>
