@@ -42,16 +42,24 @@
     </div>
 
     <script>
-        // Кнопка "Play vs Computer" -> game.html + збережені ?points=...
+        // Кнопка "Play vs Computer" -> game.html, передаємо лише user_id (без старих points)
         document.getElementById("mode-vs-computer").addEventListener("click", () => {
-            const qs = window.location.search;
-            window.location.href = "game.html" + qs;
+            const params = new URLSearchParams(window.location.search);
+        
+            // старі points нам більше не потрібні, беремо їх завжди з бази
+            params.delete("points");
+        
+            const qs = params.toString();
+            window.location.href = qs ? `game.html?${qs}` : "game.html";
+        });
+        
+        document.getElementById("back-home").addEventListener("click", () => {
+            const params = new URLSearchParams(window.location.search);
+            params.delete("points");
+            const qs = params.toString();
+            window.location.href = qs ? `index.html?${qs}` : "index.html";
         });
 
-        document.getElementById("back-home").addEventListener("click", () => {
-            const qs = window.location.search;
-            window.location.href = "index.html" + qs;
-        });
     </script>
 </body>
 </html>
