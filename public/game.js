@@ -33,9 +33,9 @@ async function loadPoints() {
             coinValue.textContent = coins;
         }
 
-        if (resultEl) {
-            resultEl.textContent = "Loaded: " + coins; // тимчасовий дебаг
-        }
+        //if (resultEl) {
+        //    resultEl.textContent = "Loaded: " + coins; // тимчасовий дебаг
+        //}
         
         try {
             localStorage.setItem("dreamx_points", String(coins));
@@ -75,11 +75,14 @@ function getInitialCoins() {
 
 const options = ["stone", "scissors", "paper"];
 let locked = false;
-let coins = getInitialCoins(); // беремо з параметра ?points=X
-let pendingPoints = 0;                 // те, що заробиш у ЦІЙ грі
+let coins = 0;
+let pendingPoints = 0;
+
 if (coinValue) {
-    coinValue.textContent = coins;
+    // можемо або нічого не показувати, або поставити "..."
+    coinValue.textContent = "...";
 }
+
 
 // ✅ окрема функція для скидання флеша
 function resetFlash() {
