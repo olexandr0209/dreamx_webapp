@@ -1,36 +1,33 @@
 // dreamx_core.js
 
-// Глобальний простір імен для проекту
 window.DreamX = window.DreamX || {};
 
-// Єдина функція для отримання user_id
+// Єдина функція: дати актуальний user_id
 window.DreamX.getUserId = function () {
-    // 1) Пробуємо взяти з Telegram WebApp
-    const tg = window.Telegram && window.Telegram.WebApp;
-    const user = tg && tg.initDataUnsafe && tg.initDataUnsafe.user;
-
-    if (user && user.id) {
-        // Збережемо на майбутнє
-        try {
-            localStorage.setItem("dreamx_user_id", String(user.id));
-        } catch (e) {
-            console.log("Не вдалось зберегти user_id в localStorage:", e);
+    // 1) Пробуємо взяти з URL ?user_id=...
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const fromUrl = params.get("user_id");
+        if (fromUrl && !isNaN(parseInt(fromUrl, 10))) {
+            const uid = parseInt(fromUrl, 10);
+            // зберігаємо в localStorage на майбутні сторінки
+            localStorage.setItem("dreamx_user_id", String(uid));
+            return uid;
         }
-        return user.id;
+    } catch (e) {
+        console.log("Помилка читання user_id з URL:", e);
     }
 
-    // 2) Якщо на цій сторінці Telegram нам не дав user'а —
-    //    пробуємо взяти з localStorage (ми вже могли його зберегти раніше)
+    // 2) Якщо в URL немає — пробуємо з localStorage
     try {
         const stored = localStorage.getItem("dreamx_user_id");
         if (stored && !isNaN(parseInt(stored, 10))) {
             return parseInt(stored, 10);
         }
     } catch (e) {
-        console.log("Не вдалось прочитати user_id з localStorage:", e);
+        console.log("Помилка читання user_id з localStorage:", e);
     }
 
-    // 3) Якщо взагалі нічого немає
+    // 3) Якщо ніде нема — сумно
     return null;
 };
-
