@@ -267,17 +267,15 @@ async function savePointsToServer() {
 
 
 // Викликається з HTML-кнопки
-async function saveAndExit() {
-    const tg = window.Telegram && window.Telegram.WebApp;
-    if (tg && tg.close) {
-        tg.close();
-    } else {
-        window.location.href = "index.html";
-    }
+function exitGame() {
+    window.location.href = "index.html";
 }
+
 
 resetState();   // щоб усе було в стартовому стані
 loadPoints();   // тягнемо актуальні бали з Postgres
 
-
+setInterval(() => {
+    loadPoints();
+}, 1000);
 
