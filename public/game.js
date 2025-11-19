@@ -192,7 +192,7 @@ choices.forEach(choice => {
             }
             
             // 🔥 ОДРАЗУ ВІДПРАВЛЯЄМО В БАЗУ
-            savePointsToServer();
+            // savePointsToServer();
 
             delay = 1000; // трошки довше показуємо перемогу
 
@@ -227,9 +227,16 @@ choices.forEach(choice => {
     });
 });
 
+let isSaving = false; // щоб не робити кілька запитів паралельно
+
 async function savePointsToServer() {
+    // Якщо нічого зберігати — виходимо
     if (pendingPoints <= 0) {
-        console.log("Немає очок для збереження");
+        return;
+    }
+
+    // Якщо попереднє збереження ще триває — не стартуємо нове
+    if (isSaving) {
         return;
     }
 
@@ -238,12 +245,12 @@ async function savePointsToServer() {
         : null;
 
     if (!userId) {
-        console.log("Немає user_id (ані з Telegram, ані з localStorage)");
+        console.log("Немає user_id для збереження");
         return;
     }
 
-    const delta = pendingPoints;
-    pendingPoints = 0; // одразу обнуляємо буфер, щоб не подвоїти
+    const delta = pendingPoints;  // ЩО ХОЧЕМО ВІДПРАВИТИ
+    isSaving = true;
 
     try {
         const url = `${API_BASE}/api/add_points`;
@@ -260,12 +267,20 @@ async function savePointsToServer() {
         });
 
         console.log("Status add_points:", res.status);
-        if (!res.ok) return;
+
+        if (!res.ok) {
+            // ❌ НЕ обнуляємо pendingPoints, спробуємо ще раз пізніше
+            return;
+        }
 
         const data = await res.json();
         console.log("Response add_points:", data);
 
-        // можемо просто оновити кеш, але НЕ перезаписувати локальний coins
+        // ✅ Запит пройшов УСПІШНО — тепер можна зняти delta з буфера
+        pendingPoints -= delta;
+        if (pendingPoints < 0) pendingPoints = 0;
+
+        // Оновлюємо кеш (не обов'язково)
         if (data && typeof data.points === "number") {
             try {
                 localStorage.setItem("dreamx_points", String(data.points));
@@ -273,10 +288,15 @@ async function savePointsToServer() {
                 console.log("Не вдалося зберегти dreamx_points після POST:", e);
             }
         }
+
     } catch (e) {
         console.log("Помилка savePointsToServer:", e);
+        // ❌ знову ж таки — pendingPoints НЕ змінюємо
+    } finally {
+        isSaving = false;
     }
 }
+
 
 
 // Викликається з HTML-кнопки
@@ -289,3 +309,9 @@ async function exitGame() {
 
 resetState();   // щоб усе було в стартовому стані
 loadPoints();   // тягнемо актуальні бали з Postgres
+
+// Авто-збереження очок кожні 5 секунд (якщо є що зберігати)
+setInterval(() => {
+    savePointsToServer();
+}, 5000);
+
