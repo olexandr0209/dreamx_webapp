@@ -273,9 +273,11 @@ async function savePointsToServer() {
 
 
 // Викликається з HTML-кнопки
-function exitGame() {
+async function exitGame() {
+    await savePointsToServer();   // дочекаємось, що все долетіло
     window.location.href = "index.html";
 }
+
 
 
 resetState();   // щоб усе було в стартовому стані
