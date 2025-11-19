@@ -25,12 +25,13 @@ async function loadPoints() {
         if (!res.ok) return;
 
         const data = await res.json();
-
+        
         coins = data.points ?? 0;
-
         if (coinValue) {
             coinValue.textContent = coins;
         }
+        canPlay = true;
+        choices.forEach(c => c.classList.remove("disabled"));
 
         // Зберігаємо в кеш (не обовʼязково)
         try {
@@ -59,6 +60,9 @@ if (coinValue) {
     // можемо або нічого не показувати, або поставити "..."
     coinValue.textContent = "...";
 }
+
+// ❌ Забороняємо грати до завантаження монет
+choices.forEach(c => c.classList.add("disabled"));
 
 
 // ✅ окрема функція для скидання флеша
