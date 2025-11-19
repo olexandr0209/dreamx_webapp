@@ -36,6 +36,13 @@ async function loadPoints() {
         if (resultEl) {
             resultEl.textContent = "Loaded: " + coins; // тимчасовий дебаг
         }
+        
+        try {
+            localStorage.setItem("dreamx_points", String(coins));
+        } catch (e) {
+            console.log("Не вдалося зберегти dreamx_points в localStorage:", e);
+        }
+
 
     } catch (e) {
         console.log("Помилка loadPoints:", e);
@@ -49,9 +56,26 @@ function getInitialCoinsFromUrl() {
     return isNaN(p) ? 0 : p;
 }
 
+function getInitialCoins() {
+    // 1) Пробуємо взяти з localStorage (останнє відоме значення)
+    try {
+        const stored = localStorage.getItem("dreamx_points");
+        const parsed = parseInt(stored, 10);
+        if (!isNaN(parsed)) {
+            return parsed;
+        }
+    } catch (e) {
+        console.log("Не вдалося прочитати dreamx_points з localStorage:", e);
+    }
+
+    // 2) Якщо в localStorage нічого немає — пробуємо з URL (?points=ХХ)
+    return getInitialCoinsFromUrl();
+}
+
+
 const options = ["stone", "scissors", "paper"];
 let locked = false;
-let coins = getInitialCoinsFromUrl(); // беремо з параметра ?points=X
+let coins = getInitialCoins(); // беремо з параметра ?points=X
 let pendingPoints = 0;                 // те, що заробиш у ЦІЙ грі
 if (coinValue) {
     coinValue.textContent = coins;
@@ -253,6 +277,19 @@ async function savePointsToServer() {
         const data = await res.json();
         console.log("Response add_points:", data);
 
+        // якщо бекенд повернув актуальні points — оновлюємо локально
+        if (data && typeof data.points === "number") {
+            coins = data.points;
+            if (coinValue) {
+                coinValue.textContent = coins;
+            }
+            try {
+                localStorage.setItem("dreamx_points", String(coins));
+            } catch (e) {
+                console.log("Не вдалося зберегти dreamx_points після POST:", e);
+            }
+        }
+        
         // Можемо залишити просто обнулення буферу
         pendingPoints = 0;
     } catch (e) {
