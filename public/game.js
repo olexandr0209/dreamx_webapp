@@ -3,29 +3,28 @@ const choices = document.querySelectorAll(".choice");
 const body = document.querySelector(".game-body"); // вся сторінка гри
 const coinValue = document.getElementById("coin-value");
 const flashOverlay = document.getElementById("flash-overlay"); // ✅ нове
+
+let canPlay = false; // 👈 гра недоступна поки не прийшли монети з бази
+
+
 // Адреса сервісу, де працює main.py (бот + PointsAPI)
 const API_BASE = "https://dreamx-bot.onrender.com";
 
 async function loadPoints() {
-    const userId = window.DreamX.getUserId();  // 👈 беремо з нашого core
+    const userId = window.DreamX.getUserId();
 
     if (!userId) {
-        console.log("Немає user_id (ані з Telegram, ані з localStorage)");
+        console.log("Немає user_id");
         return;
     }
 
     try {
         const url = `${API_BASE}/api/get_points?user_id=${userId}`;
 
-        console.log("GET points from:", url);
-
         const res = await fetch(url);
-        console.log("Status get_points:", res.status);
-
         if (!res.ok) return;
 
         const data = await res.json();
-        console.log("Data from server:", data);
 
         coins = data.points ?? 0;
 
@@ -33,21 +32,22 @@ async function loadPoints() {
             coinValue.textContent = coins;
         }
 
-        //if (resultEl) {
-        //    resultEl.textContent = "Loaded: " + coins; // тимчасовий дебаг
-        //}
-        
+        // Зберігаємо в кеш (не обовʼязково)
         try {
             localStorage.setItem("dreamx_points", String(coins));
-        } catch (e) {
-            console.log("Не вдалося зберегти dreamx_points в localStorage:", e);
-        }
+        } catch {}
 
+        // 🔥 І ТУТ МИ ВКЛЮЧАЄМО ГРУ
+        canPlay = true;  
+        locked = false;  // раптом щось залишилось заблоковане
+
+        console.log("Монети завантажені. Гра активована.");
 
     } catch (e) {
         console.log("Помилка loadPoints:", e);
     }
 }
+
 
 
 const options = ["stone", "scissors", "paper"];
@@ -132,6 +132,10 @@ function resetState() {
 // Основна логіка гри
 choices.forEach(choice => {
     choice.addEventListener("click", () => {
+        if (!canPlay) {
+            console.log("Гра ще не готова. Очікуємо завантаження монет.");
+            return;
+        }
         if (locked) return;
         locked = true;
 
