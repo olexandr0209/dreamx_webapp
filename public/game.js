@@ -6,7 +6,6 @@ const flashOverlay = document.getElementById("flash-overlay"); // ✅ нове
 // Адреса сервісу, де працює main.py (бот + PointsAPI)
 const API_BASE = "https://dreamx-bot.onrender.com";
 
-
 async function loadPoints() {
     const userId = window.DreamX.getUserId();  // 👈 беремо з нашого core
 
@@ -16,7 +15,7 @@ async function loadPoints() {
     }
 
     try {
-        const url = `${API_BASE}/api/get_points?user_id=${user.id}`;
+        const url = `${API_BASE}/api/get_points?user_id=${userId}`;
 
         console.log("GET points from:", url);
 
@@ -25,16 +24,15 @@ async function loadPoints() {
 
         if (!res.ok) return;
 
-        
-        
         const data = await res.json();
         console.log("Data from server:", data);
 
         coins = data.points ?? 0;
+
         if (coinValue) {
             coinValue.textContent = coins;
         }
-        
+
         if (resultEl) {
             resultEl.textContent = "Loaded: " + coins; // тимчасовий дебаг
         }
@@ -43,7 +41,6 @@ async function loadPoints() {
         console.log("Помилка loadPoints:", e);
     }
 }
-
 
 
 function getInitialCoinsFromUrl() {
