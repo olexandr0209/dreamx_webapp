@@ -54,7 +54,7 @@ function getInitialCoinsFromUrl() {
 
 const options = ["stone", "scissors", "paper"];
 let locked = false;
-let coins = getInitialCoinsFromUrl(); // беремо з параметра ?points=X
+let coins = 0; // беремо з параметра ?points=X
 let pendingPoints = 0;                 // те, що заробиш у ЦІЙ грі
 if (coinValue) {
     coinValue.textContent = coins;
@@ -188,6 +188,8 @@ choices.forEach(choice => {
                 coinValue.textContent = coins;
             }
             
+            // 🔥 ОДРАЗУ ВІДПРАВЛЯЄМО В БАЗУ
+            savePointsToServer();
 
             delay = 1000; // трошки довше показуємо перемогу
 
@@ -264,12 +266,8 @@ async function savePointsToServer() {
 }
 
 
-
-// Викликається з HTML-кнопки
 // Викликається з HTML-кнопки
 async function saveAndExit() {
-    await savePointsToServer();
-
     const tg = window.Telegram && window.Telegram.WebApp;
     if (tg && tg.close) {
         tg.close();
@@ -277,7 +275,6 @@ async function saveAndExit() {
         window.location.href = "index.html";
     }
 }
-
 
 resetState();   // щоб усе було в стартовому стані
 loadPoints();   // тягнемо актуальні бали з Postgres
