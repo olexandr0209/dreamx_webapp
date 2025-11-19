@@ -638,3 +638,10 @@ body.start-screen {
     font-weight: 800;
     font-size: 26px;
 }
+
+.choice.disabled {
+    opacity: 0.3;          /* кнопка стає світлою та неактивною */
+    pointer-events: none;  /* кліки не працюють */
+    filter: grayscale(80%);
+}
+
