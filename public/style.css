@@ -90,31 +90,30 @@ body.tournament-screen .top-bar-home {
     color: #f0b43a;
 }
 body.tournament-screen {
-    margin: 0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
     background: #050509;
-    overflow: hidden;   /* ❌ забороняємо скрол всього екрану */
-    position: relative; /* ✅ щоб працювало absolute усередині */
+    margin: 0;
+    overflow: hidden;   /* 🔥 важливо: скрол тільки всередині */
 }
+
 
 
 
 
 /* Центральний контейнер між верхнім баром і нижнім меню */
 .tournament-container {
-    position: absolute;
-    top: 48px;      /* висота top-bar-home */
-    left: 0;
-    right: 0;
-    bottom: 80px;   /* місце під нижню панель з кнопкою Back */
-    
-    padding: 16px 20px;
+    flex: 1 1 auto;
+    overflow-y: auto;                 /* 🔥 скролиться тільки цей блок */
+    padding: 64px 20px 96px;          /* місце під верхній бар і нижню панель */
     box-sizing: border-box;
-
-    overflow-y: auto;   /* ✅ скролиться тільки ЦЕ, а не весь екран */
 
     display: flex;
     flex-direction: column;
     gap: 16px;
+
+    -webkit-overflow-scrolling: touch;
 }
 
 
