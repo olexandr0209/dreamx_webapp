@@ -702,10 +702,21 @@ body.start-screen::before {
 }
 
 
-/* ВАЖЛИВО: прибираємо будь-який фон у top-bar-home */
+
 body.start-screen .top-bar-home {
-    background: transparent !important;
-    position: relative; /* щоб працював ::before */
-    z-index: 20;
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+
+    background: #ffffff;      /* білий фон */
+    position: relative;
+    z-index: 20;              /* вище за все, що під ним */
+}
+
+.logo-main-top {
+    font-size: 24px;
+    font-weight: 800;
+    color: #f0b43a;           /* твій золотий DreamX, можна залишити */
+    letter-spacing: 1px;
 }
 
