@@ -280,6 +280,25 @@ body.start-screen {
     scroll-snap-type: y proximity;  /* легкий ефект “прилипання” */
     -webkit-overflow-scrolling: touch;
 }
+/* Верхній прозорий градієнт для головного екрану */
+body.start-screen::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px; /* висота ефекту */
+    pointer-events: none;
+
+    background: linear-gradient(
+        to bottom,
+        rgba(5, 5, 9, 0.9) 0%,
+        rgba(5, 5, 9, 0.6) 40%,
+        rgba(5, 5, 9, 0.0) 100%
+    );
+
+    z-index: 15; /* нижче за top-bar, але вище за список */
+}
 
 
 /* Нижні кнопки ТІЛЬКИ на головному екрані */
