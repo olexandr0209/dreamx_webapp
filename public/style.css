@@ -24,14 +24,22 @@ body.start-screen .top-bar-home {
     left: 0;
     right: 0;
 
-    height: 48px;          /* 🔥 зменшена висота бару */
-    padding: 0 20px;       /* бокові відступи */
+    height: 48px; /* твоя висота */
+    padding: 0 20px;
     display: flex;
     align-items: center;
 
-    background: #ffffff;   /* білий фон */
+    /* 🔥 чистий білий зверху → прозорий знизу */
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(255, 255, 255, 0.85) 40%,
+        rgba(255, 255, 255, 0.00) 100%
+    );
+
     z-index: 30;
 }
+
 
 
 .logo-main-top {
@@ -257,7 +265,7 @@ body {
 }
 
 #giveaway-list .giveaway-card:first-of-type {
-    margin-top: 65px;   /* пограйся 12–20px як більше сподобається */
+    margin-top: 60px;   /* пограйся 12–20px як більше сподобається */
 }
 
 
