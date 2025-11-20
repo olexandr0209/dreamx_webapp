@@ -34,13 +34,13 @@ body.start-screen .top-bar-home {
 }
 
 
-/* Невеликий білий градієнт, який налягає на картки */
+/* Невеликий білий градієнт, який налягає на картки 
 body.start-screen .top-bar-home::after {
     content: "";
     position: absolute;
     left: 0;
     right: 0;
-    bottom: -16px; /* 🔥 наскільки залазить на картки */
+    bottom: -16px; 
     height: 16px;
     pointer-events: none;
 
@@ -50,6 +50,7 @@ body.start-screen .top-bar-home::after {
         rgba(255, 255, 255, 0.0) 100%
     );
 }
+*/
 
 
 
