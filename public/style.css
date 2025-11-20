@@ -14,7 +14,19 @@ body {
     padding: 16px 20px;
     display: flex;
     align-items: center;
+
+    /* 👇 додаємо фон-градієнт тільки для банера */
+    background: linear-gradient(
+        to bottom,
+        #050509 0%,
+        rgba(5, 5, 9, 0.85) 60%,
+        rgba(5, 5, 9, 0.0) 100%
+    );
+
+    position: relative;
+    z-index: 25; /* вище за список, але нижче за dev-badge */
 }
+
 
 .logo-main-top {
     font-size: 24px;
@@ -674,22 +686,4 @@ body.start-screen .bottom-nav {
     filter: grayscale(80%);
 }
 
-/* Верхній прозорий градієнт для головного екрану */
-body.start-screen::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 70px; /* висота ефекту */
-    pointer-events: none;
 
-    background: linear-gradient(
-        to bottom,
-        rgba(5, 5, 9, 0.9) 0%,
-        rgba(5, 5, 9, 0.6) 40%,
-        rgba(5, 5, 9, 0.0) 100%
-    );
-
-    z-index: 15; /* нижче за top-bar, але вище за список */
-}
