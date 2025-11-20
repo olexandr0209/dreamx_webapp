@@ -56,7 +56,7 @@ const giveaways = [
         description: "Short description of this giveaway or partner.",
         buttonText: "JOIN",
         actionType: "open_channel",
-        actionPayload: "
+        actionPayload: ""
 
     {
         typeTag: "TOURNAMENT",
@@ -75,7 +75,7 @@ const giveaways = [
         description: "Exclusive partner giveaway. Join to take part.",
         buttonText: "JOIN",
         actionType: "open_link",
-        actionPayload: ""
+        actionPayload: "https://t.me/dreamxofficial"
     }
 ];
 
