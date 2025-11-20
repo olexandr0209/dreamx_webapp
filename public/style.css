@@ -15,7 +15,7 @@ body {
     display: flex;
     align-items: center;
 
-    background: #ffffff;        /* білий фон */
+    background: #0a0a0a;        
     color: #000000;             /* чорний текст */
 }
 body.start-screen .top-bar-home {
