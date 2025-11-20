@@ -56,8 +56,7 @@ const giveaways = [
         description: "Short description of this giveaway or partner.",
         buttonText: "JOIN",
         actionType: "open_channel",
-        actionPayload: "https://t.me/sport_ukraine"
-    },
+        actionPayload: "
 
     {
         typeTag: "TOURNAMENT",
@@ -76,7 +75,7 @@ const giveaways = [
         description: "Exclusive partner giveaway. Join to take part.",
         buttonText: "JOIN",
         actionType: "open_link",
-        actionPayload: "https://dreamx.ai"
+        actionPayload: ""
     }
 ];
 
