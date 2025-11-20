@@ -48,6 +48,93 @@ async function loadPoints() {
     }
 }
 
+const giveaways = [
+    {
+        typeTag: "GIVEAWAY",
+        prize: "150$",
+        title: "Sport Ukraine",
+        description: "Short description of this giveaway or partner.",
+        buttonText: "JOIN",
+        actionType: "open_channel",
+        actionPayload: "https://t.me/sport_ukraine"
+    },
+
+    {
+        typeTag: "TOURNAMENT",
+        prize: "50$",
+        title: "Fast Tournament",
+        description: "Win 50$ by playing 10 quick rounds!",
+        buttonText: "PLAY",
+        actionType: "open_tournament",
+        actionPayload: "fast_tournament"
+    },
+
+    {
+        typeTag: "SPONSOR",
+        prize: "300$",
+        title: "DreamX Special Partner",
+        description: "Exclusive partner giveaway. Join to take part.",
+        buttonText: "JOIN",
+        actionType: "open_link",
+        actionPayload: "https://dreamx.ai"
+    }
+];
+
+
+function createGiveawayCard(data) {
+    const card = document.createElement("div");
+    card.className = "giveaway-card";
+
+    card.innerHTML = `
+        <div class="giveaway-header">
+            <div class="giveaway-left">
+                <div class="giveaway-avatar"></div>
+                <span class="giveaway-tag">${data.typeTag}</span>
+            </div>
+            <div class="giveaway-prize">
+                <span class="prize-amount">${data.prize}</span>
+            </div>
+        </div>
+
+        <div class="giveaway-body">
+            <h2 class="giveaway-title">${data.title}</h2>
+            <p class="giveaway-description">${data.description}</p>
+        </div>
+
+        <div class="giveaway-footer">
+            <button class="giveaway-btn">${data.buttonText}</button>
+        </div>
+    `;
+
+    const btn = card.querySelector(".giveaway-btn");
+
+    btn.onclick = () => {
+        console.log("Clicked:", data);
+
+        if (data.actionType === "open_channel") {
+            window.open(data.actionPayload, "_blank");
+        }
+        if (data.actionType === "open_link") {
+            window.open(data.actionPayload, "_blank");
+        }
+        if (data.actionType === "open_tournament") {
+            console.log("Open tournament:", data.actionPayload);
+        }
+    };
+
+    return card;
+}
+function renderGiveawayList() {
+    const list = document.getElementById("giveaway-list");
+    list.innerHTML = ""; // очистити контейнер
+    
+    giveaways.forEach(g => {
+        const cardEl = createGiveawayCard(g);
+        list.appendChild(cardEl);
+    });
+}
+
+
 
 
 const options = ["stone", "scissors", "paper"];
@@ -369,6 +456,9 @@ async function exitGame() {
     window.location.href = "index.html";
 }
 
+document.addEventListener("DOMContentLoaded", () => {
+    renderGiveawayList();
+});
 
 
 resetState();   // щоб усе було в стартовому стані
