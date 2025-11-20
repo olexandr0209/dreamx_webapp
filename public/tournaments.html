@@ -20,15 +20,40 @@
         <div class="logo-main-top">DreamX</div>
     </div>
 
+    <!-- Центральний скрол-блок -->
     <div class="tournament-container">
         <h1 class="tournament-title">Tournaments</h1>
 
-        <!-- Головна велика кнопка режиму -->
-        <button class="mode-card" id="mode-vs-computer">
+        <button class="mode-card">
             <div class="mode-title">Play vs Computer</div>
             <div class="mode-sub">Fast game • Earn coins</div>
         </button>
 
+        <!-- Тестові карточки, щоб був скрол -->
+        <button class="mode-card">
+            <div class="mode-title">Daily Tournament</div>
+            <div class="mode-sub">Win extra coins</div>
+        </button>
+
+        <button class="mode-card">
+            <div class="mode-title">Pro League</div>
+            <div class="mode-sub">Hard mode</div>
+        </button>
+
+        <button class="mode-card">
+            <div class="mode-title">Special Event</div>
+            <div class="mode-sub">Limited time</div>
+        </button>
+
+        <button class="mode-card">
+            <div class="mode-title">Weekend Cup</div>
+            <div class="mode-sub">More prizes</div>
+        </button>
+
+        <button class="mode-card">
+            <div class="mode-title">Ultra Challenge</div>
+            <div class="mode-sub">Only for brave</div>
+        </button>
     </div>
 
     <div class="bottom-nav">
@@ -38,24 +63,13 @@
     </div>
 
     <script>
-        // Кнопка "Play vs Computer" -> game.html, передаємо лише user_id (без старих points)
-        document.getElementById("mode-vs-computer").addEventListener("click", () => {
-            const params = new URLSearchParams(window.location.search);
-        
-            // старі points нам більше не потрібні, беремо їх завжди з бази
-            params.delete("points");
-        
-            const qs = params.toString();
-            window.location.href = qs ? `game.html?${qs}` : "game.html";
-        });
-        
         document.getElementById("back-home").addEventListener("click", () => {
             const params = new URLSearchParams(window.location.search);
             params.delete("points");
             const qs = params.toString();
             window.location.href = qs ? `index.html?${qs}` : "index.html";
         });
-
     </script>
 </body>
+
 </html>
