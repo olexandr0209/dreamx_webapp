@@ -18,7 +18,9 @@ body {
     background: #0a0a0a;        
     color: #000000;             /* чорний текст */
 }
-body.start-screen .top-bar-home {
+
+body.start-screen .top-bar-home,
+body.tournament-screen .top-bar-home {
     position: fixed;
     top: 0;
     left: 0;
@@ -84,20 +86,26 @@ body.start-screen .top-bar-home {
     color: #f0b43a;
 }
 body.tournament-screen {
-    min-height: 100vh;
+    height: 100vh;
     display: flex;
     flex-direction: column;
-    background: #0a0a0a;
+    background: #050509;
     margin: 0;
+    overflow: hidden;  /* скрол тільки у .tournament-container */
 }
 
+
 .tournament-container {
-    padding: 10px 20px 0;
-    flex: 1;
+    flex: 1 1 auto;
+    overflow-y: auto;                 /* скролиться тільки середина */
+    padding: 64px 20px 96px;          /* відступи: під бар зверху і кнопки знизу */
+    box-sizing: border-box;
+
     display: flex;
     flex-direction: column;
     gap: 16px;
 }
+
 
 .tournament-title {
     font-size: 22px;
@@ -323,6 +331,21 @@ body.start-screen .bottom-nav {
     z-index: 20;  /* поверх карток */
 }
 
+/* Нижні кнопки ТІЛЬКИ на екрані турнірів */
+body.tournament-screen .bottom-nav {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    padding: 12px 20px 24px;
+    display: flex;
+    gap: 12px;
+    box-sizing: border-box;
+
+    background: linear-gradient(to top, #050509 70%, transparent);
+    z-index: 20;
+}
 
 .container {
     display: flex;
