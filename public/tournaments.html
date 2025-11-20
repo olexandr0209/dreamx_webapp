@@ -62,5 +62,55 @@
             });
         }
     </script>
+
+    <script>
+    const container = document.querySelector(".tournament-container");
+
+    function hasScroll() {
+        return container.scrollHeight > container.clientHeight;
+    }
+
+    function enableBounce() {
+        let startY = 0;
+        let isDragging = false;
+
+        function onStart(e) {
+            if (hasScroll()) return; // ❗ якщо скрол є — bounce не працює
+
+            isDragging = true;
+            startY = e.touches[0].clientY;
+            container.style.transition = "none";
+        }
+
+        function onMove(e) {
+            if (!isDragging) return;
+            if (hasScroll()) return; // ❗ блокувати, якщо скрол зʼявився
+
+            const currentY = e.touches[0].clientY;
+            let delta = currentY - startY;
+
+            const MAX = 40;
+            delta = Math.max(-MAX, Math.min(MAX, delta));
+            const softened = delta * 0.4;
+
+            container.style.transform = `translateY(${softened}px)`;
+        }
+
+        function onEnd() {
+            if (!isDragging) return;
+            isDragging = false;
+            container.style.transition = "transform 0.25s ease-out";
+            container.style.transform = "translateY(0)";
+        }
+
+        container.addEventListener("touchstart", onStart);
+        container.addEventListener("touchmove", onMove);
+        container.addEventListener("touchend", onEnd);
+        container.addEventListener("touchcancel", onEnd);
+    }
+
+    enableBounce();
+</script>
+
 </body>
 </html>
