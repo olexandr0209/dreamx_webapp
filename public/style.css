@@ -290,7 +290,7 @@ body.start-screen {
 #giveaway-list {
     flex: 1 1 auto;
     overflow-y: auto;
-    padding: 70px 16px 110px;  /* ⬅ ДОДАЛИ PADDING TOP */
+    padding: 90px 16px 110px;  /* тут одразу став 90px */
     box-sizing: border-box;
 
     display: flex;
@@ -695,25 +695,6 @@ body.start-screen .bottom-nav {
 }
 
 /* Напівпрозорий градієнт тільки ПІД верхнім банером */
-/* Напівпрозорий чорний градієнт зверху екрана (над картками, під логотипом) */
-body.start-screen::before {
-    content: "";
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 90px;  /* можна гратись 70–110px як подобається */
-    pointer-events: none;
-
-    background: linear-gradient(
-        to bottom,
-        rgba(0, 0, 0, 0.92) 0%,   /* майже чорний зверху */
-        rgba(0, 0, 0, 0.55) 40%,  /* м’якший посередині */
-        rgba(0, 0, 0, 0.0) 100%   /* повністю прозорий внизу */
-    );
-
-    z-index: 5;   /* нижче за .top-bar-home (10), вище за картки */
-}
 
 
 
