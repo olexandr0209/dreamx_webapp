@@ -18,6 +18,20 @@ body {
     background: #ffffff;        /* білий фон */
     color: #000000;             /* чорний текст */
 }
+body.start-screen .top-bar-home {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+
+    height: 70px;              /* нормальна висота бару */
+    padding: 0 20px;           /* рівні відступи по боках */
+    display: flex;
+    align-items: center;
+
+    background: #ffffff;        /* білий верх */
+    z-index: 30;                /* найвище */
+}
 
 
 
@@ -704,28 +718,32 @@ body.start-screen::before {
 
 
 /* Верхній бар над картками */
-body.start-screen .top-bar-home {
-    position: fixed;      /* ← тепер завжди зверху */
+body.start-screen::before {
+    content: "";
+    position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    height: 70px;         /* трохи менше або більше — як хочеш */
+
+    height: 120px; /* висота градієнта */
+    pointer-events: none;
+
     background: linear-gradient(
         to bottom,
-        rgba(255, 255, 255, 1) 0%,     /* повністю білий */
-        rgba(255, 255, 255, 0.85) 40%, /* м’який перехід */
-        rgba(255, 255, 255, 0) 100%    /* прозорий низ */
+        rgba(255, 255, 255, 1) 0%,     /* зверху чисто білий */
+        rgba(255, 255, 255, 0.7) 40%,  /* м’якший */
+        rgba(255, 255, 255, 0) 100%    /* знизу прозорий */
     );
-    display: flex;
-    align-items: center;
-    padding: 16px 20px;
-    z-index: 50;          /* вище за картки */
+
+    z-index: 10; /* нижче за top-bar-home */
 }
+
 
 /* Щоб картки не заходили ВПРИТУЛ і були під градієнтом */
 #giveaway-list {
-    padding-top: 100px;   /* було 70px — робимо більший відступ */
+    padding-top: 90px !important;  /* щоб картки починались нижче бару */
 }
+
 
 
 .logo-main-top {
