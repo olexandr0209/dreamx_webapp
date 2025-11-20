@@ -686,4 +686,30 @@ body.start-screen .bottom-nav {
     filter: grayscale(80%);
 }
 
+/* Напівпрозорий градієнт тільки ПІД верхнім банером */
+body.start-screen .top-bar-home::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 70px; /* висота зони градієнта */
+    pointer-events: none;
+
+    background: linear-gradient(
+        to bottom,
+        rgba(5, 5, 9, 0.95) 0%,   /* найтемніший колір зверху */
+        rgba(5, 5, 9, 0.55) 40%, /* середня зона */
+        rgba(5, 5, 9, 0.0) 100%  /* прозорий низ */
+    );
+
+    z-index: -1; /* важливо: фон під текстом */
+}
+
+/* ВАЖЛИВО: прибираємо будь-який фон у top-bar-home */
+body.start-screen .top-bar-home {
+    background: transparent !important;
+    position: relative; /* щоб працював ::before */
+    z-index: 20;
+}
 
