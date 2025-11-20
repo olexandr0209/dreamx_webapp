@@ -169,18 +169,15 @@ body {
 
 /* Приз (монетка) */
 .giveaway-prize {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 6px 14px;
+  padding: 10px 20px;  /* було 6px 14px */
   border-radius: 999px;
   background: radial-gradient(circle at 30% 0, #ffeaa0, #f0b33b);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
 }
 
 .prize-amount {
   font-weight: 700;
-  font-size: 14px;
+  font-size: 18px;   /* було 14px */
   color: #3b2600;
 }
 
