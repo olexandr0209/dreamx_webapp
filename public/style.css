@@ -24,7 +24,7 @@ body.start-screen .top-bar-home {
     left: 0;
     right: 0;
 
-    height: 56px;          /* 🔥 зменшена висота бару */
+    height: 48px;          /* 🔥 зменшена висота бару */
     padding: 0 20px;       /* бокові відступи */
     display: flex;
     align-items: center;
