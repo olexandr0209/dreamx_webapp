@@ -3,8 +3,13 @@
    ========================== */
 
 html, body {
+    margin: 0;
+    padding: 0;
     height: 100%;
+    overflow: hidden;  /* 💥 забороняємо скрол всього екрану */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
 }
+
 
 body {
     margin: 0;
@@ -91,12 +96,12 @@ body.tournament-screen .top-bar-home {
 }
 body.tournament-screen {
     height: 100vh;
-    display: flex;
-    flex-direction: column;
     background: #050509;
     margin: 0;
-    overflow: hidden;   /* 🔥 важливо: скрол тільки всередині */
+    overflow: hidden;   /* залишаємо, але тепер ще й html заблокований */
+    position: relative; /* 💥 потрібно для absolute-центрального контейнера */
 }
+
 
 
 
@@ -104,11 +109,14 @@ body.tournament-screen {
 
 /* Центральний контейнер між верхнім баром і нижнім меню */
 .tournament-container {
-    position: relative;             /* 🟨 потрібно! */
-    height: calc(100vh - 48px - 90px);  /* 🟨 ключовий момент */
+    position: absolute;
+    top: 48px;     /* висота top-bar-home */
+    bottom: 90px;  /* висота + запас під нижній бар */
+    left: 0;
+    right: 0;
 
-    overflow-y: auto;
-    padding: 64px 20px 96px;
+    overflow-y: auto;      /* 💥 скрол тільки тут */
+    padding: 16px 20px 16px;
     box-sizing: border-box;
 
     display: flex;
