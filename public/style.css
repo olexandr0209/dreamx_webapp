@@ -296,10 +296,7 @@ body.start-screen {
 #giveaway-list {
     flex: 1 1 auto;
     overflow-y: auto;
-    
-    /* 🔥 прибираємо padding-top повністю */
-    padding: 0 16px 110px;
-
+    padding: 150px 16px 110px;  /* 48px бар + ~24px запас зверху */
     box-sizing: border-box;
 
     display: flex;
@@ -309,13 +306,6 @@ body.start-screen {
     scroll-snap-type: y proximity;
     -webkit-overflow-scrolling: touch;
 }
-
-/* 🔥 Перша карточка нижче */
-#giveaway-list .giveaway-card:first-child {
-    margin-top: 200px;   /* можеш ставити 60–140 як подобається */
-}
-
-
 
 
 /* Нижні кнопки ТІЛЬКИ на головному екрані */
