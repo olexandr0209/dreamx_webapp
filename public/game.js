@@ -57,6 +57,7 @@ const giveaways = [
         buttonText: "JOIN",
         actionType: "open_channel",
         actionPayload: ""
+    },
 
     {
         typeTag: "TOURNAMENT",
