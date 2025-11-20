@@ -108,6 +108,133 @@ body.tournament-screen {
     cursor: default;
 }
 
+
+/* =========================
+   GIVEAWAY CARD (MAIN SCREEN)
+   ========================== */
+
+/* Загальний фон, можна не використовувати, якщо вже є */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+  background: #050509;
+  color: #ffffff;
+}
+
+/* Карточка розіграшу */
+.giveaway-card {
+  width: 100%;
+  max-width: 420px;
+  background: radial-gradient(circle at top left, #1c1c2b 0, #090910 60%);
+  border-radius: 24px;
+  padding: 18px 20px 16px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
+  box-sizing: border-box;
+}
+
+/* Верхній рядок */
+.giveaway-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+
+/* Ліва частина: аватар + тег */
+.giveaway-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Коло-аватар (універсальний) */
+.giveaway-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 20%, #5b6bff, #3b2bb3);
+}
+
+/* Маленький тег типу розіграшу */
+.giveaway-tag {
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  color: rgba(255, 255, 255, 0.75);
+}
+
+/* Приз (монетка) */
+.giveaway-prize {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: radial-gradient(circle at 30% 0, #ffeaa0, #f0b33b);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.6);
+}
+
+.prize-amount {
+  font-weight: 700;
+  font-size: 14px;
+  color: #3b2600;
+}
+
+/* Основний текст */
+.giveaway-body {
+  margin-bottom: 14px;
+}
+
+.giveaway-title {
+  margin: 0 0 4px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.giveaway-description {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* Низ карточки: кнопка */
+.giveaway-footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.giveaway-btn {
+  padding: 8px 22px;
+  border-radius: 999px;
+  border: 1px solid #f9b938;
+  background: transparent;
+  color: #f9b938;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.15s ease-out;
+}
+
+.giveaway-btn:hover {
+  background: #f9b938;
+  color: #1a1205;
+  box-shadow: 0 6px 20px rgba(249, 185, 56, 0.4);
+  transform: translateY(-1px);
+}
+
+.giveaway-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.6);
+}
+
+
 /* =========================
    HERO CARD (MAIN SCREEN)
    ========================== */
