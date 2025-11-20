@@ -12,7 +12,6 @@
 
     <!-- Наш загальний core-скрипт -->
     <script src="dreamx_core.js"></script>
-
 </head>
 
 <body class="tournament-screen">
@@ -24,12 +23,11 @@
     <div class="tournament-container">
         <h1 class="tournament-title">Tournaments</h1>
 
-        <button class="mode-card">
+        <!-- 🔥 ДОДАВ id, щоб JS міг знайти кнопку -->
+        <button class="mode-card" id="mode-vs-computer">
             <div class="mode-title">Play vs Computer</div>
             <div class="mode-sub">Fast game • Earn coins</div>
         </button>
-
-        
     </div>
 
     <div class="bottom-nav">
@@ -39,17 +37,15 @@
     </div>
 
     <script>
-        document.getElementById("mode-vs-computer").addEventListener("click", () => {
-        const params = new URLSearchParams(window.location.search);
-    
-        // Завжди очищаємо старі points, бо вони нам більше не потрібні
-        params.delete("points");
-    
-        const qs = params.toString();
-        window.location.href = qs ? `game.html?${qs}` : "game.html";
-    });
-    </script>
+        // Безпечна робота з кнопками: перевіряємо, чи вони існують
 
-</body>
+        const modeBtn = document.getElementById("mode-vs-computer");
+        if (modeBtn) {
+            modeBtn.addEventListener("click", () => {
+                const params = new URLSearchParams(window.location.search);
 
-</html>
+                // старі points нам не потрібні
+                params.delete("points");
+
+                const qs = params.toString();
+                window.location.href = qs ? `game.html?${qs}` : "game.html";
