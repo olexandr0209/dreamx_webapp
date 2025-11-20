@@ -309,7 +309,7 @@ body.start-screen {
 #giveaway-list {
     flex: 1 1 auto;
     overflow-y: auto;
-    padding: 80px 16px 110px;  /* 70px бар + ~10px запас */
+    padding: 72px 16px 110px;  /* 56px бар + 16px запас */
     box-sizing: border-box;
 
     display: flex;
