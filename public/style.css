@@ -24,14 +24,15 @@ body.start-screen .top-bar-home {
     left: 0;
     right: 0;
 
-    height: 70px;          /* висота бару */
-    padding: 0 20px;
+    height: 56px;          /* 🔥 зменшена висота бару */
+    padding: 0 20px;       /* бокові відступи */
     display: flex;
     align-items: center;
 
-    background: #ffffff;   /* білий фон бару */
+    background: #ffffff;   /* білий фон */
     z-index: 30;
 }
+
 
 /* Невеликий білий градієнт, який налягає на картки */
 body.start-screen .top-bar-home::after {
@@ -39,16 +40,17 @@ body.start-screen .top-bar-home::after {
     position: absolute;
     left: 0;
     right: 0;
-    bottom: -18px; /* наскільки залазить на картки */
-    height: 18px;
+    bottom: -16px; /* 🔥 наскільки залазить на картки */
+    height: 16px;
     pointer-events: none;
 
     background: linear-gradient(
         to bottom,
-        rgba(255, 255, 255, 0.85) 0%,  /* у низу бару/верх градієнта */
-        rgba(255, 255, 255, 0.0) 100%  /* прозорий далі */
+        rgba(255, 255, 255, 0.9) 0%,
+        rgba(255, 255, 255, 0.0) 100%
     );
 }
+
 
 
 
