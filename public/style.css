@@ -292,10 +292,14 @@ body.start-screen {
 /* Список розіграшів на головному екрані */
 
 
+/* --- БЛОК С КАРТОЧКАМИ --- */
 #giveaway-list {
     flex: 1 1 auto;
     overflow-y: auto;
-    padding: 72px 16px 110px;  /* 48px бар + запас, можна потім підправити */
+    
+    /* 🔥 прибираємо padding-top повністю */
+    padding: 0 16px 110px;
+
     box-sizing: border-box;
 
     display: flex;
@@ -305,6 +309,12 @@ body.start-screen {
     scroll-snap-type: y proximity;
     -webkit-overflow-scrolling: touch;
 }
+
+/* 🔥 Перша карточка нижче */
+#giveaway-list .giveaway-card:first-child {
+    margin-top: 200px;   /* можеш ставити 60–140 як подобається */
+}
+
 
 
 
