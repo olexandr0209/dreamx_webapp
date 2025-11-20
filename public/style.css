@@ -15,10 +15,10 @@ body {
     display: flex;
     align-items: center;
 
-    background: transparent;  /* фон банера прозорий */
-    position: relative;
-    z-index: 10;              /* вище за градієнт-шар */
+    background: #ffffff;        /* білий фон */
+    color: #000000;             /* чорний текст */
 }
+
 
 
 
