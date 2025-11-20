@@ -104,9 +104,11 @@ body.tournament-screen {
 
 /* Центральний контейнер між верхнім баром і нижнім меню */
 .tournament-container {
-    flex: 1 1 auto;
-    overflow-y: auto;                 /* 🔥 скролиться тільки цей блок */
-    padding: 64px 20px 96px;          /* місце під верхній бар і нижню панель */
+    position: relative;             /* 🟨 потрібно! */
+    height: calc(100vh - 48px - 90px);  /* 🟨 ключовий момент */
+
+    overflow-y: auto;
+    padding: 64px 20px 96px;
     box-sizing: border-box;
 
     display: flex;
