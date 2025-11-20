@@ -882,3 +882,10 @@ body.tournament-screen .bottom-nav {
     color: #f0b43a;
 }
 
+.tournament-container::after {
+    content: "";
+    display: block;
+    height: 80px;  /* можеш погратись: 60–150px */
+}
+
+
