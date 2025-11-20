@@ -308,6 +308,7 @@ body.start-screen {
 
 
 #giveaway-list {
+    margin-top: 12px;   /* або 16px, або 20px — як тобі візуально подобається */
     flex: 1 1 auto;
     overflow-y: auto;
     padding: 72px 16px 110px;  /* 56px бар + 16px запас */
