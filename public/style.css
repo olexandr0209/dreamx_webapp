@@ -290,7 +290,7 @@ body.start-screen {
 #giveaway-list {
     flex: 1 1 auto;
     overflow-y: auto;
-    padding: 90px 16px 110px;  /* тут одразу став 90px */
+    padding: 90px 16px 110px;  /* top = 90, щоб під градієнтом */
     box-sizing: border-box;
 
     display: flex;
@@ -706,14 +706,14 @@ body.start-screen::before {
     left: 0;
     right: 0;
 
-    height: 120px; /* висота градієнта */
+    height: 90px;                 /* було 120px */
     pointer-events: none;
 
     background: linear-gradient(
         to bottom,
-        rgba(255, 255, 255, 1) 0%,     /* зверху чисто білий */
+        rgba(255, 255, 255, 1) 0%,     /* чисто білий зверху */
         rgba(255, 255, 255, 0.7) 40%,  /* м’якший */
-        rgba(255, 255, 255, 0) 100%    /* знизу прозорий */
+        rgba(255, 255, 255, 0) 100%    /* прозорий внизу */
     );
 
     z-index: 10; /* нижче за top-bar-home */
