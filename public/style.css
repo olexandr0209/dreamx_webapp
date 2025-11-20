@@ -708,9 +708,16 @@ body.start-screen .top-bar-home {
     display: flex;
     align-items: center;
 
-    background: #ffffff;      /* білий фон */
+    background: linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 1) 0%,     /* повністю білий */
+        rgba(255, 255, 255, 0.65) 40%, /* легка прозорість */
+        rgba(255, 255, 255, 0.0) 100%  /* прозорий низ */
+    );
+
+    backdrop-filter: blur(6px);
     position: relative;
-    z-index: 20;              /* вище за все, що під ним */
+    z-index: 20;
 }
 
 .logo-main-top {
