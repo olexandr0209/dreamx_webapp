@@ -108,8 +108,11 @@ function createGiveawayCard(data) {
 
     const btn = card.querySelector(".giveaway-btn");
 
-    btn.onclick = () => {
+    btn.onclick = async () => {
         console.log("Clicked:", data);
+
+        // 🔥 Гарантуємо, що користувач є в базі
+        await ensureUserInDB();
 
         if (data.actionType === "open_channel") {
             window.open(data.actionPayload, "_blank");
@@ -119,11 +122,16 @@ function createGiveawayCard(data) {
         }
         if (data.actionType === "open_tournament") {
             console.log("Open tournament:", data.actionPayload);
+            // сюди потім додаси перехід на tournament.html
+            // window.location.href = "tournament.html";
         }
     };
 
     return card;
 }
+
+
+
 function renderGiveawayList() {
     const list = document.getElementById("giveaway-list");
     if (!list) {
@@ -322,6 +330,32 @@ choices.forEach(choice => {
     });
 });
 
+async function ensureUserInDB() {
+    const userId = window.DreamX && window.DreamX.getUserId
+        ? window.DreamX.getUserId()
+        : null;
+
+    if (!userId) {
+        console.log("ensureUserInDB: немає user_id");
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_BASE}/api/ensure_user`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ user_id: userId })
+        });
+
+        console.log("ensure_user status:", res.status);
+    } catch (e) {
+        console.log("Помилка ensureUserInDB:", e);
+    }
+}
+
+
+
+
 let isSaving = false; // щоб не робити кілька запитів паралельно
 
 async function savePointsToServer() {
@@ -404,9 +438,13 @@ document.addEventListener("DOMContentLoaded", () => {
     renderGiveawayList();
 });
 
-
+// ✅ Спочатку гарантуємо користувача в БД, потім тягнемо бали
 resetState();   // щоб усе було в стартовому стані
-loadPoints();   // тягнемо актуальні бали з Postgres
+
+(async () => {
+    await ensureUserInDB();  // 🔥 створює юзера, якщо його ще нема
+    await loadPoints();      // тягнемо актуальні бали з Postgres
+})();
 
 // Авто-збереження очок кожні 5 секунд (якщо є що зберігати)
 setInterval(() => {
