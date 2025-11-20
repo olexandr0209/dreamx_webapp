@@ -126,14 +126,18 @@ function createGiveawayCard(data) {
 }
 function renderGiveawayList() {
     const list = document.getElementById("giveaway-list");
-    list.innerHTML = ""; // очистити контейнер
+    if (!list) {
+        console.warn("giveaway-list container not found");
+        return;
+    }
+
+    list.innerHTML = "";
     
     giveaways.forEach(g => {
         const cardEl = createGiveawayCard(g);
         list.appendChild(cardEl);
     });
 }
-
 
 
 
@@ -219,66 +223,6 @@ function resetState() {
     locked = false;
 }
 
-
-// =========================
-//  Дані розіграшу (тимчасово тут)
-//  Потім це замінимо на дані з бази / API
-// =========================
-const currentGiveaway = {
-    typeTag: "GIVEAWAY",
-    prize: "150$",
-    title: "Sport Ukraine",
-    description: "Short description of this giveaway or partner. Very simple and clean.",
-    buttonText: "JOIN",
-    // додатково можемо зберегти link / id
-    actionType: "open_channel",   // наприклад: open_channel / open_video / open_tournament
-    actionPayload: "https://t.me/sport_ukraine" // або id розіграшу
-};
-
-// =========================
-//  Функція, яка заповнює карточку
-// =========================
-function renderGiveawayCard(data) {
-    const tagEl = document.getElementById("giveaway-tag");
-    const prizeEl = document.getElementById("giveaway-prize");
-    const titleEl = document.getElementById("giveaway-title");
-    const descEl = document.getElementById("giveaway-description");
-    const btnEl = document.getElementById("giveaway-btn");
-
-    if (!tagEl || !prizeEl || !titleEl || !descEl || !btnEl) {
-        console.warn("Giveaway elements not found in DOM");
-        return;
-    }
-
-    tagEl.textContent = data.typeTag;
-    prizeEl.textContent = data.prize;
-    titleEl.textContent = data.title;
-    descEl.textContent = data.description;
-    btnEl.textContent = data.buttonText;
-
-    // Обробник кліку по кнопці (поки просто console.log або відкриття лінку)
-    btnEl.onclick = () => {
-        console.log("Giveaway button clicked", data);
-
-        // приклад дії: відкрити канал у новій вкладці
-        if (data.actionType === "open_channel" && data.actionPayload) {
-            window.open(data.actionPayload, "_blank");
-        }
-
-        // далі тут можна буде робити:
-        // - відкриття турніру
-        // - відправку події в бот
-        // - перехід на інший екран гри
-    };
-}
-
-// =========================
-//  Виклик при завантаженні сторінки
-// =========================
-document.addEventListener("DOMContentLoaded", () => {
-    renderGiveawayCard(currentGiveaway);
-    // тут вже у тебе йде інша ініціалізація гри
-});
 
 
 
