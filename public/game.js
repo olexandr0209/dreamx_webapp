@@ -54,7 +54,9 @@ async function loadPoints() {
         const data = await res.json();
         
         coins = data.points ?? 0;
-        if (coinValue) {
+        // На звичайній грі показуємо загальні монети,
+        // у режимі розіграшу — НЕ чіпаємо (там покажемо points_tour)
+        if (coinValue && !isTourMode) {
             coinValue.textContent = coins;
         }
         canPlay = true;
@@ -92,11 +94,16 @@ async function loadTourPoints() {
         const data = await res.json();
         tourPoints = data.points_tour ?? 0;
 
+        if (coinValue && isTourMode) {
+            coinValue.textContent = tourPoints;
+        }
+
         updateTourUI();
     } catch (e) {
         console.log("Помилка loadTourPoints:", e);
     }
 }
+
 
 
 const giveaways = [
@@ -376,6 +383,9 @@ choices.forEach(choice => {
                     tourPending += 1;
                     updateTourUI();
                 }
+                if (coinValue) {
+                    coinValue.textContent = isTourMode ? tourPoints : coins;
+                }
 
 
                 
@@ -569,9 +579,10 @@ async function saveTourPointsToServer() {
 // Викликається з HTML-кнопки
 async function exitGame() {
     await savePointsToServer();
-    await saveTourPointsToServer();   // 🟡 збережемо й points_tour
+    await saveTourPointsToServer();
     window.location.href = "index.html";
 }
+
 
 
 document.addEventListener("DOMContentLoaded", () => {
