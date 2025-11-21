@@ -461,11 +461,11 @@ body.start-screen .bottom-nav {
 }
 
 #player-pick-circle {
-    width: 120px;
-    height: 120px;
+    width: 150px;
+    height: 150px;
     margin: 0 auto;
     border-radius: 50%;
-    border: 3px solid rgba(47, 90, 255, 0.9);  /* синя рамка як у кнопок */
+    border: 3px solid rgba(47, 90, 255, 0.9);
     background: #121212;
     display: flex;
     align-items: center;
@@ -474,9 +474,8 @@ body.start-screen .bottom-nav {
     opacity: 0;
     transform: scale(0.7);
 }
-
 #player-pick-symbol {
-    font-size: 60px;
+    font-size: 80px;
     opacity: 0.95;
 }
 
