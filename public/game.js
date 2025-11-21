@@ -308,7 +308,7 @@ function resetState() {
 
     if (resultEl) {
         resultEl.classList.remove("result-win", "result-lose", "result-draw");
-        resultEl.textContent = "Choose";
+        resultEl.textContent = "Обери";
         resultEl.classList.remove("hidden");
     }
 
