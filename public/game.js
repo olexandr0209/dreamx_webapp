@@ -10,6 +10,25 @@ const playerPickSymbol = document.getElementById("player-pick-symbol");
 const computerPickCircle = document.getElementById("computer-pick-circle");
 const computerPickSymbol = document.getElementById("computer-pick-symbol");
 
+// --- TOUR (розіграш на $10) ---
+const params = new URLSearchParams(window.location.search);
+const isTourMode = params.get("mode") === "tour";
+
+const tourStatus = document.getElementById("tour-status");
+const tourStatusText = document.getElementById("tour-status-text");
+const tourFinishedOverlay = document.getElementById("tour-finished-overlay");
+const tourFinishedBack = document.getElementById("tour-finished-back");
+
+let tourPoints = 0;
+let tourPending = 0;
+const TOUR_TARGET = 5;
+
+if (tourFinishedBack) {
+    tourFinishedBack.addEventListener("click", () => {
+        exitGame();  // вихід на головну з автозбереженням
+    });
+}
+
 
 
 let canPlay = false; // 👈 гра недоступна поки не прийшли монети з бази
@@ -55,6 +74,30 @@ async function loadPoints() {
         console.log("Помилка loadPoints:", e);
     }
 }
+
+async function loadTourPoints() {
+    if (!isTourMode) return;
+
+    const userId = window.DreamX.getUserId();
+    if (!userId) {
+        console.log("Немає user_id для loadTourPoints");
+        return;
+    }
+
+    try {
+        const url = `${API_BASE}/api/get_tour_points?user_id=${userId}`;
+        const res = await fetch(url);
+        if (!res.ok) return;
+
+        const data = await res.json();
+        tourPoints = data.points_tour ?? 0;
+
+        updateTourUI();
+    } catch (e) {
+        console.log("Помилка loadTourPoints:", e);
+    }
+}
+
 
 const giveaways = [
     {
@@ -163,6 +206,25 @@ function resetFlash() {
     if (!flashOverlay) return;
     flashOverlay.className = ""; // прибираємо всі класи
 }
+
+function updateTourUI() {
+    if (!isTourMode) return;
+
+    if (tourStatus && tourStatusText) {
+        tourStatus.classList.remove("hidden");
+        tourStatusText.textContent =
+            `Earn 5 Coins to join the $10 giveaway: ${tourPoints} / ${TOUR_TARGET}`;
+    }
+
+    if (tourFinishedOverlay) {
+        if (tourPoints >= TOUR_TARGET) {
+            tourFinishedOverlay.classList.remove("hidden");
+        } else {
+            tourFinishedOverlay.classList.add("hidden");
+        }
+    }
+}
+
 
 function getBotChoice() {
     return options[Math.floor(Math.random() * options.length)];
@@ -400,6 +462,15 @@ choices.forEach(choice => {
                     coinValue.textContent = coins;
                 }
 
+                // Якщо ми в режимі розіграшу — рахуємо спеціальні монети
+                if (isTourMode && tourPoints < TOUR_TARGET) {
+                    tourPoints += 1;
+                    tourPending += 1;
+                    updateTourUI();
+                }
+
+
+                
                 // перемога показується довше — 1 секунда
                 delay = 1000;
 
@@ -534,6 +605,57 @@ async function savePointsToServer() {
     }
 }
 
+let isSavingTour = false;
+
+async function saveTourPointsToServer() {
+    if (!isTourMode) return;
+    if (tourPending <= 0) return;
+    if (isSavingTour) return;
+
+    const userId = window.DreamX && window.DreamX.getUserId
+        ? window.DreamX.getUserId()
+        : null;
+
+    if (!userId) {
+        console.log("Немає user_id для збереження tour");
+        return;
+    }
+
+    const delta = tourPending;
+    isSavingTour = true;
+
+    try {
+        const url = `${API_BASE}/api/add_tour_points`;
+
+        console.log("POST tour points to:", url, "delta:", delta);
+
+        const res = await fetch(url, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                user_id: userId,
+                delta: delta,
+            }),
+        });
+
+        console.log("Status add_tour_points:", res.status);
+
+        if (!res.ok) {
+            return;
+        }
+
+        const data = await res.json();
+        console.log("Response add_tour_points:", data);
+
+        tourPending -= delta;
+        if (tourPending < 0) tourPending = 0;
+
+    } catch (e) {
+        console.log("Помилка saveTourPointsToServer:", e);
+    } finally {
+        isSavingTour = false;
+    }
+}
 
 
 // Викликається з HTML-кнопки
@@ -550,12 +672,15 @@ document.addEventListener("DOMContentLoaded", () => {
 resetState();   // щоб усе було в стартовому стані
 
 (async () => {
-    await ensureUserInDB();  // 🔥 створює юзера, якщо його ще нема
-    await loadPoints();      // тягнемо актуальні бали з Postgres
+    await ensureUserInDB();
+    await loadPoints();
+    await loadTourPoints();   // якщо режим розіграшу — підтягуємо points_tour
 })();
+
 
 // Авто-збереження очок кожні 5 секунд (якщо є що зберігати)
 setInterval(() => {
     savePointsToServer();
+    saveTourPointsToServer();
 }, 5000);
 
