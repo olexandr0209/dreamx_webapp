@@ -353,78 +353,93 @@ choices.forEach(choice => {
 
         const playerChoice = choice.dataset.choice;
 
+        // спочатку плавно ховаємо трикутник
         if (gameArea) gameArea.classList.add("hidden");
-        showPlayerPick(playerChoice);
 
+        // гарантуємо, що старі кружки сховані
+        if (computerPickCircle) {
+            computerPickCircle.style.opacity = "0";
+            computerPickCircle.style.transform = "scale(0.7)";
+        }
+        if (playerPickCircle) {
+            playerPickCircle.style.opacity = "0";
+            playerPickCircle.style.transform = "scale(0.7)";
+        }
+
+        // даємо 150 мс, щоб трикутник згас → потім показуємо вибір гравця
         setTimeout(() => {
-            const botChoice = getBotChoice();
-            showComputerPick(botChoice);
+            showPlayerPick(playerChoice);
 
-            const final = getResult(playerChoice, botChoice);
+            // ще через 200 мс показуємо вибір компʼютера
+            setTimeout(() => {
+                const botChoice = getBotChoice();
+                showComputerPick(botChoice);
 
-            if (resultEl) {
-                resultEl.classList.remove("result-win", "result-lose", "result-draw");
-            }
-            if (body) {
-                body.classList.remove("glow-win", "glow-lose", "glow-draw");
-            }
-            resetFlash();
+                const final = getResult(playerChoice, botChoice);
 
-            let delay = 600;
-
-            if (final === "YOU WIN") {
                 if (resultEl) {
-                    resultEl.innerHTML =
-                        'You WIN! 🔥<br><span class="plus-one-inline">+1</span>';
-                    resultEl.classList.add("result-win");
+                    resultEl.classList.remove("result-win", "result-lose", "result-draw");
                 }
-                if (body) body.classList.add("glow-win");
-                if (flashOverlay) {
-                    flashOverlay.classList.add("flash-win", "flash-active");
+                if (body) {
+                    body.classList.remove("glow-win", "glow-lose", "glow-draw");
                 }
+                resetFlash();
 
-                // Нарахування монет
-                if (isTourMode) {
-                    if (tourPoints < TOUR_TARGET) {
-                        tourPoints += 1;
-                        tourPending += 1;
-                        updateTourUI();
+                let delay = 600;
+
+                if (final === "YOU WIN") {
+                    if (resultEl) {
+                        resultEl.innerHTML =
+                            'You WIN! 🔥<br><span class="plus-one-inline">+1</span>';
+                        resultEl.classList.add("result-win");
+                    }
+                    if (body) body.classList.add("glow-win");
+                    if (flashOverlay) {
+                        flashOverlay.classList.add("flash-win", "flash-active");
+                    }
+
+                    if (isTourMode) {
+                        if (tourPoints < TOUR_TARGET) {
+                            tourPoints += 1;
+                            tourPending += 1;
+                            updateTourUI();
+                        }
+                    } else {
+                        coins += 1;
+                        pendingPoints += 1;
+                    }
+
+                    if (coinValue) {
+                        coinValue.textContent = isTourMode ? tourPoints : coins;
+                    }
+
+                    delay = 1000;
+                } else if (final === "YOU LOSE") {
+                    if (resultEl) {
+                        resultEl.textContent = "You lose ❌";
+                        resultEl.classList.add("result-lose");
+                    }
+                    if (body) body.classList.add("glow-lose");
+                    if (flashOverlay) {
+                        flashOverlay.classList.add("flash-lose", "flash-active");
                     }
                 } else {
-                    coins += 1;
-                    pendingPoints += 1;
+                    if (resultEl) {
+                        resultEl.textContent = "Draw 🤝";
+                        resultEl.classList.add("result-draw");
+                    }
+                    if (body) body.classList.add("glow-draw");
+                    if (flashOverlay) {
+                        flashOverlay.classList.add("flash-draw", "flash-active");
+                    }
                 }
 
-                if (coinValue) {
-                    coinValue.textContent = isTourMode ? tourPoints : coins;
-                }
+                setTimeout(() => {
+                    resetState();
+                }, delay);
 
-                delay = 1000;
-            } else if (final === "YOU LOSE") {
-                if (resultEl) {
-                    resultEl.textContent = "You lose ❌";
-                    resultEl.classList.add("result-lose");
-                }
-                if (body) body.classList.add("glow-lose");
-                if (flashOverlay) {
-                    flashOverlay.classList.add("flash-lose", "flash-active");
-                }
-            } else {
-                if (resultEl) {
-                    resultEl.textContent = "Draw 🤝";
-                    resultEl.classList.add("result-draw");
-                }
-                if (body) body.classList.add("glow-draw");
-                if (flashOverlay) {
-                    flashOverlay.classList.add("flash-draw", "flash-active");
-                }
-            }
-
-            setTimeout(() => {
-                resetState();
-            }, delay);
-
-        }, 200);
+            }, 200); // між гравцем і компʼютером
+        }, 150); // даємо трикутнику сховатись
     });
 });
 
