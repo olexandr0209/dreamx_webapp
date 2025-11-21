@@ -449,6 +449,37 @@ body.start-screen .bottom-nav {
     opacity: 0.9;
 }
 
+/* ==== Вибір гравця (великий жест внизу) ==== */
+
+#player-pick-container {
+    position: absolute;
+    bottom: 120px;          /* над трикутником / back-кнопкою */
+    left: 0;
+    right: 0;
+    text-align: center;
+    pointer-events: none;
+}
+
+#player-pick-circle {
+    width: 120px;
+    height: 120px;
+    margin: 0 auto;
+    border-radius: 50%;
+    border: 3px solid rgba(47, 90, 255, 0.9);  /* синя рамка як у кнопок */
+    background: #121212;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: 0.25s ease;
+    opacity: 0;
+    transform: scale(0.7);
+}
+
+#player-pick-symbol {
+    font-size: 60px;
+    opacity: 0.95;
+}
+
 
 /* =========================
    FLYING COIN
@@ -472,6 +503,15 @@ body.start-screen .bottom-nav {
     align-items: center;
     gap: 35px;
 }
+
+/* Коли трикутник схований під час показу результату */
+.game-area.hidden {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.8);
+    pointer-events: none;
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
 
 .triangle {
     position: relative;
@@ -996,6 +1036,4 @@ body.tournament-screen .bottom-nav {
         bottom: calc(140px + env(safe-area-inset-bottom, 0px));
     }
 }
-
-
 
