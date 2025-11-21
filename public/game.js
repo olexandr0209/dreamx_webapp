@@ -140,11 +140,11 @@ async function loadTourPoints() {
 
 const giveaways = [
     {
-        typeTag: "GIVEAWAY",
+        typeTag: "РОЗІГРАШ",
         prize: "$10",
-        title: "First DreamX Giveaway",
-        description: "Earn 5 Coins in the game to join the $10 draw.",
-        buttonText: "JOIN",
+        title: "ПЕРШИЙ DreamX РОЗІГРАШ",
+        description: "ЗАРОБИ 5 МОНЕТ І ПРИЄДНАЙСЯ ДО РОЗІГРАШУ.",
+        buttonText: "ПРИЄДНАТИСЬ",
         actionType: "open_tour_game",
         actionPayload: ""
     }
@@ -390,7 +390,7 @@ choices.forEach(choice => {
                 if (final === "YOU WIN") {
                     if (resultEl) {
                         resultEl.innerHTML =
-                            'You WIN! 🔥<br><span class="plus-one-inline">+1</span>';
+                            'ВИГРАШ! 🔥<br><span class="plus-one-inline">+1</span>';
                         resultEl.classList.add("result-win");
                     }
                     if (body) body.classList.add("glow-win");
@@ -416,7 +416,7 @@ choices.forEach(choice => {
                     delay = 1000;
                 } else if (final === "YOU LOSE") {
                     if (resultEl) {
-                        resultEl.textContent = "You lose ❌";
+                        resultEl.textContent = "ПРОГРАШ ❌";
                         resultEl.classList.add("result-lose");
                     }
                     if (body) body.classList.add("glow-lose");
@@ -425,7 +425,7 @@ choices.forEach(choice => {
                     }
                 } else {
                     if (resultEl) {
-                        resultEl.textContent = "Draw 🤝";
+                        resultEl.textContent = "НІЧИЯ 🤝";
                         resultEl.classList.add("result-draw");
                     }
                     if (body) body.classList.add("glow-draw");
