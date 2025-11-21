@@ -366,31 +366,35 @@ choices.forEach(choice => {
                     resultEl.classList.add("result-win");
                 }
                 if (body) body.classList.add("glow-win");
-
+            
                 if (flashOverlay) {
                     flashOverlay.classList.add("flash-win", "flash-active");
                 }
-
-                coins += 1;
-                pendingPoints += 1;
-                if (coinValue) {
-                    coinValue.textContent = coins;
+            
+                // --- НАРАХУВАННЯ МОНЕТ ---
+            
+                if (isTourMode) {
+                    // 🎯 Режим розіграшу: пишемо тільки в points_tour (з лімітом 5)
+                    if (tourPoints < TOUR_TARGET) {
+                        tourPoints += 1;
+                        tourPending += 1;
+                        updateTourUI();
+                    }
+                } else {
+                    // ⭐ Звичайна гра: пишемо тільки в points
+                    coins += 1;
+                    pendingPoints += 1;
                 }
-
-                // Якщо ми в режимі розіграшу — рахуємо спеціальні монети
-                if (isTourMode && tourPoints < TOUR_TARGET) {
-                    tourPoints += 1;
-                    tourPending += 1;
-                    updateTourUI();
-                }
+            
+                // Що показувати в UI
                 if (coinValue) {
                     coinValue.textContent = isTourMode ? tourPoints : coins;
                 }
-
-
-                
+            
                 // перемога показується довше — 1 секунда
                 delay = 1000;
+            }
+
 
             } else if (final === "YOU LOSE") {
                 if (resultEl) {
