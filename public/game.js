@@ -260,11 +260,11 @@ function updateTourUI() {
         if (tourFinishedOverlay) {
             tourFinishedOverlay.classList.add("hidden");
         }
-
-        if (gameArea) gameArea.classList.remove("hidden");
-        if (resultEl) resultEl.classList.remove("hidden");
+        // тут більше нічого не робимо
     }
 }
+
+
 
 function getBotChoice() {
     return options[Math.floor(Math.random() * options.length)];
