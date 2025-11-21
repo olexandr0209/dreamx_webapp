@@ -6,27 +6,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
     <link rel="stylesheet" href="style.css" />
-    <!-- 👇 ОБОВʼЯЗКОВО: Telegram WebApp JS -->
+
+    <!-- Telegram WebApp JS -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     
     <!-- Наш загальний core-скрипт -->
     <script src="dreamx_core.js"></script>
     
-    <!-- 👇 Потім твій скрипт гри -->
+    <!-- Скрипт гри (один раз, з defer) -->
     <script defer src="game.js"></script>
-    
-
-   
-
 </head>
     
-
-
 <body class="game-body">
-    
-     <div class="top-bar">
+    <!-- Верхній бар -->
+    <div class="top-bar">
         <div class="logo">DreamX</div>
-        <div class="coins-label">Coins: <span id="coin-value">0</span></div>
+        <div class="coins-label">
+            Coins: <span id="coin-value">0</span>
+        </div>
     </div>
     
     <div class="game-container">
@@ -38,47 +35,47 @@
 
         <!-- Текст над кружечками -->
         <div class="result" id="result">Choose</div>
-            <!-- Статус розіграшу -->
+
+        <!-- Статус розіграшу -->
         <div id="tour-status" class="tour-status hidden">
             <span id="tour-status-text">
                 Earn 5 Coins to join the $10 giveaway: 0 / 5
             </span>
         </div>
 
+        <!-- Вибір компʼютера -->
         <div id="computer-pick-container">
             <div id="computer-pick-circle">
                 <span id="computer-pick-symbol">?</span>
             </div>
         </div>
+
+        <!-- Вибір гравця -->
         <div id="player-pick-container">
             <div id="player-pick-circle">
                 <span id="player-pick-symbol">?</span>
             </div>
         </div>
 
-
-
         <!-- Трикутник з трьох кружечків -->
         <div class="game-area">
             <div class="triangle">
-                
-                    <div class="choice" data-choice="scissors">✌️</div>
-                    <div class="choice" data-choice="stone">✊</div>
-                    <div class="choice" data-choice="paper">✋</div>
-
+                <div class="choice" data-choice="scissors">✌️</div>
+                <div class="choice" data-choice="stone">✊</div>
+                <div class="choice" data-choice="paper">✋</div>
             </div>
-    
-           
         </div>
+
+        <!-- Кнопка Back -->
         <button class="back-btn" onclick="exitGame()">Back</button>
     </div>
     
+    <!-- Флеш-ефект -->
     <div id="flash-overlay"></div>
-    <script src="game.js"></script> 
 
     <!-- Оверлей, коли гравець вже набрав 5 монет і в розіграші -->
-    <div id="tour-finished-overlay" class="tour-overlay hidden">
-        <div class="tour-card">
+    <div id="tour-finished-overlay" class="tour-finished-overlay hidden">
+        <div class="tour-finished-card">
             <h2 class="tour-title">You are in! 🎉</h2>
             <p class="tour-text">
                 You have earned 5 Coins and joined the $10 DreamX giveaway.
@@ -88,7 +85,5 @@
             </button>
         </div>
     </div>
-
-    
 </body>
 </html>
