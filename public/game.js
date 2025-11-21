@@ -244,7 +244,7 @@ function resetState() {
     // ✅ прибираємо флеш-підсвітку
     resetFlash();
     
-        // Сховати вибір комп'ютера
+    // Сховати вибір комп'ютера
     if (computerPickCircle) {
         computerPickCircle.style.opacity = "0";
         computerPickCircle.style.transform = "scale(0.7)";
@@ -264,7 +264,96 @@ function resetState() {
     locked = false;
 }
 
-}
+// Основна логіка гри — режим "дуелі"
+choices.forEach(choice => {
+    choice.addEventListener("click", () => {
+        if (!canPlay) {
+            console.log("Гра ще не готова. Очікуємо завантаження монет.");
+            return;
+        }
+        if (locked) return;
+        locked = true;
+
+        const playerChoice = choice.dataset.choice;
+
+        // При кліку ховаємо трикутник і показуємо жест гравця внизу
+        if (gameArea) {
+            gameArea.classList.add("hidden");
+        }
+        showPlayerPick(playerChoice);
+
+        // Невелика пауза, потім показуємо комп'ютера і результат
+        setTimeout(() => {
+            const botChoice = getBotChoice();
+
+            // показати вибір комп’ютера зверху
+            showComputerPick(botChoice);
+            
+            const final = getResult(playerChoice, botChoice);
+
+            // очищаємо попередні анімації + glow
+            if (resultEl) {
+                resultEl.classList.remove("result-win", "result-lose", "result-draw");
+            }
+            if (body) {
+                body.classList.remove("glow-win", "glow-lose", "glow-draw");
+            }
+            resetFlash(); // ✅ скидаємо флеш перед новим результатом
+
+            // --- ЛОГІКА РЕЗУЛЬТУ + МОНЕТИ ---
+            let delay = 600; // DRAW / LOSE = 0.6 cек
+
+            if (final === "YOU WIN") {
+                if (resultEl) {
+                    resultEl.innerHTML = 'You WIN! 🔥<br><span class="plus-one-inline">+1</span>';
+                    resultEl.classList.add("result-win");
+                }
+                if (body) body.classList.add("glow-win");
+
+                if (flashOverlay) {
+                    flashOverlay.classList.add("flash-win", "flash-active");
+                }
+
+                coins += 1;
+                pendingPoints += 1;
+                if (coinValue) {
+                    coinValue.textContent = coins;
+                }
+
+                // перемога показується довше — 1 секунда
+                delay = 1000;
+
+            } else if (final === "YOU LOSE") {
+                if (resultEl) {
+                    resultEl.textContent = "You lose ❌";
+                    resultEl.classList.add("result-lose");
+                }
+                if (body) body.classList.add("glow-lose");
+
+                if (flashOverlay) {
+                    flashOverlay.classList.add("flash-lose", "flash-active");
+                }
+
+            } else {
+                if (resultEl) {
+                    resultEl.textContent = "Draw 🤝";
+                    resultEl.classList.add("result-draw");
+                }
+                if (body) body.classList.add("glow-draw");
+
+                if (flashOverlay) {
+                    flashOverlay.classList.add("flash-draw", "flash-active");
+                }
+            }
+
+            // через delay повертаємо все назад (0.6 / 1.0 сек)
+            setTimeout(() => {
+                resetState();
+            }, delay);
+
+        }, 200); // пауза перед появою вибору комп'ютера
+    });
+});
 
 
 
