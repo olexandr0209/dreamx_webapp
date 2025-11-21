@@ -217,18 +217,45 @@ function resetFlash() {
 function updateTourUI() {
     if (!isTourMode) return;
 
+    // Показуємо рядок прогресу
     if (tourStatus && tourStatusText) {
         tourStatus.classList.remove("hidden");
         tourStatusText.textContent =
             `Earn 5 Coins to join the $10 giveaway: ${tourPoints} / ${TOUR_TARGET}`;
     }
 
-    if (tourFinishedOverlay) {
-        if (tourPoints >= TOUR_TARGET) {
+    const finished = tourPoints >= TOUR_TARGET;
+
+    // Якщо гравець вже набрав 5 монет
+    if (finished) {
+        // Показуємо оверлей "You are in giveaway"
+        if (tourFinishedOverlay) {
             tourFinishedOverlay.classList.remove("hidden");
-        } else {
+        }
+
+        // Вимикаємо гру
+        canPlay = false;
+        choices.forEach(c => {
+            c.classList.add("disabled");
+        });
+
+        // Ховаємо трикутник і результати
+        if (gameArea) gameArea.classList.add("hidden");
+        if (resultEl) resultEl.classList.add("hidden");
+
+    } else {
+        // Ще не набрав 5 монет – гра доступна
+        if (tourFinishedOverlay) {
             tourFinishedOverlay.classList.add("hidden");
         }
+
+        canPlay = true;
+        choices.forEach(c => {
+            c.classList.remove("disabled");
+        });
+
+        if (gameArea) gameArea.classList.remove("hidden");
+        if (resultEl) resultEl.classList.remove("hidden");
     }
 }
 
@@ -324,12 +351,19 @@ function resetState() {
 // Основна логіка гри — режим "дуелі"
 choices.forEach(choice => {
     choice.addEventListener("click", () => {
+        // Якщо це турнір і гравець вже набрав 5 монет – не даємо грати
+        if (isTourMode && tourPoints >= TOUR_TARGET) {
+            console.log("Вже в розіграші – гра вимкнена.");
+            return;
+        }
+
         if (!canPlay) {
             console.log("Гра ще не готова. Очікуємо завантаження монет.");
             return;
         }
         if (locked) return;
         locked = true;
+
 
         const playerChoice = choice.dataset.choice;
 
@@ -594,13 +628,23 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // ✅ Спочатку гарантуємо користувача в БД, потім тягнемо бали
+// ✅ Спочатку гарантуємо користувача в БД, потім тягнемо бали
 resetState();   // щоб усе було в стартовому стані
 
 (async () => {
     await ensureUserInDB();
-    await loadPoints();
-    await loadTourPoints();   // якщо режим розіграшу — підтягуємо points_tour
+
+    if (isTourMode) {
+        // Спочатку тягнемо турнірні монети і показуємо їх
+        await loadTourPoints();
+        // Потім у фоні тягнемо звичайні points (для внутрішньої логіки, але не показуємо)
+        await loadPoints();
+    } else {
+        // Звичайна гра
+        await loadPoints();
+    }
 })();
+
 
 
 // Авто-збереження очок кожні 5 секунд (якщо є що зберігати)
