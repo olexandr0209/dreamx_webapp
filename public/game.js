@@ -140,10 +140,10 @@ async function loadTourPoints() {
 
 const giveaways = [
     {
-        typeTag: "РОЗІГРАШ",
+        typeTag: "ПОДАРУНОК",
         prize: "$10",
-        title: "ПЕРШИЙ DreamX РОЗІГРАШ",
-        description: "ЗАРОБИ 5 МОНЕТ І ПРИЄДНАЙСЯ ДО РОЗІГРАШУ.",
+        title: "ПЕРШИЙ DreamX ПОДАРУНОК",
+        description: "ЗАРОБИ 5 МОНЕТ І ПРИЄДНАЙСЯ.",
         buttonText: "ПРИЄДНАТИСЬ",
         actionType: "open_tour_game",
         actionPayload: ""
