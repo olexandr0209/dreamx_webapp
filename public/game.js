@@ -396,7 +396,7 @@ choices.forEach(choice => {
             }
 
 
-            } else if (final === "YOU LOSE") {
+             else if (final === "YOU LOSE") {
                 if (resultEl) {
                     resultEl.textContent = "You lose ❌";
                     resultEl.classList.add("result-lose");
