@@ -7,6 +7,8 @@ const body = document.querySelector(".game-body");
 const coinValue = document.getElementById("coin-value");
 const flashOverlay = document.getElementById("flash-overlay");
 
+choices.forEach(c => c.classList.add("disabled"));
+
 const gameArea = document.querySelector(".game-area");
 const playerPickCircle = document.getElementById("player-pick-circle");
 const playerPickSymbol = document.getElementById("player-pick-symbol");
