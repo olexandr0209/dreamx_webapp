@@ -385,7 +385,7 @@ choices.forEach(choice => {
                 }
                 resetFlash();
 
-                let delay = 600;
+                let delay = 1000;
 
                 if (final === "YOU WIN") {
                     if (resultEl) {
