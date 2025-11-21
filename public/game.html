@@ -38,7 +38,13 @@
 
         <!-- Текст над кружечками -->
         <div class="result" id="result">Choose</div>
-        
+            <!-- Статус розіграшу -->
+        <div id="tour-status" class="tour-status hidden">
+            <span id="tour-status-text">
+                Earn 5 Coins to join the $10 giveaway: 0 / 5
+            </span>
+        </div>
+
         <div id="computer-pick-container">
             <div id="computer-pick-circle">
                 <span id="computer-pick-symbol">?</span>
@@ -69,5 +75,20 @@
     
     <div id="flash-overlay"></div>
     <script src="game.js"></script> 
+
+    <!-- Оверлей, коли гравець вже набрав 5 монет і в розіграші -->
+    <div id="tour-finished-overlay" class="tour-overlay hidden">
+        <div class="tour-card">
+            <h2 class="tour-title">You are in! 🎉</h2>
+            <p class="tour-text">
+                You have earned 5 Coins and joined the $10 DreamX giveaway.
+            </p>
+            <button id="tour-finished-back" class="tour-back-btn">
+                Back
+            </button>
+        </div>
+    </div>
+
+    
 </body>
 </html>
