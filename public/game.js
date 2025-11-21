@@ -241,7 +241,7 @@ function updateTourUI() {
     if (tourStatus && tourStatusText) {
         tourStatus.classList.remove("hidden");
         tourStatusText.textContent =
-            `Earn 5 Coins to join the $10 giveaway: ${tourPoints} / ${TOUR_TARGET}`;
+            `Зароби 5 монет щоб взяти участь: ${tourPoints} / ${TOUR_TARGET}`;
     }
 
     const finished = tourPoints >= TOUR_TARGET;
