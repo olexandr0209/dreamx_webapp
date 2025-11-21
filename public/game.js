@@ -49,11 +49,12 @@ const API_BASE = "https://dreamx-bot.onrender.com";
 // ========================
 
 // Звичайні монети (таблиця players.points)
+// Звичайні монети (points) — тільки для НЕ tour режиму
 async function loadPoints() {
-    // У тур-режимі НЕ чіпаємо звичайні points
-    if (isTourMode) return;
+    const userId = window.DreamX && window.DreamX.getUserId
+        ? window.DreamX.getUserId()
+        : null;
 
-    const userId = window.DreamX.getUserId();
     if (!userId) {
         console.log("Немає user_id");
         return;
@@ -67,30 +68,36 @@ async function loadPoints() {
         const data = await res.json();
         coins = data.points ?? 0;
 
-        if (coinValue && !isTourMode) {
+        // На звичайній грі показуємо загальні монети
+        if (!isTourMode && coinValue) {
             coinValue.textContent = coins;
         }
 
-        canPlay = true;
-        choices.forEach(c => c.classList.remove("disabled"));
+        // Грати дозволяємо тільки в звичайному режимі через цю функцію
+        if (!isTourMode) {
+            canPlay = true;
+            choices.forEach(c => c.classList.remove("disabled"));
+        }
 
         try {
             localStorage.setItem("dreamx_points", String(coins));
         } catch {}
 
-        locked = false;
+        console.log("Монети (points) завантажені:", coins);
 
-        console.log("Монети (звичайні) завантажені. Гра активована.");
     } catch (e) {
         console.log("Помилка loadPoints:", e);
     }
 }
 
-// Турнірні монети (таблиця players_tour.points_tour)
+// Турнірні монети (points_tour) — тільки для tour режиму
 async function loadTourPoints() {
     if (!isTourMode) return;
 
-    const userId = window.DreamX.getUserId();
+    const userId = window.DreamX && window.DreamX.getUserId
+        ? window.DreamX.getUserId()
+        : null;
+
     if (!userId) {
         console.log("Немає user_id для loadTourPoints");
         return;
@@ -104,20 +111,26 @@ async function loadTourPoints() {
         const data = await res.json();
         tourPoints = data.points_tour ?? 0;
 
+        // У тур-режимі в топ-барі завжди показуємо саме tour монети
         if (coinValue) {
             coinValue.textContent = tourPoints;
         }
 
-        // Активуємо гру (якщо ще не досягнуто 5)
-        canPlay = true;
-        choices.forEach(c => c.classList.remove("disabled"));
+        // Можна грати тільки якщо ще не набрали 5
+        canPlay = tourPoints < TOUR_TARGET;
+        choices.forEach(c => {
+            c.classList.toggle("disabled", !canPlay);
+        });
 
         updateTourUI();
-        console.log("Турнірні монети завантажені:", tourPoints);
+
+        console.log("Турнірні монети (points_tour) завантажені:", tourPoints);
+
     } catch (e) {
         console.log("Помилка loadTourPoints:", e);
     }
 }
+
 
 // ========================
 //   Giveaway-картка (головний екран)
@@ -180,9 +193,10 @@ function createGiveawayCard(data) {
         }
 
         if (data.actionType === "open_tour_game") {
-            const qs = window.location.search;  // збережемо ?tgWebAppStartParam=...
-            window.location.href = "game.html?mode=tour" + qs;
+            // Для тур-режиму нам достатньо mode=tour
+            window.location.href = "game.html?mode=tour";
         }
+
     };
 
     return card;
@@ -231,28 +245,22 @@ function updateTourUI() {
     const finished = tourPoints >= TOUR_TARGET;
 
     if (finished) {
-        // Показуємо оверлей "You are in!"
         if (tourFinishedOverlay) {
             tourFinishedOverlay.classList.remove("hidden");
         }
 
-        // Вимикаємо гру
         canPlay = false;
         choices.forEach(c => c.classList.add("disabled"));
 
         if (gameArea) gameArea.classList.add("hidden");
         if (resultEl) resultEl.classList.add("hidden");
     } else {
-        // Гра ще триває
         if (tourFinishedOverlay) {
             tourFinishedOverlay.classList.add("hidden");
         }
 
         if (gameArea) gameArea.classList.remove("hidden");
         if (resultEl) resultEl.classList.remove("hidden");
-
-        canPlay = true;
-        choices.forEach(c => c.classList.remove("disabled"));
     }
 }
 
@@ -557,18 +565,16 @@ document.addEventListener("DOMContentLoaded", () => {
     renderGiveawayList(); // на game.html просто нічого не знайде і вийде
 });
 
-resetState();
+resetState();   // стартовий стан
 
 (async () => {
     await ensureUserInDB();
 
-    if (isTourMode) {
-        await loadTourPoints();  // показує points_tour і статус
-        // Звичайні points у турі нам не потрібні для UI, але якщо захочеш — можна тягнути окремо
-        // await loadPoints();
-    } else {
-        await loadPoints();      // звичайна гра
-    }
+    // Спочатку завжди тягнемо звичайні монети (для /start, статистики і т.д.)
+    await loadPoints();
+
+    // Якщо це тур-режим — поверх цього підтягуємо points_tour
+    await loadTourPoints();
 })();
 
 // Автозбереження кожні 5 секунд
