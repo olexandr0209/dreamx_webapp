@@ -957,6 +957,71 @@ body.tournament-screen .bottom-nav {
     padding-bottom: calc(16px + env(safe-area-inset-bottom, 0px));
 }
 
+/* =========================
+   TOUR GIVEAWAY UI
+   ========================== */
+
+/* Маленький статус над грою */
+.tour-status {
+    margin-top: 8px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.85);
+    text-align: center;
+}
+
+.tour-status.hidden {
+    display: none;
+}
+
+/* Оверлей, коли гравець уже набрав 5 монет */
+.tour-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.78);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 200;
+}
+
+.tour-overlay.hidden {
+    display: none;
+}
+
+.tour-card {
+    width: 90%;
+    max-width: 320px;
+    background: #121212;
+    border-radius: 20px;
+    padding: 20px 18px 18px;
+    text-align: center;
+    box-shadow: 0 18px 40px rgba(0, 0, 0, 0.8);
+    border: 1px solid #2f5aff;
+}
+
+.tour-title {
+    margin: 0 0 8px;
+    font-size: 20px;
+}
+
+.tour-text {
+    margin: 0 0 16px;
+    font-size: 14px;
+    color: rgba(255,255,255,0.8);
+}
+
+.tour-back-btn {
+    padding: 10px 32px;
+    border-radius: 999px;
+    border: 1px solid #3a4fff;
+    background: transparent;
+    color: #3a4fff;
+    font-size: 15px;
+}
+
+
+
+
 /* 5. Маленькі телефони: вузькі або низькі
    (iPhone 8, SE, старі Android, тощо) */
 @media (max-width: 360px), (max-height: 650px) {
