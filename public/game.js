@@ -59,35 +59,14 @@ async function loadPoints() {
 const giveaways = [
     {
         typeTag: "GIVEAWAY",
-        prize: "150$",
-        title: "Sport Ukraine",
-        description: "Short description of this giveaway or partner.",
+        prize: "$10",
+        title: "First DreamX Giveaway",
+        description: "Earn 5 Coins in the game to join the $10 draw.",
         buttonText: "JOIN",
-        actionType: "open_channel",
+        actionType: "open_tour_game",
         actionPayload: ""
-    },
-
-    {
-        typeTag: "TOURNAMENT",
-        prize: "50$",
-        title: "Fast Tournament",
-        description: "Win 50$ by playing 10 quick rounds!",
-        buttonText: "PLAY",
-        actionType: "open_tournament",
-        actionPayload: "fast_tournament"
-    },
-
-    {
-        typeTag: "SPONSOR",
-        prize: "300$",
-        title: "DreamX Special Partner",
-        description: "Exclusive partner giveaway. Join to take part.",
-        buttonText: "JOIN",
-        actionType: "open_link",
-        actionPayload: "https://t.me/dreamxofficial"
     }
 ];
-
 
 function createGiveawayCard(data) {
     const card = document.createElement("div");
@@ -125,15 +104,23 @@ function createGiveawayCard(data) {
         if (data.actionType === "open_channel") {
             window.open(data.actionPayload, "_blank");
         }
+
         if (data.actionType === "open_link") {
             window.open(data.actionPayload, "_blank");
         }
+
         if (data.actionType === "open_tournament") {
             console.log("Open tournament:", data.actionPayload);
-            // сюди потім додаси перехід на tournament.html
-            // window.location.href = "tournament.html";
+            // window.location.href = "tournaments.html";
+        }
+
+        // 🎁 Режим розіграшу на $10
+        if (data.actionType === "open_tour_game") {
+            const qs = window.location.search;  // збережемо ?tgWebAppStartParam=...
+            window.location.href = "game.html?mode=tour" + qs;
         }
     };
+
 
     return card;
 }
