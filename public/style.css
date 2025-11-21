@@ -1129,3 +1129,6 @@ body.tournament-screen .bottom-nav {
     text-align: center;
 }
 
+.tour-finished-overlay.hidden {
+    display: none;
+}
