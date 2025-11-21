@@ -38,6 +38,11 @@ let canPlay = false; // 👈 гра недоступна поки не прий�
 const API_BASE = "https://dreamx-bot.onrender.com";
 
 async function loadPoints() {
+    // ⛔ У режимі розіграшу взагалі не чіпаємо звичайні монети
+    if (isTourMode) {
+        return;
+    }
+    
     const userId = window.DreamX.getUserId();
 
     if (!userId) {
@@ -217,7 +222,6 @@ function resetFlash() {
 function updateTourUI() {
     if (!isTourMode) return;
 
-    // Показуємо рядок прогресу
     if (tourStatus && tourStatusText) {
         tourStatus.classList.remove("hidden");
         tourStatusText.textContent =
@@ -226,7 +230,6 @@ function updateTourUI() {
 
     const finished = tourPoints >= TOUR_TARGET;
 
-    // Якщо гравець вже набрав 5 монет
     if (finished) {
         // Показуємо оверлей "You are in giveaway"
         if (tourFinishedOverlay) {
@@ -235,24 +238,15 @@ function updateTourUI() {
 
         // Вимикаємо гру
         canPlay = false;
-        choices.forEach(c => {
-            c.classList.add("disabled");
-        });
+        choices.forEach(c => c.classList.add("disabled"));
 
-        // Ховаємо трикутник і результати
         if (gameArea) gameArea.classList.add("hidden");
         if (resultEl) resultEl.classList.add("hidden");
-
     } else {
-        // Ще не набрав 5 монет – гра доступна
+        // Гра ще триває
         if (tourFinishedOverlay) {
             tourFinishedOverlay.classList.add("hidden");
         }
-
-        canPlay = true;
-        choices.forEach(c => {
-            c.classList.remove("disabled");
-        });
 
         if (gameArea) gameArea.classList.remove("hidden");
         if (resultEl) resultEl.classList.remove("hidden");
