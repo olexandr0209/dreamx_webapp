@@ -138,17 +138,7 @@ async function loadTourPoints() {
 //   Giveaway-картка (головний екран)
 // ========================
 
-const giveaways = [
-    {
-        typeTag: "ПОДАРУНОК",
-        prize: "$10",
-        title: "ПЕРШИЙ DreamX ПОДАРУНОК",
-        description: "ЗАРОБИ 5 МОНЕТ І ПРИЄДНАЙСЯ.",
-        buttonText: "ПРИЄДНАТИСЬ",
-        actionType: "open_tour_game",
-        actionPayload: ""
-    }
-];
+
 
 function createGiveawayCard(data) {
     const card = document.createElement("div");
@@ -204,13 +194,82 @@ function createGiveawayCard(data) {
     return card;
 }
 
-function renderGiveawayList() {
+function createCardFromBackend(card) {
+    // 1) Визначаємо тег зверху
+    let typeTag = "РОЗІГРАШ";
+    if (card.kind === "promo") typeTag = "ПРОМО";
+    if (card.kind === "announcement") typeTag = "ОГОЛОШЕННЯ";
+
+    // 2) Текстові поля
+    const title = card.title || "";
+    const desc = card.description || card.message || "";
+    const prize = card.prize || "";
+
+    // 3) Яка кнопка і що вона робить
+    let actionType = "none";
+    let buttonText = "OK";
+
+    // Якщо це звичайний розіграш формату "турнір" — відкриваємо гру в tour-режимі
+    if (card.kind === "normal" && card.gtype === "tour") {
+        actionType = "open_tour_game";
+        buttonText = "ПРИЄДНАТИСЬ";
+    }
+
+    const data = {
+        typeTag,
+        prize,
+        title,
+        description: desc,
+        buttonText,
+        actionType,
+        actionPayload: ""    // поки пусто, потім додамо, якщо буде потрібно
+    };
+
+    return createGiveawayCard(data);
+}
+
+
+
+async function renderGiveawayList() {
     const list = document.getElementById("giveaway-list");
-    if (!list) return;
+    if (!list) return; // на game.html просто вийде
 
     list.innerHTML = "";
-    giveaways.forEach(g => list.appendChild(createGiveawayCard(g)));
+
+    let backendCards = [];
+
+    try {
+        const res = await fetch(`${API_BASE}/api/get_giveaways`);
+        if (res.ok) {
+            const data = await res.json();
+            backendCards = data.giveaways || [];
+            console.log("Cards from backend:", backendCards);
+        } else {
+            console.log("get_giveaways response not OK:", res.status);
+        }
+    } catch (e) {
+        console.log("Помилка завантаження /api/get_giveaways:", e);
+    }
+
+    if (backendCards.length > 0) {
+        backendCards.forEach(card => {
+            const el = createCardFromBackend(card);
+            list.appendChild(el);
+        });
+        return;
+    }
+
+    // Якщо активних карток немає — показуємо просте повідомлення
+    const empty = document.createElement("div");
+    empty.style.padding = "80px 16px 0";
+    empty.style.textAlign = "center";
+    empty.style.opacity = "0.8";
+    empty.innerHTML = "Наразі активних розіграшів немає.<br/>Заглянь пізніше 😉";
+
+    list.appendChild(empty);
 }
+
+
 
 // ========================
 //   Логіка гри
