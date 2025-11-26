@@ -228,8 +228,8 @@ body.start-screen .top-bar-home {
 
 .giveaway-meta {
     margin-top: 8px;
-    font-size: 12px;
-    opacity: 0.85;
+    font-size: 11px;
+    opacity: 0.7;              /* менш помітний текст */
 }
 
 .giveaway-meta-line {
@@ -240,13 +240,28 @@ body.start-screen .top-bar-home {
     margin-top: 10px;
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    gap: 8px;
 }
 
-.channel-pill {
-    padding: 6px 8px;
-    border-radius: 10px;
-    background: rgba(255, 255, 255, 0.06);
+/* роздільна полоска між каналами */
+.channel-separator {
+    height: 1px;
+    background: rgba(255, 255, 255, 0.08);
+    margin: 4px 0;
+}
+
+/* рядок каналу: текст + кнопка справа */
+.promo-channel-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+/* блок з назвою/описом */
+.promo-channel-info {
+    flex: 1;
+    min-width: 0; /* щоб текст красиво переносився */
 }
 
 .channel-name {
@@ -260,20 +275,28 @@ body.start-screen .top-bar-home {
     margin-top: 2px;
 }
 
-.giveaway-links {
-    margin-top: 10px;
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-}
-
-.giveaway-link-btn {
-    border: none;
-    padding: 6px 10px;
+/* кнопка "Приєднатись" — менш агресивна, ніж основна */
+.channel-join-btn {
+    white-space: nowrap;
+    padding: 6px 12px;
     border-radius: 999px;
-    font-size: 12px;
+    border: 1px solid rgba(240, 180, 58, 0.8);
+    background: transparent;
+    color: #f0b43a;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
     cursor: pointer;
 }
+
+/* текст "+ ще N каналів" */
+.channels-extra {
+    margin-top: 4px;
+    font-size: 11px;
+    opacity: 0.75;
+}
+
 
 
 
