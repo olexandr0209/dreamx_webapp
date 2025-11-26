@@ -107,16 +107,18 @@ body.start-screen .top-bar-home {
 
 .giveaway-card {
   width: 100%;
-  max-width: 420px;
+  max-width: 100%;                   /* карта тягнеться по ширині контейнера */
   background: radial-gradient(circle at top left, #1c1c2b 0, #090910 60%);
-  border-radius: 24px;
-  padding: 18px 20px 16px;
+  border-radius: 26px;
+  padding: 18px 18px 16px;
   box-shadow: 0 18px 40px rgba(0, 0, 0, 0.7);
   box-sizing: border-box;
-
-  /*scroll-snap-align: start;       прилипає до верху при скролі */
   transition: transform 0.12s ease-out;
 }
+.giveaway-body > * + * {
+  margin-top: 6px;   /* кожен наступний блок трохи відходить вниз */
+}
+
 
 /* Верхній рядок */
 .giveaway-header {
@@ -138,8 +140,22 @@ body.start-screen .top-bar-home {
   width: 40px;
   height: 40px;
   border-radius: 999px;
+  background: radial-gradient(circle at 30% 20%, #555, #222);
+}
+
+/* Кольори аватара по типу картки */
+.giveaway-card--normal .giveaway-avatar {
   background: radial-gradient(circle at 30% 20%, #5b6bff, #3b2bb3);
 }
+
+.giveaway-card--promo .giveaway-avatar {
+  background: radial-gradient(circle at 30% 20%, #c471f5, #5a3fff);
+}
+
+.giveaway-card--announcement .giveaway-avatar {
+  background: radial-gradient(circle at 30% 20%, #35e0c2, #0b8f7a);
+}
+
 
 /* Маленький тег типу розіграшу */
 .giveaway-tag {
@@ -154,7 +170,7 @@ body.start-screen .top-bar-home {
 
 /* Приз (монетка) */
 .giveaway-prize {
-  padding: 10px 20px;  /* було 6px 14px */
+  padding: 7px 16px;                /* було 10px 20px */
   border-radius: 999px;
   background: radial-gradient(circle at 30% 0, #ffeaa0, #f0b33b);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.6);
@@ -162,7 +178,7 @@ body.start-screen .top-bar-home {
 
 .prize-amount {
   font-weight: 700;
-  font-size: 18px;   /* було 14px */
+  font-size: 15px;                  /* було 18px */
   color: #3b2600;
 }
 
@@ -227,21 +243,33 @@ body.start-screen .top-bar-home {
 
 
 .giveaway-meta {
-    margin-top: 8px;
-    font-size: 11px;
-    opacity: 0.7;              /* менш помітний текст */
+    margin-top: 10px;
+    font-size: 12px;
+    line-height: 1.4;
+    opacity: 0.85;
 }
+
 
 .giveaway-meta-line {
     margin-top: 2px;
 }
 
+.promo-main-btn-row {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: flex-start;
+}
+
 .giveaway-channels {
     margin-top: 10px;
+    padding-top: 6px;
     display: flex;
     flex-direction: column;
     gap: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
+
 
 /* роздільна полоска між каналами */
 .channel-separator {
@@ -322,6 +350,7 @@ body.start-screen .top-bar-home {
 .promo-main-btn:active {
     transform: translateY(0.5px);
 }
+
 
 
 
@@ -1011,9 +1040,10 @@ body.tournament-screen .bottom-nav {
 
 @supports (-webkit-touch-callout: none) {
     .giveaway-card {
-        max-width: 92vw;
+        max-width: 100%;
     }
 }
+
 
 
 /* ==========================================
@@ -1126,12 +1156,13 @@ body.tournament-screen .bottom-nav {
 
     /* --- Головний екран: карточка розіграшу --- */
     #giveaway-list {
-        padding: 5px 12px 90px;
+        padding: 5px 12px 96px;
     }
 
     .giveaway-card {
-        padding: 14px 12px 12px;
-        border-radius: 18px;
+        max-width: 100%;
+        padding: 14px 14px 12px;
+        border-radius: 22px;
     }
 
     .giveaway-title {
