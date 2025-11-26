@@ -6,6 +6,7 @@ const choices = document.querySelectorAll(".choice");
 const body = document.querySelector(".game-body");
 const coinValue = document.getElementById("coin-value");
 const flashOverlay = document.getElementById("flash-overlay");
+const loadingOverlay = document.getElementById("loading-overlay");
 
 choices.forEach(c => c.classList.add("disabled"));
 
@@ -492,6 +493,11 @@ async function renderGiveawayList() {
     const list = document.getElementById("giveaway-list");
     if (!list) return; // на game.html просто вийде
 
+    // 🔥 показуємо лоадер
+    if (loadingOverlay) {
+        loadingOverlay.classList.remove("hidden");
+    }
+
     list.innerHTML = "";
 
     let backendCards = [];
@@ -505,26 +511,38 @@ async function renderGiveawayList() {
         } else {
             console.log("get_giveaways response not OK:", res.status);
         }
+
+        if (backendCards.length > 0) {
+            backendCards.forEach(card => {
+                const el = createCardFromBackend(card);
+                list.appendChild(el);
+            });
+        } else {
+            // Якщо активних карток немає — показуємо просте повідомлення
+            const empty = document.createElement("div");
+            empty.style.padding = "80px 16px 0";
+            empty.style.textAlign = "center";
+            empty.style.opacity = "0.8";
+            empty.innerHTML = "Наразі активних розіграшів немає.<br/>Заглянь пізніше 😉";
+            list.appendChild(empty);
+        }
+
     } catch (e) {
         console.log("Помилка завантаження /api/get_giveaways:", e);
+
+        const error = document.createElement("div");
+        error.style.padding = "80px 16px 0";
+        error.style.textAlign = "center";
+        error.style.opacity = "0.8";
+        error.innerHTML = "Сталася помилка при завантаженні.<br/>Спробуй трохи пізніше 🙏";
+        list.appendChild(error);
+
+    } finally {
+        // 🧨 ховаємо лоадер в будь-якому випадку
+        if (loadingOverlay) {
+            loadingOverlay.classList.add("hidden");
+        }
     }
-
-    if (backendCards.length > 0) {
-        backendCards.forEach(card => {
-            const el = createCardFromBackend(card);
-            list.appendChild(el);
-        });
-        return;
-    }
-
-    // Якщо активних карток немає — показуємо просте повідомлення
-    const empty = document.createElement("div");
-    empty.style.padding = "80px 16px 0";
-    empty.style.textAlign = "center";
-    empty.style.opacity = "0.8";
-    empty.innerHTML = "Наразі активних розіграшів немає.<br/>Заглянь пізніше 😉";
-
-    list.appendChild(empty);
 }
 
 
