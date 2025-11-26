@@ -174,6 +174,7 @@ function createGiveawayCard(data) {
     if (data.kindClass) {
         card.classList.add(data.kindClass);
     }
+
     const metaHtml = (data.metaLines && data.metaLines.length)
         ? `
         <div class="giveaway-meta">
@@ -224,25 +225,48 @@ function createGiveawayCard(data) {
         `
         : "";
 
+    // 🔗 блок посилань для оголошень
     const linksHtml = (data.links && data.links.length)
         ? `
         <div class="giveaway-links">
             ${data.links
                 .map((l, idx) => `
-                    <button 
-                        class="giveaway-link-btn" 
-                        data-url="${l.url}"
-                    >
-                        ${l.title || `Посилання ${idx + 1}`}
-                    </button>
+                    <div class="giveaway-link-row">
+                        <div class="giveaway-link-main">
+                            <div class="giveaway-link-title">
+                                ${l.title || `Посилання ${idx + 1}`}
+                            </div>
+                            ${
+                                l.description
+                                    ? `<div class="giveaway-link-desc">${l.description}</div>`
+                                    : ""
+                            }
+                            <div class="giveaway-link-url">${l.url}</div>
+                        </div>
+                        <button 
+                            class="giveaway-link-btn" 
+                            data-url="${l.url}"
+                        >
+                            ВІДКРИТИ
+                        </button>
+                    </div>
                 `)
                 .join("")}
         </div>
         `
         : "";
 
-    // футер рендеримо тільки якщо НЕ promo з внутрішньою кнопкою
-    const footerHtml = data.isPromoWithBodyBtn
+    // 🎁 приз показуємо не завжди (у announcement його не буде)
+    const prizeHtml = (data.showPrize === false)
+        ? ""
+        : `
+        <div class="giveaway-prize">
+            <span class="prize-amount">${data.prize || ""}</span>
+        </div>
+        `;
+
+    // футер не рендеримо, якщо promo з внутрішньою кнопкою АБО announcement
+    const footerHtml = (data.isPromoWithBodyBtn || data.hideFooterBtn)
         ? ""
         : `
         <div class="giveaway-footer">
@@ -256,9 +280,7 @@ function createGiveawayCard(data) {
                 <div class="giveaway-avatar"></div>
                 <span class="giveaway-tag">${data.typeTag}</span>
             </div>
-            <div class="giveaway-prize">
-                <span class="prize-amount">${data.prize || ""}</span>
-            </div>
+            ${prizeHtml}
         </div>
 
         <div class="giveaway-body">
@@ -276,7 +298,7 @@ function createGiveawayCard(data) {
         ${footerHtml}
     `;
 
-    // основна кнопка (звичайні / announcement картки)
+    // основна кнопка (звичайні / promo без body-btn)
     const btn = card.querySelector(".giveaway-btn");
     if (btn) {
         btn.onclick = async () => {
@@ -305,11 +327,11 @@ function createGiveawayCard(data) {
         promoMainBtn.onclick = async () => {
             console.log("Promo main btn clicked:", data);
             await ensureUserInDB();
-            // тут поки нічого не відкриваємо — участь через гру
+            // участь через гру / бот
         };
     }
 
-    // кнопки-посилання (announcement)
+    // кнопки "ВІДКРИТИ" для посилань (announcement)
     if (data.links && data.links.length) {
         const linkBtns = card.querySelectorAll(".giveaway-link-btn");
         linkBtns.forEach(b => {
@@ -339,6 +361,7 @@ function createGiveawayCard(data) {
 }
 
 
+
 function createCardFromBackend(card) {
     let typeTag = "РОЗІГРАШ";
     let title = card.title || "";
@@ -351,12 +374,14 @@ function createCardFromBackend(card) {
     let channels = null;
     let channelsExtraCount = 0;
     let links = null;
-    let kindClass = ""; 
+    let kindClass = "";
+    let hideFooterBtn = false;
+    let showPrize = true;
 
     const endText = card.end_at_human || card.end_at || null;
     const startText = card.start_at_human || card.start_at || null;
     const endShort = endText ? formatShortDateTime(endText) : null;
-    // const startShort = startText ? formatShortDateTime(startText) : null; // раптом знадобиться
+    const startShort = startText ? formatShortDateTime(startText) : null;
 
     if (card.kind === "normal") {
         // Звичайний розіграш
@@ -364,7 +389,7 @@ function createCardFromBackend(card) {
         prize = formatPrize(card.prize, card.prize_count);
         kindClass = "giveaway-card--normal";
 
-        // 🔥 Замість "Період" показуємо тільки час оголошення результату
+        // Тільки час оголошення результату
         if (endShort) {
             metaLines.push(`Оголошення результату: ${endShort}`);
         }
@@ -386,12 +411,10 @@ function createCardFromBackend(card) {
         prize = formatPrize(card.prize, card.prize_count);
         kindClass = "giveaway-card--promo";
 
-        // 🔥 Під описом: "Закінчення: дата • час"
         if (endShort) {
             metaLines.push(`Закінчення: ${endShort}`);
         }
 
-        // показуємо до 3 каналів, решта — "+ ще N каналів"
         if (card.channels && card.channels.length) {
             const maxToShow = 3;
             const all = card.channels;
@@ -399,37 +422,41 @@ function createCardFromBackend(card) {
             channels = all.slice(0, maxToShow).map(ch => ({
                 name: ch.name,
                 description: ch.description || "",
-                url: ch.url || ch.link || ""   // очікуємо, що бекенд сюди дасть посилання
+                url: ch.url || ch.link || ""
             }));
 
             channelsExtraCount = Math.max(all.length - maxToShow, 0);
         }
 
         buttonText = "ВЗЯТИ УЧАСТЬ";
-        // участь відбувається через гру / бот, тому actionType="none"
+        // participation через гру
 
     } else if (card.kind === "announcement") {
         // Оголошення
         typeTag = "ОГОЛОШЕННЯ";
         prize = "";
         kindClass = "giveaway-card--announcement";
+        hideFooterBtn = true;   // ❌ немає нижньої кнопки
+        showPrize = false;      // ❌ немає жовтої "суми" справа
 
         if (card.extra_info) {
             metaLines.push(card.extra_info);
         }
-        if (startText && endText) {
-            metaLines.push(`Показ: ${startText} → ${endText}`);
+
+        // показуємо дату ПУБЛІКАЦІЇ
+        if (startShort) {
+            metaLines.push(`Опубліковано: ${startShort}`);
         }
 
         if (card.links && card.links.length) {
             links = card.links.map(l => ({
                 title: l.title || "Посилання",
-                url: l.url
+                url: l.url,
+                description: l.description || ""
             }));
-            buttonText = "ДІЗНАТИСЬ БІЛЬШЕ";
-        } else {
-            buttonText = "OK";
         }
+
+        buttonText = ""; // все одно не використовується (footer схований)
 
     } else {
         // fallback
@@ -452,8 +479,9 @@ function createCardFromBackend(card) {
         links,
         isPromoWithBodyBtn: (card.kind === "promo"),
         kindClass,
+        hideFooterBtn,
+        showPrize,
     };
-
 
     return createGiveawayCard(data);
 }
