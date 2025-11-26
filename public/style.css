@@ -252,8 +252,9 @@ body.start-screen .top-bar-home {
 
 .giveaway-meta-line {
     margin-top: 2px;
-    font-weight: 550;
+    font-weight: 600;  /* було 550, можна так лишити або поставити 600 */
 }
+
 
 .promo-main-btn-row {
     margin-top: 10px;
@@ -350,6 +351,58 @@ body.start-screen .top-bar-home {
 
 .promo-main-btn:active {
     transform: translateY(0.5px);
+}
+.giveaway-links {
+    margin-top: 10px;
+    padding-top: 6px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.giveaway-link-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.giveaway-link-main {
+    flex: 1;
+    min-width: 0;
+}
+
+.giveaway-link-title {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.giveaway-link-desc {
+    font-size: 12px;
+    opacity: 0.85;
+    margin-top: 2px;
+}
+
+.giveaway-link-url {
+    font-size: 11px;
+    opacity: 0.65;
+    margin-top: 2px;
+    word-break: break-all;
+}
+
+.giveaway-link-btn {
+    white-space: nowrap;
+    padding: 6px 12px;
+    border-radius: 999px;
+    border: 1px solid rgba(240, 180, 58, 0.8);
+    background: transparent;
+    color: #f0b43a;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    cursor: pointer;
 }
 
 
