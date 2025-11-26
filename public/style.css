@@ -226,6 +226,56 @@ body.start-screen .top-bar-home {
 }
 
 
+.giveaway-meta {
+    margin-top: 8px;
+    font-size: 12px;
+    opacity: 0.85;
+}
+
+.giveaway-meta-line {
+    margin-top: 2px;
+}
+
+.giveaway-channels {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.channel-pill {
+    padding: 6px 8px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.channel-name {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.channel-desc {
+    font-size: 12px;
+    opacity: 0.85;
+    margin-top: 2px;
+}
+
+.giveaway-links {
+    margin-top: 10px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.giveaway-link-btn {
+    border: none;
+    padding: 6px 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+
 
 /* =========================
    START SCREEN
