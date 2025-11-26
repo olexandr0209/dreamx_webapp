@@ -172,7 +172,6 @@ function createGiveawayCard(data) {
     const card = document.createElement("div");
     card.className = "giveaway-card";
 
-    // meta (оголошення результату / закінчення / extra_info)
     const metaHtml = (data.metaLines && data.metaLines.length)
         ? `
         <div class="giveaway-meta">
@@ -183,7 +182,15 @@ function createGiveawayCard(data) {
         `
         : "";
 
-    // список каналів (для promo)
+    // 🔥 кнопка всередині body тільки для promo
+    const bodyPromoBtnHtml = data.isPromoWithBodyBtn
+        ? `
+        <div class="promo-main-btn-row">
+            <button class="promo-main-btn">${data.buttonText || "ВЗЯТИ УЧАСТЬ"}</button>
+        </div>
+        `
+        : "";
+
     const channelsHtml = (data.channels && data.channels.length)
         ? `
         <div class="giveaway-channels">
@@ -215,7 +222,6 @@ function createGiveawayCard(data) {
         `
         : "";
 
-    // кнопки-посилання (для оголошень)
     const linksHtml = (data.links && data.links.length)
         ? `
         <div class="giveaway-links">
@@ -232,6 +238,15 @@ function createGiveawayCard(data) {
         </div>
         `
         : "";
+
+    // футер рендеримо тільки якщо НЕ promo з внутрішньою кнопкою
+    const footerHtml = data.isPromoWithBodyBtn
+        ? ""
+        : `
+        <div class="giveaway-footer">
+            <button class="giveaway-btn">${data.buttonText || "OK"}</button>
+        </div>
+        `;
 
     card.innerHTML = `
         <div class="giveaway-header">
@@ -251,42 +266,48 @@ function createGiveawayCard(data) {
                 : ""
             }
             ${metaHtml}
+            ${bodyPromoBtnHtml}
             ${channelsHtml}
             ${linksHtml}
         </div>
 
-        <div class="giveaway-footer">
-            <button class="giveaway-btn">${data.buttonText || "OK"}</button>
-        </div>
+        ${footerHtml}
     `;
 
+    // основна кнопка (звичайні / announcement картки)
     const btn = card.querySelector(".giveaway-btn");
+    if (btn) {
+        btn.onclick = async () => {
+            console.log("Clicked:", data);
 
-    btn.onclick = async () => {
-        console.log("Clicked:", data);
+            await ensureUserInDB();
 
-        await ensureUserInDB();
+            if (data.actionType === "open_channel") {
+                window.open(data.actionPayload, "_blank");
+            }
+            if (data.actionType === "open_link") {
+                window.open(data.actionPayload, "_blank");
+            }
+            if (data.actionType === "open_tournament") {
+                console.log("Open tournament:", data.actionPayload);
+            }
+            if (data.actionType === "open_tour_game") {
+                window.location.href = "game.html?mode=tour";
+            }
+        };
+    }
 
-        if (data.actionType === "open_channel") {
-            window.open(data.actionPayload, "_blank");
-        }
+    // кнопка в тілі promo
+    const promoMainBtn = card.querySelector(".promo-main-btn");
+    if (promoMainBtn) {
+        promoMainBtn.onclick = async () => {
+            console.log("Promo main btn clicked:", data);
+            await ensureUserInDB();
+            // тут поки нічого не відкриваємо — участь через гру
+        };
+    }
 
-        if (data.actionType === "open_link") {
-            window.open(data.actionPayload, "_blank");
-        }
-
-        if (data.actionType === "open_tournament") {
-            console.log("Open tournament:", data.actionPayload);
-        }
-
-        if (data.actionType === "open_tour_game") {
-            window.location.href = "game.html?mode=tour";
-        }
-
-        // "none" – нічого не робимо
-    };
-
-    // кліки по кнопкам-посиланням (для оголошень)
+    // кнопки-посилання (announcement)
     if (data.links && data.links.length) {
         const linkBtns = card.querySelectorAll(".giveaway-link-btn");
         linkBtns.forEach(b => {
@@ -299,7 +320,7 @@ function createGiveawayCard(data) {
         });
     }
 
-    // кліки по кнопкам "ПРИЄДНАТИСЬ" (канали promo)
+    // кнопки "ПРИЄДНАТИСЬ" біля каналів
     if (data.channels && data.channels.length) {
         const joinBtns = card.querySelectorAll(".channel-join-btn");
         joinBtns.forEach(b => {
@@ -423,7 +444,9 @@ function createCardFromBackend(card) {
         channels,
         channelsExtraCount,
         links,
+        isPromoWithBodyBtn: (card.kind === "promo"),
     };
+
 
     return createGiveawayCard(data);
 }
