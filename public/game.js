@@ -171,7 +171,9 @@ function formatShortDateTime(raw) {
 function createGiveawayCard(data) {
     const card = document.createElement("div");
     card.className = "giveaway-card";
-
+    if (data.kindClass) {
+        card.classList.add(data.kindClass);
+    }
     const metaHtml = (data.metaLines && data.metaLines.length)
         ? `
         <div class="giveaway-meta">
@@ -349,6 +351,7 @@ function createCardFromBackend(card) {
     let channels = null;
     let channelsExtraCount = 0;
     let links = null;
+    let kindClass = ""; 
 
     const endText = card.end_at_human || card.end_at || null;
     const startText = card.start_at_human || card.start_at || null;
@@ -359,6 +362,7 @@ function createCardFromBackend(card) {
         // Звичайний розіграш
         typeTag = "РОЗІГРАШ";
         prize = formatPrize(card.prize, card.prize_count);
+        kindClass = "giveaway-card--normal";
 
         // 🔥 Замість "Період" показуємо тільки час оголошення результату
         if (endShort) {
@@ -380,6 +384,7 @@ function createCardFromBackend(card) {
         // Рекламний розіграш каналів
         typeTag = "ПРОМО";
         prize = formatPrize(card.prize, card.prize_count);
+        kindClass = "giveaway-card--promo";
 
         // 🔥 Під описом: "Закінчення: дата • час"
         if (endShort) {
@@ -407,6 +412,7 @@ function createCardFromBackend(card) {
         // Оголошення
         typeTag = "ОГОЛОШЕННЯ";
         prize = "";
+        kindClass = "giveaway-card--announcement";
 
         if (card.extra_info) {
             metaLines.push(card.extra_info);
@@ -445,6 +451,7 @@ function createCardFromBackend(card) {
         channelsExtraCount,
         links,
         isPromoWithBodyBtn: (card.kind === "promo"),
+        kindClass,
     };
 
 
