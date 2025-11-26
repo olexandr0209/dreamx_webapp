@@ -523,6 +523,46 @@ body.start-screen .bottom-nav {
     transform: scale(1.05);
 }
 
+.loading-overlay {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at top, rgba(0,0,0,0.85), rgba(0,0,0,0.96));
+    z-index: 50;  /* поверх карток і нижніх кнопок */
+}
+
+.loading-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+
+.loading-spinner {
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    border: 3px solid rgba(240, 180, 58, 0.25);
+    border-top-color: #f0b43a;
+    border-right-color: #f0b43a;
+    animation: loading-spin 0.8s linear infinite;
+}
+
+.loading-text {
+    font-size: 18px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #f0b43a;
+}
+
+/* анімація */
+@keyframes loading-spin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
 
 
 /* =========================
