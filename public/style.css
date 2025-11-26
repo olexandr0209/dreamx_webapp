@@ -298,6 +298,31 @@ body.start-screen .top-bar-home {
 }
 
 
+.promo-main-btn-row {
+    margin-top: 8px;
+    margin-bottom: 6px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+.promo-main-btn {
+    padding: 7px 20px;
+    border-radius: 999px;
+    border: 1px solid #f9b938;
+    background: transparent;
+    color: #f9b938;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s ease-out;
+}
+
+.promo-main-btn:active {
+    transform: translateY(0.5px);
+}
+
 
 
 /* =========================
