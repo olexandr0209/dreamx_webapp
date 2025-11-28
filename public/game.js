@@ -154,6 +154,26 @@ if (joinOkBtn) {
         hideJoinSuccessOverlay();
     });
 }
+// Глобальний сет розіграшів, де юзер вже бере участь
+let joinedGiveawayIds = new Set();
+
+async function loadJoinedGiveaways(userId) {
+    try {
+        const resp = await fetch(`${API_BASE}/api/get_joined_giveaways?user_id=${encodeURIComponent(userId)}`);
+        if (!resp.ok) {
+            console.warn("get_joined_giveaways bad status", resp.status);
+            return;
+        }
+        const data = await resp.json();
+        if (Array.isArray(data.joined_giveaway_ids)) {
+            joinedGiveawayIds = new Set(
+                data.joined_giveaway_ids.map(id => Number(id))
+            );
+        }
+    } catch (e) {
+        console.error("loadJoinedGiveaways error", e);
+    }
+}
 
 
 
@@ -319,20 +339,39 @@ function createGiveawayCard(data) {
         ${footerHtml}
     `;
 
-    // основна кнопка (звичайні / promo без body-btn)
+    // ====== FOOTER-логіка (кнопка / зелений лейбл) ======
     const btn = card.querySelector(".giveaway-btn");
-    if (btn) {
+    const isJoined = !!data.isJoined;
+
+    // Якщо юзер вже в розіграші — замінюємо кнопку на зелений лейбл
+    if (btn && isJoined && (data.actionType === "join_normal_giveaway" || data.actionType === "already_joined")) {
+        const footer = btn.parentElement;
+        if (footer) {
+            footer.innerHTML = `<div class="giveaway-joined-label">✅ Ви приєднались!</div>`;
+        }
+    } else if (btn) {
+        // стандартна поведінка кнопки
         btn.onclick = async () => {
             console.log("Clicked:", data);
-    
+
             await ensureUserInDB();
-    
+
             if (data.actionType === "join_normal_giveaway") {
                 // приєднання до звичайного розіграшу
-                await joinGiveawayOnServer(data.actionPayload);
+                const ok = await joinGiveawayOnServer(data.actionPayload);
+                if (ok) {
+                    // додаємо в локальний список
+                    joinedGiveawayIds.add(Number(data.actionPayload));
+
+                    // міняємо кнопку на лейбл
+                    const footer = btn.parentElement;
+                    if (footer) {
+                        footer.innerHTML = `<div class="giveaway-joined-label">✅ Ви приєднались!</div>`;
+                    }
+                }
                 return;
             }
-    
+
             if (data.actionType === "open_channel") {
                 window.open(data.actionPayload, "_blank");
                 return;
@@ -351,7 +390,6 @@ function createGiveawayCard(data) {
             }
         };
     }
-
 
     // кнопка в тілі promo
     const promoMainBtn = card.querySelector(".promo-main-btn");
@@ -393,7 +431,6 @@ function createGiveawayCard(data) {
 }
 
 
-
 function createCardFromBackend(card) {
     let typeTag = "РОЗІГРАШ";
     let title = card.title || "";
@@ -409,6 +446,7 @@ function createCardFromBackend(card) {
     let kindClass = "";
     let hideFooterBtn = false;
     let showPrize = true;
+    let isJoined = false; // 🔥 нове
 
     const endText = card.end_at_human || card.end_at || null;
     const startText = card.start_at_human || card.start_at || null;
@@ -421,6 +459,10 @@ function createCardFromBackend(card) {
         prize = formatPrize(card.prize, card.prize_count);
         kindClass = "giveaway-card--normal";
 
+        // Чи вже приєднався
+        const idNum = Number(card.id);
+        isJoined = joinedGiveawayIds.has(idNum);
+
         // Тільки час оголошення результату
         if (endShort) {
             metaLines.push(`Оголошення результату: ${endShort}`);
@@ -431,10 +473,15 @@ function createCardFromBackend(card) {
             actionType = "open_tour_game";
             buttonText = "ПРИЄДНАТИСЬ";
         } else {
-            // звичайний розіграш – приєднання по кнопці
-            actionType = "join_normal_giveaway";
-            actionPayload = card.id; // id розіграшу з БД
-            buttonText = "ПРИЄДНАТИСЬ";
+            // звичайний розіграш
+            if (isJoined) {
+                actionType = "already_joined";
+                buttonText = "ВИ ПРИЄДНАЛИСЬ!";
+            } else {
+                actionType = "join_normal_giveaway";
+                actionPayload = idNum; // id розіграшу з БД
+                buttonText = "ПРИЄДНАТИСЬ";
+            }
         }
 
         if (card.extra_info) {
@@ -517,6 +564,7 @@ function createCardFromBackend(card) {
         kindClass,
         hideFooterBtn,
         showPrize,
+        isJoined, // 🔥 передаємо всередину
     };
 
     return createGiveawayCard(data);
@@ -954,7 +1002,7 @@ async function joinGiveawayOnServer(giveawayId) {
 
     if (!userId) {
         console.log("joinGiveawayOnServer: немає user_id");
-        return;
+        return false;
     }
 
     try {
@@ -970,7 +1018,7 @@ async function joinGiveawayOnServer(giveawayId) {
 
         if (!res.ok) {
             console.log("join_giveaway error status:", res.status);
-            return;
+            return false;
         }
 
         const data = await res.json();
@@ -978,9 +1026,11 @@ async function joinGiveawayOnServer(giveawayId) {
 
         // успіх — показуємо оверлей
         showJoinSuccessOverlay();
+        return true;
 
     } catch (e) {
         console.log("Помилка joinGiveawayOnServer:", e);
+        return false;
     }
 }
 
@@ -996,9 +1046,21 @@ async function exitGame() {
 //   Ініціалізація
 // ========================
 
-document.addEventListener("DOMContentLoaded", () => {
-    renderGiveawayList(); // на game.html просто нічого не знайде і вийде
+document.addEventListener("DOMContentLoaded", async () => {
+    const tg = window.Telegram && window.Telegram.WebApp;
+    const userId = window.DreamX && window.DreamX.getUserId
+        ? window.DreamX.getUserId()
+        : tg && tg.initDataUnsafe && tg.initDataUnsafe.user
+            ? tg.initDataUnsafe.user.id
+            : null;
+
+    if (userId) {
+        await loadJoinedGiveaways(userId);
+    }
+
+    await renderGiveawayList(); // на game.html просто нічого не знайде і вийде
 });
+
 
 resetState();   // стартовий стан
 
