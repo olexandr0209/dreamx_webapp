@@ -405,6 +405,14 @@ body.start-screen .top-bar-home {
     cursor: pointer;
 }
 
+.giveaway-joined-label {
+    font-weight: 600;
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: #0f9d58; /* приємний зелений */
+}
 
 
 
