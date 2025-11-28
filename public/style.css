@@ -414,6 +414,21 @@ body.start-screen .top-bar-home {
     color: #0f9d58; /* приємний зелений */
 }
 
+.joined-label {
+    background: #e6ffe6;
+    color: #1a7f1a;
+    border: 1px solid #70d470;
+    border-radius: 12px;
+    padding: 8px 12px;
+    font-weight: 600;
+    text-align: center;
+    font-size: 15px;
+    margin-top: 8px;
+}
+
+.joined-icon {
+    margin-right: 6px;
+}
 
 
 /* =========================
