@@ -7,6 +7,8 @@ const body = document.querySelector(".game-body");
 const coinValue = document.getElementById("coin-value");
 const flashOverlay = document.getElementById("flash-overlay");
 const loadingOverlay = document.getElementById("loading-overlay");
+const joinOverlay = document.getElementById("join-overlay");
+const joinOkBtn = document.getElementById("join-ok-btn");
 
 choices.forEach(c => c.classList.add("disabled"));
 
@@ -134,6 +136,24 @@ async function loadTourPoints() {
     }
 }
 
+function showJoinSuccessOverlay() {
+    if (joinOverlay) {
+        joinOverlay.classList.remove("hidden");
+    }
+}
+
+function hideJoinSuccessOverlay() {
+    if (joinOverlay) {
+        joinOverlay.classList.add("hidden");
+    }
+}
+
+// закриваємо оверлей по кнопці "Гаразд"
+if (joinOkBtn) {
+    joinOkBtn.addEventListener("click", () => {
+        hideJoinSuccessOverlay();
+    });
+}
 
 
 
@@ -304,23 +324,34 @@ function createGiveawayCard(data) {
     if (btn) {
         btn.onclick = async () => {
             console.log("Clicked:", data);
-
+    
             await ensureUserInDB();
-
+    
+            if (data.actionType === "join_normal_giveaway") {
+                // приєднання до звичайного розіграшу
+                await joinGiveawayOnServer(data.actionPayload);
+                return;
+            }
+    
             if (data.actionType === "open_channel") {
                 window.open(data.actionPayload, "_blank");
+                return;
             }
             if (data.actionType === "open_link") {
                 window.open(data.actionPayload, "_blank");
+                return;
             }
             if (data.actionType === "open_tournament") {
                 console.log("Open tournament:", data.actionPayload);
+                return;
             }
             if (data.actionType === "open_tour_game") {
                 window.location.href = "game.html?mode=tour";
+                return;
             }
         };
     }
+
 
     // кнопка в тілі promo
     const promoMainBtn = card.querySelector(".promo-main-btn");
@@ -396,10 +427,14 @@ function createCardFromBackend(card) {
         }
 
         if (card.gtype === "tour") {
+            // турнірний розіграш – відкриваємо тур-режим гри
             actionType = "open_tour_game";
             buttonText = "ПРИЄДНАТИСЬ";
         } else {
-            buttonText = "ДЕТАЛІ РОЗІГРАШУ";
+            // звичайний розіграш – приєднання по кнопці
+            actionType = "join_normal_giveaway";
+            actionPayload = card.id; // id розіграшу з БД
+            buttonText = "ПРИЄДНАТИСЬ";
         }
 
         if (card.extra_info) {
@@ -901,6 +936,54 @@ async function saveTourPointsToServer() {
         isSavingTour = false;
     }
 }
+
+async function joinGiveawayOnServer(giveawayId) {
+    const tg = window.Telegram && window.Telegram.WebApp;
+
+    const userId = window.DreamX && window.DreamX.getUserId
+        ? window.DreamX.getUserId()
+        : tg && tg.initDataUnsafe && tg.initDataUnsafe.user
+            ? tg.initDataUnsafe.user.id
+            : null;
+
+    const username =
+        (window.DreamX && window.DreamX.getUsername && window.DreamX.getUsername()) ||
+        (tg && tg.initDataUnsafe && tg.initDataUnsafe.user
+            ? tg.initDataUnsafe.user.username
+            : null);
+
+    if (!userId) {
+        console.log("joinGiveawayOnServer: немає user_id");
+        return;
+    }
+
+    try {
+        const res = await fetch(`${API_BASE}/api/join_giveaway`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                giveaway_id: giveawayId,
+                user_id: userId,
+                username: username
+            })
+        });
+
+        if (!res.ok) {
+            console.log("join_giveaway error status:", res.status);
+            return;
+        }
+
+        const data = await res.json();
+        console.log("join_giveaway response:", data);
+
+        // успіх — показуємо оверлей
+        showJoinSuccessOverlay();
+
+    } catch (e) {
+        console.log("Помилка joinGiveawayOnServer:", e);
+    }
+}
+
 
 // Викликається з HTML-кнопки Back
 async function exitGame() {
