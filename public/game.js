@@ -154,26 +154,57 @@ if (joinOkBtn) {
         hideJoinSuccessOverlay();
     });
 }
-// Глобальний сет розіграшів, де юзер вже бере участь
-let joinedGiveawayIds = new Set();
+// Глобальні сети розіграшів, де юзер вже бере участь
+// normal — звичайні розіграші
+// promo  — промо-розіграші каналів
+let joinedGiveawayIds = new Set();   // normal
+let joinedPromoIds = new Set();      // promo
 
 async function loadJoinedGiveaways(userId) {
     try {
-        const resp = await fetch(`${API_BASE}/api/get_joined_giveaways?user_id=${encodeURIComponent(userId)}`);
+        const resp = await fetch(
+            `${API_BASE}/api/get_joined_giveaways?user_id=${encodeURIComponent(userId)}`
+        );
         if (!resp.ok) {
             console.warn("get_joined_giveaways bad status", resp.status);
             return;
         }
+
         const data = await resp.json();
-        if (Array.isArray(data.joined_giveaway_ids)) {
+        console.log("joined giveaways raw:", data);
+
+        // скидаємо
+        joinedGiveawayIds = new Set();
+        joinedPromoIds = new Set();
+
+        // 🔥 новий формат: data.joined = [{giveaway_id, kind}, ...]
+        if (Array.isArray(data.joined)) {
+            data.joined.forEach(row => {
+                const gid = Number(row.giveaway_id);
+                if (!gid) return;
+
+                if (row.kind === "promo") {
+                    joinedPromoIds.add(gid);
+                } else if (row.kind === "normal") {
+                    joinedGiveawayIds.add(gid);
+                }
+            });
+        }
+        // fallback на старий формат (якщо колись знадобиться)
+        else if (Array.isArray(data.joined_giveaway_ids)) {
             joinedGiveawayIds = new Set(
                 data.joined_giveaway_ids.map(id => Number(id))
             );
         }
+
+        console.log("joined normal:", Array.from(joinedGiveawayIds));
+        console.log("joined promo:", Array.from(joinedPromoIds));
+
     } catch (e) {
         console.error("loadJoinedGiveaways error", e);
     }
 }
+
 
 
 
@@ -226,7 +257,7 @@ function createGiveawayCard(data) {
         `
         : "";
 
-    // 🔥 кнопка всередині body тільки для promo (якщо ще не приєднався)
+    // 🔥 кнопка всередині body тільки для promo
     const bodyPromoBtnHtml = data.isPromoWithBodyBtn
         ? `
         <div class="promo-main-btn-row">
@@ -343,7 +374,7 @@ function createGiveawayCard(data) {
 
     const isJoined = !!data.isJoined;
 
-    // ====== FOOTER-логіка (кнопка / зелений лейбл) ======
+    // ====== FOOTER-логіка (звичайні розіграші) ======
     const btn = card.querySelector(".giveaway-btn");
 
     if (btn && isJoined && (data.actionType === "join_normal_giveaway" || data.actionType === "already_joined")) {
@@ -352,14 +383,14 @@ function createGiveawayCard(data) {
             footer.innerHTML = `<div class="giveaway-joined-label">✅ Ви приєднались!</div>`;
         }
     } else if (btn) {
-        // стандартна поведінка кнопки (normal і promo)
+        // стандартна поведінка кнопки (normal)
         btn.onclick = async () => {
             console.log("Clicked:", data);
 
             await ensureUserInDB();
 
             if (data.actionType === "join_normal_giveaway") {
-                const ok = await joinGiveawayOnServer(data.actionPayload);
+                const ok = await joinGiveawayOnServer(data.actionPayload, "normal");
                 if (ok) {
                     joinedGiveawayIds.add(Number(data.actionPayload));
                     const footer = btn.parentElement;
@@ -389,25 +420,32 @@ function createGiveawayCard(data) {
         };
     }
 
-    // кнопка в тілі promo
+    // ====== Кнопка всередині PROMO-картки ======
     const promoMainBtn = card.querySelector(".promo-main-btn");
     if (promoMainBtn) {
-        promoMainBtn.onclick = async () => {
-            console.log("Promo main btn clicked:", data);
-            await ensureUserInDB();
+        if (isJoined && data.actionType === "join_promo_giveaway") {
+            // вже приєднався — показуємо зелений лейбл замість кнопки
+            const row = promoMainBtn.parentElement;
+            if (row) {
+                row.innerHTML = `<div class="giveaway-joined-label">✅ Ви приєднались!</div>`;
+            }
+        } else {
+            promoMainBtn.onclick = async () => {
+                console.log("Promo main btn clicked:", data);
+                await ensureUserInDB();
 
-            if (data.actionType === "join_normal_giveaway") {
-                const ok = await joinGiveawayOnServer(data.actionPayload);
-                if (ok) {
-                    joinedGiveawayIds.add(Number(data.actionPayload));
-                    // міняємо body-кнопку на зелений лейбл
-                    const row = promoMainBtn.parentElement;
-                    if (row) {
-                        row.innerHTML = `<div class="giveaway-joined-label">✅ Ви приєднались!</div>`;
+                if (data.actionType === "join_promo_giveaway") {
+                    const ok = await joinGiveawayOnServer(data.actionPayload, "promo");
+                    if (ok) {
+                        joinedPromoIds.add(Number(data.actionPayload));
+                        const row = promoMainBtn.parentElement;
+                        if (row) {
+                            row.innerHTML = `<div class="giveaway-joined-label">✅ Ви приєднались!</div>`;
+                        }
                     }
                 }
-            }
-        };
+            };
+        }
     }
 
     // кнопки "ВІДКРИТИ" для посилань (announcement)
@@ -455,7 +493,7 @@ function createCardFromBackend(card) {
     let kindClass = "";
     let hideFooterBtn = false;
     let showPrize = true;
-    let isJoined = false; // 🔥
+    let isJoined = false; // 🔥 нове
 
     const endText = card.end_at_human || card.end_at || null;
     const startText = card.start_at_human || card.start_at || null;
@@ -471,20 +509,23 @@ function createCardFromBackend(card) {
         const idNum = Number(card.id);
         isJoined = joinedGiveawayIds.has(idNum);
 
+        // Тільки час оголошення результату
         if (endShort) {
             metaLines.push(`Оголошення результату: ${endShort}`);
         }
 
         if (card.gtype === "tour") {
+            // турнірний розіграш – відкриваємо тур-режим гри
             actionType = "open_tour_game";
             buttonText = "ПРИЄДНАТИСЬ";
         } else {
+            // звичайний розіграш
             if (isJoined) {
                 actionType = "already_joined";
                 buttonText = "ВИ ПРИЄДНАЛИСЬ!";
             } else {
                 actionType = "join_normal_giveaway";
-                actionPayload = idNum;
+                actionPayload = idNum; // id розіграшу з БД
                 buttonText = "ПРИЄДНАТИСЬ";
             }
         }
@@ -500,7 +541,7 @@ function createCardFromBackend(card) {
         kindClass = "giveaway-card--promo";
 
         const idNum = Number(card.id);
-        isJoined = joinedGiveawayIds.has(idNum);
+        isJoined = joinedPromoIds.has(idNum);
 
         if (endShort) {
             metaLines.push(`Закінчення: ${endShort}`);
@@ -519,27 +560,24 @@ function createCardFromBackend(card) {
             channelsExtraCount = Math.max(all.length - maxToShow, 0);
         }
 
-        if (isJoined) {
-            actionType = "already_joined";
-            buttonText = "ВИ ПРИЄДНАЛИСЬ!";
-        } else {
-            actionType = "join_normal_giveaway";   // ту ж API використовуємо
-            actionPayload = idNum;
-            buttonText = "ВЗЯТИ УЧАСТЬ";
-        }
+        // 🔥 участь через кнопку всередині body
+        actionType = "join_promo_giveaway";
+        actionPayload = idNum;
+        buttonText = isJoined ? "ВИ ПРИЄДНАЛИСЬ!" : "ВЗЯТИ УЧАСТЬ";
 
     } else if (card.kind === "announcement") {
         // Оголошення
         typeTag = "ОГОЛОШЕННЯ";
         prize = "";
         kindClass = "giveaway-card--announcement";
-        hideFooterBtn = true;
-        showPrize = false;
+        hideFooterBtn = true;   // ❌ немає нижньої кнопки
+        showPrize = false;      // ❌ немає жовтої "суми" справа
 
         if (card.extra_info) {
             metaLines.push(card.extra_info);
         }
 
+        // показуємо дату ПУБЛІКАЦІЇ
         if (startShort) {
             metaLines.push(`Опубліковано: ${startShort}`);
         }
@@ -552,9 +590,10 @@ function createCardFromBackend(card) {
             }));
         }
 
-        buttonText = "";
+        buttonText = ""; // все одно не використовується (footer схований)
 
     } else {
+        // fallback
         typeTag = card.kind ? card.kind.toUpperCase() : "INFO";
         prize = card.prize || "";
         buttonText = "OK";
@@ -572,7 +611,7 @@ function createCardFromBackend(card) {
         channels,
         channelsExtraCount,
         links,
-        isPromoWithBodyBtn: (card.kind === "promo" && !isJoined), // 🔥 body-кнопка тільки якщо ще не приєднався
+        isPromoWithBodyBtn: (card.kind === "promo"),
         kindClass,
         hideFooterBtn,
         showPrize,
@@ -997,7 +1036,7 @@ async function saveTourPointsToServer() {
     }
 }
 
-async function joinGiveawayOnServer(giveawayId) {
+async function joinGiveawayOnServer(giveawayId, kind = "normal") {
     const tg = window.Telegram && window.Telegram.WebApp;
 
     const userId = window.DreamX && window.DreamX.getUserId
@@ -1024,7 +1063,8 @@ async function joinGiveawayOnServer(giveawayId) {
             body: JSON.stringify({
                 giveaway_id: giveawayId,
                 user_id: userId,
-                username: username
+                username: username,
+                kind: kind,        // 🔥 normal або promo
             })
         });
 
