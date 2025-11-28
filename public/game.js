@@ -226,7 +226,7 @@ function createGiveawayCard(data) {
         `
         : "";
 
-    // 🔥 кнопка всередині body тільки для promo
+    // 🔥 кнопка всередині body тільки для promo (якщо ще не приєднався)
     const bodyPromoBtnHtml = data.isPromoWithBodyBtn
         ? `
         <div class="promo-main-btn-row">
@@ -306,7 +306,9 @@ function createGiveawayCard(data) {
         </div>
         `;
 
-    // футер не рендеримо, якщо promo з внутрішньою кнопкою АБО announcement
+    // футер — тільки якщо:
+    //  - це НЕ promo з body-кнопкою
+    //  - і не announcement
     const footerHtml = (data.isPromoWithBodyBtn || data.hideFooterBtn)
         ? ""
         : `
@@ -339,31 +341,27 @@ function createGiveawayCard(data) {
         ${footerHtml}
     `;
 
-    // ====== FOOTER-логіка (кнопка / зелений лейбл) ======
-    const btn = card.querySelector(".giveaway-btn");
     const isJoined = !!data.isJoined;
 
-    // Якщо юзер вже в розіграші — замінюємо кнопку на зелений лейбл
+    // ====== FOOTER-логіка (кнопка / зелений лейбл) ======
+    const btn = card.querySelector(".giveaway-btn");
+
     if (btn && isJoined && (data.actionType === "join_normal_giveaway" || data.actionType === "already_joined")) {
         const footer = btn.parentElement;
         if (footer) {
             footer.innerHTML = `<div class="giveaway-joined-label">✅ Ви приєднались!</div>`;
         }
     } else if (btn) {
-        // стандартна поведінка кнопки
+        // стандартна поведінка кнопки (normal і promo)
         btn.onclick = async () => {
             console.log("Clicked:", data);
 
             await ensureUserInDB();
 
             if (data.actionType === "join_normal_giveaway") {
-                // приєднання до звичайного розіграшу
                 const ok = await joinGiveawayOnServer(data.actionPayload);
                 if (ok) {
-                    // додаємо в локальний список
                     joinedGiveawayIds.add(Number(data.actionPayload));
-
-                    // міняємо кнопку на лейбл
                     const footer = btn.parentElement;
                     if (footer) {
                         footer.innerHTML = `<div class="giveaway-joined-label">✅ Ви приєднались!</div>`;
@@ -397,7 +395,18 @@ function createGiveawayCard(data) {
         promoMainBtn.onclick = async () => {
             console.log("Promo main btn clicked:", data);
             await ensureUserInDB();
-            // участь через гру / бот
+
+            if (data.actionType === "join_normal_giveaway") {
+                const ok = await joinGiveawayOnServer(data.actionPayload);
+                if (ok) {
+                    joinedGiveawayIds.add(Number(data.actionPayload));
+                    // міняємо body-кнопку на зелений лейбл
+                    const row = promoMainBtn.parentElement;
+                    if (row) {
+                        row.innerHTML = `<div class="giveaway-joined-label">✅ Ви приєднались!</div>`;
+                    }
+                }
+            }
         };
     }
 
@@ -446,7 +455,7 @@ function createCardFromBackend(card) {
     let kindClass = "";
     let hideFooterBtn = false;
     let showPrize = true;
-    let isJoined = false; // 🔥 нове
+    let isJoined = false; // 🔥
 
     const endText = card.end_at_human || card.end_at || null;
     const startText = card.start_at_human || card.start_at || null;
@@ -459,27 +468,23 @@ function createCardFromBackend(card) {
         prize = formatPrize(card.prize, card.prize_count);
         kindClass = "giveaway-card--normal";
 
-        // Чи вже приєднався
         const idNum = Number(card.id);
         isJoined = joinedGiveawayIds.has(idNum);
 
-        // Тільки час оголошення результату
         if (endShort) {
             metaLines.push(`Оголошення результату: ${endShort}`);
         }
 
         if (card.gtype === "tour") {
-            // турнірний розіграш – відкриваємо тур-режим гри
             actionType = "open_tour_game";
             buttonText = "ПРИЄДНАТИСЬ";
         } else {
-            // звичайний розіграш
             if (isJoined) {
                 actionType = "already_joined";
                 buttonText = "ВИ ПРИЄДНАЛИСЬ!";
             } else {
                 actionType = "join_normal_giveaway";
-                actionPayload = idNum; // id розіграшу з БД
+                actionPayload = idNum;
                 buttonText = "ПРИЄДНАТИСЬ";
             }
         }
@@ -493,6 +498,9 @@ function createCardFromBackend(card) {
         typeTag = "ПРОМО";
         prize = formatPrize(card.prize, card.prize_count);
         kindClass = "giveaway-card--promo";
+
+        const idNum = Number(card.id);
+        isJoined = joinedGiveawayIds.has(idNum);
 
         if (endShort) {
             metaLines.push(`Закінчення: ${endShort}`);
@@ -511,22 +519,27 @@ function createCardFromBackend(card) {
             channelsExtraCount = Math.max(all.length - maxToShow, 0);
         }
 
-        buttonText = "ВЗЯТИ УЧАСТЬ";
-        // participation через гру
+        if (isJoined) {
+            actionType = "already_joined";
+            buttonText = "ВИ ПРИЄДНАЛИСЬ!";
+        } else {
+            actionType = "join_normal_giveaway";   // ту ж API використовуємо
+            actionPayload = idNum;
+            buttonText = "ВЗЯТИ УЧАСТЬ";
+        }
 
     } else if (card.kind === "announcement") {
         // Оголошення
         typeTag = "ОГОЛОШЕННЯ";
         prize = "";
         kindClass = "giveaway-card--announcement";
-        hideFooterBtn = true;   // ❌ немає нижньої кнопки
-        showPrize = false;      // ❌ немає жовтої "суми" справа
+        hideFooterBtn = true;
+        showPrize = false;
 
         if (card.extra_info) {
             metaLines.push(card.extra_info);
         }
 
-        // показуємо дату ПУБЛІКАЦІЇ
         if (startShort) {
             metaLines.push(`Опубліковано: ${startShort}`);
         }
@@ -539,10 +552,9 @@ function createCardFromBackend(card) {
             }));
         }
 
-        buttonText = ""; // все одно не використовується (footer схований)
+        buttonText = "";
 
     } else {
-        // fallback
         typeTag = card.kind ? card.kind.toUpperCase() : "INFO";
         prize = card.prize || "";
         buttonText = "OK";
@@ -560,7 +572,7 @@ function createCardFromBackend(card) {
         channels,
         channelsExtraCount,
         links,
-        isPromoWithBodyBtn: (card.kind === "promo"),
+        isPromoWithBodyBtn: (card.kind === "promo" && !isJoined), // 🔥 body-кнопка тільки якщо ще не приєднався
         kindClass,
         hideFooterBtn,
         showPrize,
