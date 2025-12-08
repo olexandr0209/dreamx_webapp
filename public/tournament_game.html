@@ -11,45 +11,47 @@
 </head>
 
 <body class="tournament-game-screen">
-    <!-- ВЕРХ: турнір + група -->
-    <div class="tourgame-top">
-        <!-- Ліва сторона: турнір -->
-        <div class="tourgame-tournament-block">
-            <div class="tourgame-tournament-name">DreamX Турнір #12</div>
-            <div class="tourgame-tournament-host">Організатор: @Host</div>
-            <div class="tourgame-tournament-progress">
-                Було 32 → Залишилось 8
-            </div>
-        </div>
-
-        <!-- Права сторона: група + список учасників -->
-        <div class="tourgame-group-block">
-            <div class="tourgame-group-header">
-                <div class="tourgame-group-title">Група C-4</div>
-                <div class="tourgame-group-subtitle">
-                    4 учасники (2 проходять)
+    <!-- ВЕРХ: турнір + група всередині карточки -->
+    <div class="tourgame-header-card">
+        <div class="tourgame-top">
+            <!-- Ліва сторона: турнір -->
+            <div class="tourgame-tournament-block">
+                <div class="tourgame-tournament-pill">LIVE • Турнір</div>
+                <div class="tourgame-tournament-name">DreamX Турнір #12</div>
+                <div class="tourgame-tournament-host">Організатор: @Host</div>
+                <div class="tourgame-tournament-progress">
+                    Було 32 → Залишилось 8
                 </div>
             </div>
 
-            <ul class="tourgame-group-list">
-                <!-- приклад, потім підставиш з JS -->
-                <li class="tourgame-group-player">
-                    <span class="tourgame-player-name">@userAlpha</span>
-                    <span class="tourgame-player-score">2 бали</span>
-                </li>
-                <li class="tourgame-group-player">
-                    <span class="tourgame-player-name">@dragon</span>
-                    <span class="tourgame-player-score">1 бал</span>
-                </li>
-                <li class="tourgame-group-player">
-                    <span class="tourgame-player-name">@solowalker</span>
-                    <span class="tourgame-player-score">1 бал</span>
-                </li>
-                <li class="tourgame-group-player me">
-                    <span class="tourgame-player-name">@you (Ти)</span>
-                    <span class="tourgame-player-score">2 бали</span>
-                </li>
-            </ul>
+            <!-- Права сторона: група + список учасників -->
+            <div class="tourgame-group-block">
+                <div class="tourgame-group-header">
+                    <div class="tourgame-group-title">Група C-4</div>
+                    <div class="tourgame-group-subtitle">
+                        4 учасники · 2 проходять
+                    </div>
+                </div>
+
+                <ul class="tourgame-group-list">
+                    <li class="tourgame-group-player">
+                        <span class="tourgame-player-name">@userAlpha</span>
+                        <span class="tourgame-player-score">2 бали</span>
+                    </li>
+                    <li class="tourgame-group-player">
+                        <span class="tourgame-player-name">@dragon</span>
+                        <span class="tourgame-player-score">1 бал</span>
+                    </li>
+                    <li class="tourgame-group-player">
+                        <span class="tourgame-player-name">@solowalker</span>
+                        <span class="tourgame-player-score">1 бал</span>
+                    </li>
+                    <li class="tourgame-group-player me">
+                        <span class="tourgame-player-name">@you (Ти)</span>
+                        <span class="tourgame-player-score">2 бали</span>
+                    </li>
+                </ul>
+            </div>
         </div>
     </div>
 
@@ -77,24 +79,49 @@
         </div>
     </div>
 
-    <!-- НИЗ: вибір ходу -->
-    <div class="tourgame-choices">
-        <button class="tourgame-rps-btn rps-rock">
-            <span class="tourgame-rps-icon">🪨</span>
-            <span class="tourgame-rps-text">Камінь</span>
-        </button>
-        <button class="tourgame-rps-btn rps-scissors">
-            <span class="tourgame-rps-icon">✂️</span>
-            <span class="tourgame-rps-text">Ножиці</span>
-        </button>
-        <button class="tourgame-rps-btn rps-paper">
-            <span class="tourgame-rps-icon">📄</span>
-            <span class="tourgame-rps-text">Папір</span>
-        </button>
+    <!-- ІСТОРІЯ ВИБОРІВ У РАУНДІ -->
+    <div class="tourgame-history">
+        <div class="tourgame-history-row header">
+            <span class="history-label">Гра</span>
+            <span class="history-cell">1</span>
+            <span class="history-cell">2</span>
+            <span class="history-cell">3</span>
+        </div>
+        <div class="tourgame-history-row opponent">
+            <span class="history-label">Суперник</span>
+            <!-- приклад: тут потім з JS підставиш реальні ходи -->
+            <span class="history-cell">✂️</span>
+            <span class="history-cell">🪨</span>
+            <span class="history-cell"></span>
+        </div>
+        <div class="tourgame-history-row me">
+            <span class="history-label">Ти</span>
+            <span class="history-cell">🪨</span>
+            <span class="history-cell">📄</span>
+            <span class="history-cell"></span>
+        </div>
     </div>
 
-    <div class="tourgame-status-line">
-        Зроби вибір за 6 секунд…
+    <!-- НИЗ: вибір ходу + таймер, притиснуті до низу -->
+    <div class="tourgame-bottom">
+        <div class="tourgame-choices">
+            <button class="tourgame-rps-btn rps-rock">
+                <span class="tourgame-rps-icon">🪨</span>
+                <span class="tourgame-rps-text">Камінь</span>
+            </button>
+            <button class="tourgame-rps-btn rps-scissors">
+                <span class="tourgame-rps-icon">✂️</span>
+                <span class="tourgame-rps-text">Ножиці</span>
+            </button>
+            <button class="tourgame-rps-btn rps-paper">
+                <span class="tourgame-rps-icon">📄</span>
+                <span class="tourgame-rps-text">Папір</span>
+            </button>
+        </div>
+
+        <div class="tourgame-status-line">
+            Зроби вибір за 6 секунд…
+        </div>
     </div>
 </body>
 </html>
