@@ -1731,3 +1731,20 @@ body.tournament-screen .bottom-nav {
         font-size: 11px;
     }
 }
+
+/* Відступ зверху для всього екрану */
+.tournament-game-screen {
+    padding-top: 20px !important;
+}
+
+/* Нижній відступ для кнопок */
+.tourgame-choices {
+    margin-top: 22px;
+    margin-bottom: 28px; /* ⬅️ нижній відступ для кнопок */
+}
+
+/* Нижній відступ для надпису */
+.tourgame-status-line {
+    margin-bottom: 26px;
+}
+
