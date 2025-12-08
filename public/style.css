@@ -1748,3 +1748,64 @@ body.tournament-screen .bottom-nav {
     margin-bottom: 26px;
 }
 
+
+/* Блок історії */
+.tourgame-history {
+    margin-top: 18px;
+    margin-bottom: 10px;
+    padding: 12px 10px;
+    border-radius: 16px;
+    background: rgba(15, 23, 42, 0.55);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+}
+
+/* Рядки */
+.history-row {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 6px;
+}
+
+/* Комірки */
+.history-cell {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    background: rgba(15,21,35,0.6);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    color: #f1f5f9;
+    font-weight: 600;
+}
+
+/* Порожні комірки */
+.history-cell:empty {
+    background: rgba(15,21,35,0.3);
+    border: 1px dashed rgba(148, 163, 184, 0.3);
+}
+
+/* РЕЗУЛЬТАТИ */
+
+/* Нічия */
+.result-draw {
+    background: rgba(250, 204, 21, 0.25);
+    border-color: rgba(250, 204, 21, 0.4);
+}
+
+/* Ти виграв */
+.result-win {
+    background: rgba(34, 197, 94, 0.25);
+    border-color: rgba(34, 197, 94, 0.5);
+}
+
+/* Ти програв */
+.result-lose {
+    background: rgba(239, 68, 68, 0.25);
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+
