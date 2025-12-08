@@ -21,149 +21,267 @@
 
     <!-- Центральний скрол-блок -->
     <div class="tournament-container">
-        <h1 class="tournament-title">Обери гру</h1>
+    <h1 class="tournament-title">Обери гру</h1>
 
-        <!-- 🔥 ДОДАВ id, щоб JS міг знайти кнопку -->
-        <button class="mode-card" id="mode-vs-computer">
-            <div class="mode-title">Ти vs Компʼютер</div>
-            <div class="mode-sub">Швидка гра• Отримуй монети</div>
-        </button>
-        
-        <button class="mode-card" id="mode-tournament-test">
-            <div class="mode-title">Тест турніру</div>
-            <div class="mode-sub">Переглянути турнірний бій</div>
-        </button>
+    <!-- Швидка гра -->
+    <button class="mode-card" id="mode-vs-computer">
+        <div class="mode-title">Ти vs Компʼютер</div>
+        <div class="mode-sub">Швидка гра • Отримуй монети</div>
+    </button>
 
+    <h2 class="tournament-subtitle">Турніри DreamX</h2>
+
+    <!-- Сюди JS підставить список турнірів -->
+    <div id="tournament-list">
+        <!-- можна тимчасово залишити тут один placeholder -->
     </div>
+</div>
 
-    <div class="bottom-nav">
-        <button class="bottom-btn bottom-btn-secondary" id="back-home">
-            НАЗАД
-        </button>
-    </div>
+<div class="bottom-nav">
+    <button class="bottom-btn bottom-btn-secondary" id="back-home">
+        НАЗАД
+    </button>
+</div>
 
-    <script>
-        // Безпечна робота з кнопками: перевіряємо, чи вони існують
+<script>
+    // Кнопка "Ти vs Компʼютер"
+    const modeBtn = document.getElementById("mode-vs-computer");
+    if (modeBtn) {
+        modeBtn.addEventListener("click", () => {
+            const params = new URLSearchParams(window.location.search);
+            params.delete("points");
+            const qs = params.toString();
+            window.location.href = qs ? `game.html?${qs}` : "game.html";
+        });
+    }
 
-        const modeBtn = document.getElementById("mode-vs-computer");
-        if (modeBtn) {
-            modeBtn.addEventListener("click", () => {
-                const params = new URLSearchParams(window.location.search);
+    // Назад на головну
+    const backBtn = document.getElementById("back-home");
+    if (backBtn) {
+        backBtn.addEventListener("click", () => {
+            const params = new URLSearchParams(window.location.search);
+            params.delete("points");
+            const qs = params.toString();
+            window.location.href = qs ? `index.html?${qs}` : "index.html";
+        });
+    }
 
-                // старі points нам не потрібні
-                params.delete("points");
+    const tournamentListEl = document.getElementById("tournament-list");
 
-                const qs = params.toString();
-                window.location.href = qs ? `game.html?${qs}` : "game.html";
-            });
-        }
+    // ==== 1. Завантаження списку турнірів з бекенда ====
+    async function loadTournaments() {
+        if (!tournamentListEl) return;
 
-        const backBtn = document.getElementById("back-home");
-        if (backBtn) {
-            backBtn.addEventListener("click", () => {
-                const params = new URLSearchParams(window.location.search);
-                params.delete("points");
-                const qs = params.toString();
-                window.location.href = qs ? `index.html?${qs}` : "index.html";
-            });
-        }
-        const tourTestBtn = document.getElementById("mode-tournament-test");
-            if (tourTestBtn) {
-                tourTestBtn.addEventListener("click", () => {
-                const params = new URLSearchParams(window.location.search);
-                params.delete("points");
-                const qs = params.toString();
-                window.location.href = qs ? `tournament_game.html?${qs}` : "tournament_game.html";
-            });
-        }
+        try {
+            // 🔥 ТУТ ШЛЯХ, ЯКИЙ ТИ ЗРОБИШ НА БЕКЕНДІ
+            // чекаємо JSON масив турнірів
+            const res = await fetch("/api/get_tournaments");
+            if (!res.ok) throw new Error("HTTP " + res.status);
 
-    </script>
+            /** Очікувана структура елемента:
+             * {
+             *   "id": 12,
+             *   "title": "DreamX Турнір #12",
+             *   "host": "@Host",
+             *   "starts_at": "2025-12-08T18:00:00Z",
+             *   "players_total": 32,
+             *   "players_left": 8,
+             *   "status": "scheduled"
+             * }
+             */
+            const tournaments = await res.json();
 
-    <script>
-            const container = document.querySelector(".tournament-container");
-        
-            function hasScroll() {
-                if (!container) return false;
-                return container.scrollHeight > container.clientHeight;
+            tournamentListEl.innerHTML = "";
+
+            if (!tournaments.length) {
+                tournamentListEl.innerHTML =
+                    '<div class="tour-empty">Найближчих турнірів ще немає…</div>';
+                return;
             }
-        
-            function enableBounce() {
-                if (!container) return;
-        
-                let startY = 0;
-                let isDragging = false;
-                let isMouse = false;
-        
-                // TOUCH
-                container.addEventListener("touchstart", (e) => {
-                    if (hasScroll()) return;    // якщо є скрол – не робимо bounce
-                    if (e.touches.length !== 1) return;
-        
-                    isDragging = true;
-                    isMouse = false;
-                    startY = e.touches[0].clientY;
-                    container.style.transition = "none";
-                });
-        
-                container.addEventListener("touchmove", (e) => {
-                    if (!isDragging || isMouse) return;
-                    if (hasScroll()) return;
-        
-                    const currentY = e.touches[0].clientY;
-                    let delta = currentY - startY;
-        
-                    const MAX = 40;
-                    delta = Math.max(-MAX, Math.min(MAX, delta));
-                    const softened = delta * 0.4;
-        
-                    container.style.transform = `translateY(${softened}px)`;
-                });
-        
-                const endTouch = () => {
-                    if (!isDragging || isMouse) return;
-                    isDragging = false;
-                    container.style.transition = "transform 0.25s ease-out";
-                    container.style.transform = "translateY(0)";
-                };
-        
-                container.addEventListener("touchend", endTouch);
-                container.addEventListener("touchcancel", endTouch);
-        
-                // MOUSE – щоб ти бачив ефект у браузері на ноуті
-                container.addEventListener("mousedown", (e) => {
-                    if (hasScroll()) return;
-        
-                    isDragging = true;
-                    isMouse = true;
-                    startY = e.clientY;
-                    container.style.transition = "none";
-                });
-        
-                window.addEventListener("mousemove", (e) => {
-                    if (!isDragging || !isMouse) return;
-                    if (hasScroll()) return;
-        
-                    const currentY = e.clientY;
-                    let delta = currentY - startY;
-        
-                    const MAX = 40;
-                    delta = Math.max(-MAX, Math.min(MAX, delta));
-                    const softened = delta * 0.4;
-        
-                    container.style.transform = `translateY(${softened}px)`;
-                });
-        
-                window.addEventListener("mouseup", () => {
-                    if (!isDragging || !isMouse) return;
-                    isDragging = false;
-                    container.style.transition = "transform 0.25s ease-out";
-                    container.style.transform = "translateY(0)";
-                });
-            }
-        
-            enableBounce();
-    </script>
 
+            tournaments.forEach(t => {
+                const btn = document.createElement("button");
+                btn.className = "mode-card tournament-card";
+                btn.dataset.tournamentId = t.id;
+                btn.dataset.startsAt = t.starts_at;  // ISO-дата для таймера
+
+                btn.innerHTML = `
+                    <div class="tour-card-top">
+                        <div class="mode-title">${t.title}</div>
+                        <div class="tour-card-tag">ТУРНІР</div>
+                    </div>
+                    <div class="mode-sub">
+                        Організатор: ${t.host || "—"}
+                        • Було ${t.players_total ?? "—"} → Залишилось ${t.players_left ?? "—"}
+                    </div>
+                    <div class="tour-card-bottom">
+                        <span class="tour-card-start">
+                            Старт: <span class="tour-card-start-time"></span>
+                        </span>
+                        <span class="tour-card-countdown" data-start="${t.starts_at}">
+                            ...
+                        </span>
+                    </div>
+                `;
+
+                tournamentListEl.appendChild(btn);
+            });
+
+            attachTournamentHandlers();
+            startCountdownLoop();
+        } catch (err) {
+            console.error("Помилка завантаження турнірів:", err);
+            tournamentListEl.innerHTML =
+                '<div class="tour-empty">Не вдалося завантажити турніри…</div>';
+        }
+    }
+
+    // ==== 2. Обробник кліку по карточці турніру ====
+    function attachTournamentHandlers() {
+        const cards = tournamentListEl.querySelectorAll(".tournament-card");
+        cards.forEach(card => {
+            card.addEventListener("click", () => {
+                const id = card.dataset.tournamentId;
+                const params = new URLSearchParams(window.location.search);
+                params.delete("points");
+                if (id) params.set("tournament_id", id);
+
+                const qs = params.toString();
+                window.location.href = qs
+                    ? `tournament_game.html?${qs}`
+                    : "tournament_game.html";
+            });
+        });
+    }
+
+    // ==== 3. Таймери — оновлюємо підписи "72:00" ====
+    function formatCountdown(diffMs) {
+        if (diffMs <= 0) return "Починається!";
+
+        const totalMinutes = Math.floor(diffMs / 60000);
+        const hours = Math.floor(totalMinutes / 60);       // загальна кількість годин
+        const minutes = totalMinutes % 60;
+
+        return `${hours}:${minutes.toString().padStart(2, "0")}`;
+    }
+
+    function updateCountdowns() {
+        const now = Date.now();
+
+        document.querySelectorAll(".tour-card-countdown").forEach(el => {
+            const startISO = el.dataset.start;
+            if (!startISO) return;
+
+            const startTs = new Date(startISO).getTime();
+            const diff = startTs - now;
+
+            el.textContent = formatCountdown(diff);
+        });
+
+        // паралельно можна показати локальний час старту
+        document.querySelectorAll(".tour-card-start-time").forEach(el => {
+            const parent = el.closest(".tournament-card");
+            if (!parent) return;
+            const iso = parent.dataset.startsAt;
+            if (!iso) return;
+            const dt = new Date(iso);
+            const hours = String(dt.getHours()).padStart(2, "0");
+            const mins = String(dt.getMinutes()).padStart(2, "0");
+            el.textContent = `${hours}:${mins}`;
+        });
+    }
+
+    function startCountdownLoop() {
+        updateCountdowns();
+        // раз на 30 секунд — більш ніж достатньо
+        setInterval(updateCountdowns, 30000);
+    }
+
+    // ==== 4. Bounce-ефект для контейнера (як раніше) ====
+    const container = document.querySelector(".tournament-container");
+
+    function hasScroll() {
+        if (!container) return false;
+        return container.scrollHeight > container.clientHeight;
+    }
+
+    function enableBounce() {
+        if (!container) return;
+
+        let startY = 0;
+        let isDragging = false;
+        let isMouse = false;
+
+        container.addEventListener("touchstart", (e) => {
+            if (hasScroll()) return;
+            if (e.touches.length !== 1) return;
+
+            isDragging = true;
+            isMouse = false;
+            startY = e.touches[0].clientY;
+            container.style.transition = "none";
+        });
+
+        container.addEventListener("touchmove", (e) => {
+            if (!isDragging || isMouse) return;
+            if (hasScroll()) return;
+
+            const currentY = e.touches[0].clientY;
+            let delta = currentY - startY;
+
+            const MAX = 40;
+            delta = Math.max(-MAX, Math.min(MAX, delta));
+            const softened = delta * 0.4;
+
+            container.style.transform = `translateY(${softened}px)`;
+        });
+
+        const endTouch = () => {
+            if (!isDragging || isMouse) return;
+            isDragging = false;
+            container.style.transition = "transform 0.25s ease-out";
+            container.style.transform = "translateY(0)";
+        };
+
+        container.addEventListener("touchend", endTouch);
+        container.addEventListener("touchcancel", endTouch);
+
+        // Для ноутбука
+        container.addEventListener("mousedown", (e) => {
+            if (hasScroll()) return;
+            isDragging = true;
+            isMouse = true;
+            startY = e.clientY;
+            container.style.transition = "none";
+        });
+
+        window.addEventListener("mousemove", (e) => {
+            if (!isDragging || !isMouse) return;
+            if (hasScroll()) return;
+
+            const currentY = e.clientY;
+            let delta = currentY - startY;
+
+            const MAX = 40;
+            delta = Math.max(-MAX, Math.min(MAX, delta));
+            const softened = delta * 0.4;
+
+            container.style.transform = `translateY(${softened}px)`;
+        });
+
+        window.addEventListener("mouseup", () => {
+            if (!isDragging || !isMouse) return;
+            isDragging = false;
+            container.style.transition = "transform 0.25s ease-out";
+            container.style.transform = "translateY(0)";
+        });
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+        enableBounce();
+        loadTournaments();   // 🔥 тягнемо турніри
+    });
+</script>
 
 </body>
 </html>
