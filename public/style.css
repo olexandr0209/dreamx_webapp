@@ -1886,3 +1886,90 @@ body.tournament-screen .bottom-nav {
     background: rgba(239, 68, 68, 0.35);
 }
 
+/* Контейнер історії — трохи більший, красивіший */
+.tourgame-history-box {
+    margin-top: 18px;
+    padding: 12px 14px;
+    border-radius: 18px;
+    background: rgba(15, 23, 42, 0.92);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
+}
+
+/* Рядок структури */
+.tourgame-history-row {
+    display: grid;
+    grid-template-columns: auto 28px 28px 28px 34px;
+    column-gap: 10px;            /* ➜ більше повітря */
+    align-items: center;
+    margin-bottom: 8px;          /* ➜ збільшено */
+    font-size: 12px;
+}
+
+.tourgame-history-row.header {
+    margin-bottom: 10px;
+}
+
+/* Ролі та нікнейми */
+.history-label {
+    display: flex;
+    flex-direction: column;
+}
+
+.history-role {
+    font-size: 10px;
+    text-transform: uppercase;
+    color: #9ca3af;
+    letter-spacing: 0.12em;
+}
+
+.history-nick {
+    font-size: 12px;
+    color: #e5e7eb;
+    font-weight: 600;
+}
+
+/* Клітинки */
+.history-cell {
+    width: 100%;
+    height: 30px;                /* ➜ збільшено */
+    border-radius: 10px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(148,163,184,0.28);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;             /* ➜ трохи більша іконка */
+}
+
+/* Порожня */
+.history-cell:empty {
+    background: rgba(255,255,255,0.03);
+}
+
+/* Хедер */
+.history-cell-header {
+    font-size: 11px;
+    color: #9ca3af;
+    background: rgba(15,23,42,0.95);
+}
+
+/* Σ сума */
+.history-total {
+    font-weight: 700;
+    font-size: 14px;
+    background: rgba(15,23,42,0.9);
+}
+
+/* РЕЗУЛЬТАТИ */
+.result-draw {
+    background: rgba(250, 204, 21, 0.35);
+}
+
+.result-win {
+    background: rgba(34, 197, 94, 0.35);
+}
+
+.result-lose {
+    background: rgba(239, 68, 68, 0.32);
+}
