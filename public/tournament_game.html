@@ -9,33 +9,38 @@
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <script src="dreamx_core.js"></script>
     <script defer src="tournament_game.js"></script>
-
 </head>
 
 <body class="tournament-game-screen">
-    <!-- ВЕРХ: турнір + група всередині карточки -->
+    <!-- ВЕРХ: турнір + група в одній карточці -->
     <div class="tourgame-header-card">
         <div class="tourgame-top">
-            <!-- Ліва сторона: турнір -->
+            <!-- Ліва частина: інформація про турнір -->
             <div class="tourgame-tournament-block">
                 <div class="tourgame-tournament-pill">LIVE • Турнір</div>
-                <div class="tourgame-tournament-name">DreamX Турнір #12</div>
-                <div class="tourgame-tournament-host">Організатор: @Host</div>
-                <div class="tourgame-tournament-progress">
+                <div class="tourgame-tournament-name" id="tourgame-tournament-name">
+                    DreamX Турнір #12
+                </div>
+                <div class="tourgame-tournament-host" id="tourgame-tournament-host">
+                    Організатор: @Host
+                </div>
+                <div class="tourgame-tournament-progress" id="tourgame-tournament-progress">
                     Було 32 → Залишилось 8
                 </div>
             </div>
 
-            <!-- Права сторона: група + список учасників -->
+            <!-- Права частина: група + учасники -->
             <div class="tourgame-group-block">
                 <div class="tourgame-group-header">
-                    <div class="tourgame-group-title">Група C-4</div>
-                    <div class="tourgame-group-subtitle">
+                    <div class="tourgame-group-title" id="tourgame-group-title">
+                        Група C-4
+                    </div>
+                    <div class="tourgame-group-subtitle" id="tourgame-group-subtitle">
                         4 учасники · 2 проходять
                     </div>
                 </div>
 
-                <ul class="tourgame-group-list">
+                <ul class="tourgame-group-list" id="tourgame-group-list">
                     <li class="tourgame-group-player">
                         <span class="tourgame-player-name">@userAlpha</span>
                         <span class="tourgame-player-score">2 бали</span>
@@ -57,36 +62,40 @@
         </div>
     </div>
 
-    <!-- ЦЕНТР: бій -->
-   <!-- ЦЕНТР: бій + історія виборів в одній карті -->
+    <!-- ЦЕНТР: арена (двобій + історія) -->
     <div class="tourgame-arena">
-    
         <!-- Заголовок раунду -->
-        <div class="tourgame-round-label">РАУНД 2 / 3</div>
-        <div class="tourgame-round-sub">Цей раунд: 3 гри</div>
-    
+        <div class="tourgame-round-label" id="tourgame-round-label">
+            РАУНД 2 / 3
+        </div>
+        <div class="tourgame-round-sub" id="tourgame-round-sub">
+            Цей раунд: 3 гри
+        </div>
+
         <!-- ДВОБІЙ: ТИ VS СУПЕРНИК -->
         <div class="tourgame-duel">
+            <!-- Суперник -->
             <div class="tourgame-player-card opponent">
                 <div class="tourgame-role-label">Суперник</div>
-                <div class="tourgame-name">@dragon</div>
+                <div class="tourgame-name" id="tourgame-opponent-name">@dragon</div>
                 <div class="tourgame-score-label">Цей раунд</div>
-                <div class="tourgame-score">1</div>
+                <div class="tourgame-score" id="tourgame-opponent-round-score">1</div>
             </div>
-    
+
             <div class="tourgame-vs">VS</div>
-    
+
+            <!-- Ти -->
             <div class="tourgame-player-card me">
                 <div class="tourgame-role-label">Ти</div>
-                <div class="tourgame-name">@you</div>
+                <div class="tourgame-name" id="tourgame-me-name">@you</div>
                 <div class="tourgame-score-label">Цей раунд</div>
-                <div class="tourgame-score">2</div>
+                <div class="tourgame-score" id="tourgame-me-round-score">2</div>
             </div>
         </div>
-    
+
         <!-- ІСТОРІЯ ВИБОРІВ -->
         <div class="tourgame-history-box">
-    
+            <!-- Хедер 1 / 2 / 3 / Σ -->
             <div class="tourgame-history-row header">
                 <div class="history-label"></div>
                 <div class="history-cell history-cell-header">1</div>
@@ -94,33 +103,58 @@
                 <div class="history-cell history-cell-header">3</div>
                 <div class="history-cell history-cell-header">Σ</div>
             </div>
-    
-            <div class="tourgame-history-row opponent">
+
+            <!-- Рядок суперника -->
+            <div class="tourgame-history-row opponent" id="history-row-opponent">
                 <div class="history-label">
                     <div class="history-role">Суперник</div>
-                    <div class="history-nick">@dragon</div>
+                    <div class="history-nick" id="history-opponent-nick">@dragon</div>
                 </div>
-                <div class="history-cell result-draw">🪨</div>
-                <div class="history-cell result-lose">📄</div>
-                <div class="history-cell"></div>
-                <div class="history-cell history-total">1</div>
+                <div class="history-cell result-draw" data-player="opponent" data-round="1">🪨</div>
+                <div class="history-cell result-lose" data-player="opponent" data-round="2">📄</div>
+                <div class="history-cell" data-player="opponent" data-round="3"></div>
+                <div class="history-cell history-total" id="history-opponent-total">1</div>
             </div>
-    
-            <div class="tourgame-history-row me">
+
+            <!-- Рядок "Ти" -->
+            <div class="tourgame-history-row me" id="history-row-me">
                 <div class="history-label">
                     <div class="history-role">Ти</div>
-                    <div class="history-nick">@you</div>
+                    <div class="history-nick" id="history-me-nick">@you</div>
                 </div>
-                <div class="history-cell result-draw">🪨</div>
-                <div class="history-cell result-win">✂️</div>
-                <div class="history-cell"></div>
-                <div class="history-cell history-total">2</div>
+                <div class="history-cell result-draw" data-player="me" data-round="1">🪨</div>
+                <div class="history-cell result-win" data-player="me" data-round="2">✂️</div>
+                <div class="history-cell" data-player="me" data-round="3"></div>
+                <div class="history-cell history-total" id="history-me-total">2</div>
             </div>
-    
         </div>
     </div>
 
-        <div class="tourgame-status-line">
+    <!-- НИЗ: таймер + вибір ходу -->
+    <div class="tourgame-bottom">
+        <!-- Таймер-бар -->
+        <div class="tourgame-timer-bar">
+            <div class="tourgame-timer-progress" id="tourgame-timer-progress"></div>
+        </div>
+
+        <!-- Кнопки вибору -->
+        <div class="tourgame-choices">
+            <button class="tourgame-rps-btn rps-rock" data-choice="rock">
+                <span class="tourgame-rps-icon">🪨</span>
+                <span class="tourgame-rps-text">Камінь</span>
+            </button>
+            <button class="tourgame-rps-btn rps-scissors" data-choice="scissors">
+                <span class="tourgame-rps-icon">✂️</span>
+                <span class="tourgame-rps-text">Ножиці</span>
+            </button>
+            <button class="tourgame-rps-btn rps-paper" data-choice="paper">
+                <span class="tourgame-rps-icon">📄</span>
+                <span class="tourgame-rps-text">Папір</span>
+            </button>
+        </div>
+
+        <!-- Статусний текст -->
+        <div class="tourgame-status-line" id="tourgame-status-text">
             Зроби вибір за 6 секунд…
         </div>
     </div>
