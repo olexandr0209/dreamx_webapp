@@ -1973,3 +1973,65 @@ body.tournament-screen .bottom-nav {
 .result-lose {
     background: rgba(239, 68, 68, 0.32);
 }
+
+.tournament-subtitle {
+    font-size: 16px;
+    margin: 4px 0 4px;
+    opacity: 0.9;
+}
+
+/* Карточка турніру — трохи інша стилістика */
+.mode-card.tournament-card {
+    background: radial-gradient(circle at top left, #191929 0, #090910 60%);
+    border-color: #3b82f6;
+}
+
+/* Верхній рядок: назва + маленький тег "Турнір" */
+.tour-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 4px;
+}
+
+.tour-card-tag {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(59, 130, 246, 0.6);
+    color: #bfdbfe;
+    background: rgba(15, 23, 42, 0.9);
+}
+
+/* Нижній рядок: час старту + таймер */
+.tour-card-bottom {
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 12px;
+    opacity: 0.95;
+}
+
+.tour-card-start {
+    color: rgba(209, 213, 219, 0.9);
+}
+
+.tour-card-countdown {
+    font-weight: 700;
+    color: #f0b43a;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Плейсхолдер "немає турнірів" */
+.tour-empty {
+    padding: 12px 10px;
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px dashed rgba(148, 163, 184, 0.5);
+    font-size: 13px;
+    opacity: 0.85;
+}
