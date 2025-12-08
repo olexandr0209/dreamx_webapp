@@ -1378,3 +1378,264 @@ body.tournament-screen .bottom-nav {
 .tour-finished-overlay.hidden {
     display: none;
 }
+
+
+/* ============================
+   ТУРНІРНИЙ ЕКРАН БОЮ
+   ============================ */
+
+.tournament-game-screen {
+    min-height: 100vh;
+    box-sizing: border-box;
+    padding: 12px 14px 24px;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Roboto", sans-serif;
+    background: radial-gradient(circle at top, #0b1020 0%, #020617 55%, #000 100%);
+    color: #e5e7eb;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Верхній блок: турнір + група */
+.tourgame-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+/* Ліва сторона — турнір */
+.tourgame-tournament-block {
+    flex: 1 1 0;
+    max-width: 55%;
+}
+
+.tourgame-tournament-name {
+    font-size: 14px;
+    font-weight: 700;
+    color: #f9fafb;
+    margin-bottom: 2px;
+}
+
+.tourgame-tournament-host,
+.tourgame-tournament-progress {
+    font-size: 11px;
+    color: #9ca3af;
+    line-height: 1.3;
+}
+
+/* Права сторона — група і список */
+.tourgame-group-block {
+    flex: 0 0 auto;
+    text-align: right;
+    min-width: 150px;
+}
+
+.tourgame-group-title {
+    font-size: 12px;
+    font-weight: 600;
+    color: #f9fafb;
+}
+
+.tourgame-group-subtitle {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 2px;
+}
+
+.tourgame-group-list {
+    list-style: none;
+    padding: 6px 0 0;
+    margin: 0;
+}
+
+.tourgame-group-player {
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-end;
+    gap: 6px;
+    font-size: 11px;
+    color: #e5e7eb;
+    margin-bottom: 2px;
+}
+
+.tourgame-group-player .tourgame-player-name {
+    opacity: 0.9;
+}
+
+.tourgame-group-player .tourgame-player-score {
+    font-variant-numeric: tabular-nums;
+    opacity: 0.7;
+}
+
+/* Підсвітка себе */
+.tourgame-group-player.me {
+    background: rgba(236, 72, 153, 0.12);
+    border-radius: 999px;
+    padding: 3px 6px 3px 8px;
+}
+
+/* Центр — арена */
+.tourgame-arena {
+    margin-top: 8px;
+    padding: 10px 10px 14px;
+    border-radius: 16px;
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.55);
+}
+
+.tourgame-round-label {
+    text-align: center;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #e5e7eb;
+}
+
+.tourgame-round-sub {
+    text-align: center;
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 2px;
+}
+
+/* Двобій */
+.tourgame-duel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.tourgame-player-card {
+    flex: 1 1 0;
+    max-width: 140px;
+    padding: 8px 10px;
+    border-radius: 14px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(148, 163, 184, 0.4);
+    text-align: center;
+}
+
+.tourgame-player-card.opponent {
+    background: radial-gradient(circle at top, rgba(59, 130, 246, 0.25), rgba(15, 23, 42, 0.95));
+}
+
+.tourgame-player-card.me {
+    background: radial-gradient(circle at top, rgba(236, 72, 153, 0.3), rgba(15, 23, 42, 0.95));
+}
+
+.tourgame-role-label {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.16em;
+    color: #9ca3af;
+    margin-bottom: 2px;
+}
+
+.tourgame-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: #f9fafb;
+}
+
+.tourgame-score-label {
+    font-size: 10px;
+    color: #9ca3af;
+    margin-top: 4px;
+}
+
+.tourgame-score {
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 2px;
+    color: #fbbf24;
+}
+
+.tourgame-vs {
+    font-size: 13px;
+    font-weight: 700;
+    color: #e5e7eb;
+    padding: 0 4px;
+}
+
+/* Низ — вибір ходу */
+.tourgame-choices {
+    margin-top: 18px;
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.tourgame-rps-btn {
+    flex: 1 1 0;
+    border: none;
+    outline: none;
+    border-radius: 999px;
+    padding: 8px 4px;
+    background: radial-gradient(circle at top, rgba(148, 163, 184, 0.2), rgba(15, 23, 42, 0.95));
+    color: #f9fafb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 3px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
+    transition: transform 0.08s ease-out, box-shadow 0.08s ease-out, background 0.12s ease-out;
+}
+
+.tourgame-rps-btn .tourgame-rps-icon {
+    font-size: 20px;
+}
+
+.tourgame-rps-btn:active {
+    transform: translateY(1px) scale(0.98);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.6);
+    background: radial-gradient(circle at bottom, rgba(15, 23, 42, 0.9), rgba(15, 23, 42, 1));
+}
+
+/* Статус внизу */
+.tourgame-status-line {
+    margin-top: 8px;
+    text-align: center;
+    font-size: 11px;
+    color: #9ca3af;
+}
+
+/* Адаптив */
+@media (max-width: 480px) {
+    .tourgame-top {
+        gap: 8px;
+    }
+
+    .tourgame-tournament-block {
+        max-width: 52%;
+    }
+
+    .tourgame-group-block {
+        min-width: 130px;
+    }
+
+    .tourgame-duel {
+        gap: 8px;
+    }
+
+    .tourgame-player-card {
+        max-width: 130px;
+        padding: 7px 8px;
+    }
+
+    .tourgame-score {
+        font-size: 16px;
+    }
+
+    .tourgame-rps-btn {
+        font-size: 11px;
+    }
+}
