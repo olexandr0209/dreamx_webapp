@@ -1657,17 +1657,20 @@ body.tournament-screen .bottom-nav {
     flex: 1 1 0;
     border: none;
     outline: none;
-    border-radius: 999px;
-    padding: 8px 4px;
+    border-radius: 22px;
+    padding: 14px 4px;            /* ⬅️ збільшив внутрішні відступи */
+    height: 64px;                 /* ⬅️ додав фіксовану висоту */
     background: radial-gradient(circle at top,
             rgba(148, 163, 184, 0.2),
             rgba(15, 23, 42, 0.95));
+
     color: #f9fafb;
     display: flex;
     flex-direction: column;
+    justify-content: center;       /* ⬅️ вирівнюємо по центру */
     align-items: center;
-    gap: 3px;
-    font-size: 12px;
+    gap: 6px;                      /* ⬅️ трохи більше простору */
+    font-size: 14px;               /* ⬅️ текст трохи більший */
     font-weight: 600;
     cursor: pointer;
     box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
@@ -1677,8 +1680,9 @@ body.tournament-screen .bottom-nav {
 }
 
 .tourgame-rps-btn .tourgame-rps-icon {
-    font-size: 20px;
+    font-size: 28px;               /* ⬅️ більша іконка */
 }
+
 
 .tourgame-rps-btn:active {
     transform: translateY(1px) scale(0.98);
