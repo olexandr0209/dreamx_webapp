@@ -2196,3 +2196,21 @@ body.tournament-screen .bottom-nav {
     transform: scale(0.97);
     opacity: 0.9;
 }
+
+/* Таймер над кнопками */
+.tourgame-timer-bar {
+    position: relative;
+    width: 100%;
+    height: 4px;
+    border-radius: 999px;
+    background: rgba(31, 41, 55, 0.9);
+    overflow: hidden;
+    margin-bottom: 12px;
+}
+
+.tourgame-timer-progress {
+    height: 100%;
+    width: 100%; /* 🔁 міняй через JS: 100% → 0% */
+    background: linear-gradient(90deg, #22c55e, #f97316, #ef4444);
+    transition: width 0.2s linear;
+}
