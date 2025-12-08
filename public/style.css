@@ -2083,3 +2083,116 @@ body.tournament-screen .bottom-nav {
     transform: scale(0.97);
     opacity: 0.9;
 }
+/* Список турнірів усередині екрана */
+#tournaments-list {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+/* ================================
+   КАРТОЧКА ТУРНІРУ
+=================================*/
+.mode-card.tournament-card {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box; /* ✅ щоб padding + border не вилазили за 100% */
+
+    background: radial-gradient(circle at top left, #191929 0, #090910 60%);
+    border-color: #3b82f6;
+
+    padding: 14px 16px;
+    margin: 10px 0;          /* вертикальні відступи між картками */
+    border-radius: 18px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+/* Верх: назва + тег */
+.tour-card-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.tour-card-tag {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 3px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(59, 130, 246, 0.6);
+    color: #bfdbfe;
+    background: rgba(15, 23, 42, 0.9);
+}
+
+/* Середина — підзаголовок */
+.mode-sub {
+    font-size: 13px;
+    opacity: 0.9;
+    line-height: 1.3;
+}
+
+/* Низ: старт + таймер */
+.tour-card-bottom {
+    margin-top: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.tour-start-label {
+    font-size: 12px;
+    opacity: 0.85;
+}
+
+.tour-card-countdown {
+    font-weight: 700;
+    color: #f0b43a;
+    font-variant-numeric: tabular-nums;
+}
+
+/* Плейсхолдер "немає турнірів" */
+.tour-empty {
+    padding: 14px 16px;
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.9);
+    border: 1px dashed rgba(148, 163, 184, 0.5);
+    font-size: 13px;
+    opacity: 0.85;
+    margin-top: 12px;
+}
+
+/* ====================================
+    КНОПКА "ВІДКРИТИ ТУРНІР"
+==================================== */
+.tour-join-btn {
+    margin-top: 10px;
+
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+
+    padding: 10px 14px;
+    border-radius: 999px;
+    border: 1px solid #f0b43a;
+    background: transparent;
+    color: #f0b43a;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+
+    cursor: pointer;
+    text-align: center;
+
+    display: inline-block;
+}
+
+/* красиве натискання */
+.tour-join-btn:active {
+    transform: scale(0.97);
+    opacity: 0.9;
+}
