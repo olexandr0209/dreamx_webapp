@@ -1,10 +1,10 @@
 // tournament_game.js
-// Логіка "Турнірної" гри: ти vs суперник у 3 іграх раунду
+// Логіка "турнірної" гри: ти vs суперник у 3 іграх раунду
 
 // ======================
 //  Налаштування
 // ======================
-const STATUS_TIME = 3;          // ⬅️ 3 секунди на хід
+const STATUS_TIME = 6;          // сек на хід
 const MAX_GAMES = 3;            // 3 гри в раунді
 
 let currentGameIndex = 0;       // 0,1,2
@@ -14,8 +14,13 @@ let turnLocked = false;
 let timerId = null;
 let timeLeft = STATUS_TIME;
 
-// Елементи DOM
-const statusEl = document.querySelector(".tourgame-status-line");
+// ======================
+//  DOM-елементи
+// ======================
+
+const statusEl = document.getElementById("tourgame-status-text");
+const timerBarEl = document.getElementById("tourgame-timer-progress");
+
 const rockBtn = document.querySelector(".tourgame-rps-btn.rps-rock");
 const scissorsBtn = document.querySelector(".tourgame-rps-btn.rps-scissors");
 const paperBtn = document.querySelector(".tourgame-rps-btn.rps-paper");
@@ -41,6 +46,10 @@ const meCells = meRow
 
 const meTotalCell = meRow ? meRow.querySelector(".history-total") : null;
 
+// центральні рахунки "Цей раунд"
+const oppRoundScoreEl = document.getElementById("tourgame-opponent-round-score");
+const meRoundScoreEl = document.getElementById("tourgame-me-round-score");
+
 // Мапа фігур
 const CHOICES = {
   rock: { icon: "🪨", beats: "scissors" },
@@ -54,28 +63,42 @@ const CHOICES = {
 
 function updateStatusText() {
   if (!statusEl) return;
+
   if (currentGameIndex >= MAX_GAMES) {
-    statusEl.textContent = "Раунд завершено. Очікуємо наступну групу…";
+    statusEl.textContent = "Раунд завершено. Очікуємо наступний етап…";
     return;
   }
+
   statusEl.textContent = `Зроби вибір за ${timeLeft} секунди…`;
+}
+
+function updateTimerBar() {
+  if (!timerBarEl) return;
+  const ratio = Math.max(0, Math.min(1, timeLeft / STATUS_TIME));
+  timerBarEl.style.width = ratio * 100 + "%";
 }
 
 function startTurnTimer() {
   clearInterval(timerId);
   timeLeft = STATUS_TIME;
   updateStatusText();
+  updateTimerBar();
 
   timerId = setInterval(() => {
     timeLeft -= 1;
     if (timeLeft <= 0) {
+      timeLeft = 0;
+      updateStatusText();
+      updateTimerBar();
       clearInterval(timerId);
+
       if (!turnLocked) {
         autoPickForPlayer(); // авто-вибір, якщо не встиг
       }
       return;
     }
     updateStatusText();
+    updateTimerBar();
   }, 1000);
 }
 
@@ -124,8 +147,7 @@ function handlePlayerChoice(choiceKey) {
   setHistoryCells(currentGameIndex, opponentKey, choiceKey, result);
 
   // ===========================
-  //   НОВА СИСТЕМА БАЛІВ
-  //   win = 2, draw = 1, lose = 0
+  //   CИСТЕМА БАЛІВ: win=2, draw=1, lose=0
   // ===========================
   if (result === 1) {
     roundScoreMe += 2;
@@ -136,8 +158,13 @@ function handlePlayerChoice(choiceKey) {
     roundScoreOpp += 2;
   }
 
+  // оновлюємо суму в Σ
   if (oppTotalCell) oppTotalCell.textContent = String(roundScoreOpp);
   if (meTotalCell) meTotalCell.textContent = String(roundScoreMe);
+
+  // оновлюємо центральний рахунок "Цей раунд"
+  if (oppRoundScoreEl) oppRoundScoreEl.textContent = String(roundScoreOpp);
+  if (meRoundScoreEl) meRoundScoreEl.textContent = String(roundScoreMe);
 
   // Наступна гра
   currentGameIndex += 1;
@@ -153,6 +180,7 @@ function handlePlayerChoice(choiceKey) {
 }
 
 function setHistoryCells(gameIndex, opponentKey, meKey, result) {
+  // gameIndex 0..2 -> відповідно перші 3 клітинки
   if (!oppCells[gameIndex] || !meCells[gameIndex]) return;
 
   const oppCell = oppCells[gameIndex];
@@ -179,6 +207,7 @@ function setHistoryCells(gameIndex, opponentKey, meKey, result) {
 
 function finishRound() {
   updateStatusText();
+  updateTimerBar();
   disableButtons();
 }
 
@@ -194,6 +223,14 @@ function disableButtons() {
 //  Ініціалізація
 // ======================
 
+function resetButtons() {
+  [rockBtn, scissorsBtn, paperBtn].forEach((btn) => {
+    if (!btn) return;
+    btn.disabled = false;
+    btn.style.opacity = "1";
+  });
+}
+
 function initTournamentGame() {
   if (!rockBtn || !scissorsBtn || !paperBtn) return;
 
@@ -201,6 +238,7 @@ function initTournamentGame() {
   scissorsBtn.addEventListener("click", () => handlePlayerChoice("scissors"));
   paperBtn.addEventListener("click", () => handlePlayerChoice("paper"));
 
+  // Початковий стан
   turnLocked = false;
   currentGameIndex = 0;
   roundScoreMe = 0;
@@ -209,11 +247,15 @@ function initTournamentGame() {
   if (oppTotalCell) oppTotalCell.textContent = "0";
   if (meTotalCell) meTotalCell.textContent = "0";
 
+  if (oppRoundScoreEl) oppRoundScoreEl.textContent = "0";
+  if (meRoundScoreEl) meRoundScoreEl.textContent = "0";
+
   [...oppCells, ...meCells].forEach((cell) => {
     cell.textContent = "";
     cell.classList.remove("result-draw", "result-win", "result-lose");
   });
 
+  resetButtons();
   startTurnTimer();
 }
 
