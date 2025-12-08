@@ -1,16 +1,16 @@
 // tournament_game.js
-// Логіка "Турнірної" гри: ти vs умовний суперник у 3 іграх раунду
+// Логіка "Турнірної" гри: ти vs суперник у 3 іграх раунду
 
 // ======================
-//  Допоміжні змінні
+//  Налаштування
 // ======================
-const STATUS_TIME = 6;           // секунд на хід
+const STATUS_TIME = 3;          // ⬅️ 3 секунди на хід
 const MAX_GAMES = 3;            // 3 гри в раунді
 
 let currentGameIndex = 0;       // 0,1,2
 let roundScoreMe = 0;
 let roundScoreOpp = 0;
-let turnLocked = false;         // щоб не клікали по 10 разів
+let turnLocked = false;
 let timerId = null;
 let timeLeft = STATUS_TIME;
 
@@ -58,7 +58,7 @@ function updateStatusText() {
     statusEl.textContent = "Раунд завершено. Очікуємо наступну групу…";
     return;
   }
-  statusEl.textContent = `Зроби вибір за ${timeLeft} секунд…`;
+  statusEl.textContent = `Зроби вибір за ${timeLeft} секунди…`;
 }
 
 function startTurnTimer() {
@@ -71,8 +71,7 @@ function startTurnTimer() {
     if (timeLeft <= 0) {
       clearInterval(timerId);
       if (!turnLocked) {
-        // якщо гравець не вибрав — авто-вибір
-        autoPickForPlayer();
+        autoPickForPlayer(); // авто-вибір, якщо не встиг
       }
       return;
     }
@@ -108,7 +107,7 @@ function handlePlayerChoice(choiceKey) {
   turnLocked = true;
   stopTurnTimer();
 
-  // Вибір суперника (поки що рандомно)
+  // Вибір суперника (поки рандом)
   const opponentKey = randomChoiceKey();
 
   // Визначаємо результат
@@ -124,9 +123,18 @@ function handlePlayerChoice(choiceKey) {
   // Оновлюємо квадратики історії
   setHistoryCells(currentGameIndex, opponentKey, choiceKey, result);
 
-  // Оновлюємо рахунок раунду
-  if (result === 1) roundScoreMe += 1;
-  if (result === -1) roundScoreOpp += 1;
+  // ===========================
+  //   НОВА СИСТЕМА БАЛІВ
+  //   win = 2, draw = 1, lose = 0
+  // ===========================
+  if (result === 1) {
+    roundScoreMe += 2;
+  } else if (result === 0) {
+    roundScoreMe += 1;
+    roundScoreOpp += 1;
+  } else if (result === -1) {
+    roundScoreOpp += 2;
+  }
 
   if (oppTotalCell) oppTotalCell.textContent = String(roundScoreOpp);
   if (meTotalCell) meTotalCell.textContent = String(roundScoreMe);
@@ -137,44 +145,33 @@ function handlePlayerChoice(choiceKey) {
   if (currentGameIndex >= MAX_GAMES) {
     finishRound();
   } else {
-    // невелика пауза і старт наступного таймера
     setTimeout(() => {
       turnLocked = false;
       startTurnTimer();
-    }, 500);
+    }, 400);
   }
 }
 
 function setHistoryCells(gameIndex, opponentKey, meKey, result) {
-  if (
-    !oppCells[gameIndex] ||
-    !meCells[gameIndex]
-  ) {
-    return;
-  }
+  if (!oppCells[gameIndex] || !meCells[gameIndex]) return;
 
   const oppCell = oppCells[gameIndex];
   const meCell = meCells[gameIndex];
 
-  // очищаємо попередні класи результатів
   [oppCell, meCell].forEach((cell) => {
     cell.classList.remove("result-draw", "result-win", "result-lose");
   });
 
-  // ставимо іконки
   oppCell.textContent = CHOICES[opponentKey].icon;
   meCell.textContent = CHOICES[meKey].icon;
 
-  // фарбуємо фон
   if (result === 0) {
     oppCell.classList.add("result-draw");
     meCell.classList.add("result-draw");
   } else if (result === 1) {
-    // ти виграв
     meCell.classList.add("result-win");
     oppCell.classList.add("result-lose");
   } else if (result === -1) {
-    // ти програв
     meCell.classList.add("result-lose");
     oppCell.classList.add("result-win");
   }
@@ -212,7 +209,6 @@ function initTournamentGame() {
   if (oppTotalCell) oppTotalCell.textContent = "0";
   if (meTotalCell) meTotalCell.textContent = "0";
 
-  // очищаємо клітинки (на випадок повторного входу)
   [...oppCells, ...meCells].forEach((cell) => {
     cell.textContent = "";
     cell.classList.remove("result-draw", "result-win", "result-lose");
