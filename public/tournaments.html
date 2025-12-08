@@ -28,6 +28,12 @@
             <div class="mode-title">Ти vs Компʼютер</div>
             <div class="mode-sub">Швидка гра• Отримуй монети</div>
         </button>
+        
+        <button class="mode-card" id="mode-tournament-test">
+            <div class="mode-title">Тест турніру</div>
+            <div class="mode-sub">Переглянути турнірний бій</div>
+        </button>
+
     </div>
 
     <div class="bottom-nav">
@@ -61,6 +67,16 @@
                 window.location.href = qs ? `index.html?${qs}` : "index.html";
             });
         }
+        const tourTestBtn = document.getElementById("mode-tournament-test");
+            if (tourTestBtn) {
+                tourTestBtn.addEventListener("click", () => {
+                const params = new URLSearchParams(window.location.search);
+                params.delete("points");
+                const qs = params.toString();
+                window.location.href = qs ? `tournament_game.html?${qs}` : "tournament_game.html";
+            });
+        }
+
     </script>
 
     <script>
