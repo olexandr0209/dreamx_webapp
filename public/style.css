@@ -1790,3 +1790,99 @@ body.tournament-screen .bottom-nav {
 .result-lose {
     background: rgba(239, 68, 68, 0.35);
 }
+
+
+/* Історія виборів всередині арени */
+.tourgame-history {
+    margin-top: 10px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(55, 65, 81, 0.7);
+}
+
+/* Рядок історії: label + 3 гри + Σ */
+.tourgame-history-row {
+    display: grid;
+    grid-template-columns: auto 24px 24px 24px 28px; /* label + 3 ходи + сума */
+    column-gap: 6px;
+    align-items: center;
+    margin-bottom: 4px;
+    font-size: 11px;
+}
+
+.tourgame-history-row.header {
+    color: #9ca3af;
+}
+
+/* Ліва частина — роль + нік */
+.history-label {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.history-role {
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #9ca3af;
+}
+
+.history-nick {
+    font-size: 11px;
+    color: #e5e7eb;
+}
+
+/* Клітинки */
+.history-cell {
+    width: 100%;
+    height: 24px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: background 0.2s ease;
+}
+
+/* Хедерні клітинки 1,2,3,Σ */
+.history-cell-header {
+    font-size: 11px;
+    font-weight: 600;
+    color: #9ca3af;
+    background: rgba(15,23,42,0.9);
+    border-color: rgba(55,65,81,0.8);
+}
+
+/* Клітинка суми за раунд */
+.history-total {
+    font-weight: 700;
+    font-size: 12px;
+    background: rgba(15,23,42,0.9);
+    border-color: rgba(148, 163, 184, 0.6);
+    color: #e5e7eb;
+}
+
+/* Порожня клітинка */
+.history-cell:empty {
+    background: rgba(255,255,255,0.03);
+}
+
+/* 🔥 РЕЗУЛЬТАТИ — тільки фон */
+
+/* Нічия (обидва отримують жовтий) */
+.result-draw {
+    background: rgba(250, 204, 21, 0.35);
+}
+
+/* Ти виграв (зелений для тебе) */
+.result-win {
+    background: rgba(34, 197, 94, 0.35);
+}
+
+/* Ти програв (червоний для тебе) */
+.result-lose {
+    background: rgba(239, 68, 68, 0.35);
+}
+
