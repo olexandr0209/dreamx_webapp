@@ -57,14 +57,15 @@
 
     <!-- ЦЕНТР: бій -->
     <!-- ЦЕНТР: бій + історія виборів в одній карті -->
-    <div class="tourgame-arena">
+     <div class="tourgame-arena">
+    
         <!-- Заголовок раунду -->
         <div class="tourgame-round-label">РАУНД 2 / 3</div>
         <div class="tourgame-round-sub">Цей раунд: 3 гри</div>
     
-        <!-- ІСТОРІЯ ВИБОРІВ У РАУНДІ -->
-        <div class="tourgame-history">
-            <!-- Верхній рядок: номери ігор + сума -->
+        <!-- ІСТОРІЯ ВИБОРІВ -->
+        <div class="tourgame-history-box">
+    
             <div class="tourgame-history-row header">
                 <div class="history-label"></div>
                 <div class="history-cell history-cell-header">1</div>
@@ -73,7 +74,6 @@
                 <div class="history-cell history-cell-header">Σ</div>
             </div>
     
-            <!-- Рядок суперника -->
             <div class="tourgame-history-row opponent">
                 <div class="history-label">
                     <div class="history-role">Суперник</div>
@@ -82,10 +82,9 @@
                 <div class="history-cell result-draw">🪨</div>
                 <div class="history-cell result-lose">📄</div>
                 <div class="history-cell"></div>
-                <div class="history-cell history-total">1</div> <!-- очки за раунд -->
+                <div class="history-cell history-total">1</div>
             </div>
     
-            <!-- Рядок Ти -->
             <div class="tourgame-history-row me">
                 <div class="history-label">
                     <div class="history-role">Ти</div>
@@ -94,30 +93,12 @@
                 <div class="history-cell result-draw">🪨</div>
                 <div class="history-cell result-win">✂️</div>
                 <div class="history-cell"></div>
-                <div class="history-cell history-total">2</div> <!-- очки за раунд -->
+                <div class="history-cell history-total">2</div>
             </div>
+    
         </div>
     
-        <!-- ДВОБІЙ: загальні бали в групі -->
-        <div class="tourgame-duel">
-            <div class="tourgame-player-card opponent">
-                <div class="tourgame-role-label">СУПЕРНИК</div>
-                <div class="tourgame-name">@dragon</div>
-                <div class="tourgame-score-label">Бали в групі:</div>
-                <div class="tourgame-score">3</div>
-            </div>
-    
-            <div class="tourgame-vs">VS</div>
-    
-            <div class="tourgame-player-card me">
-                <div class="tourgame-role-label">ТИ</div>
-                <div class="tourgame-name">@you</div>
-                <div class="tourgame-score-label">Бали в групі:</div>
-                <div class="tourgame-score">4</div>
-            </div>
-        </div>
     </div>
-
 
     <!-- НИЗ: вибір ходу + таймер, притиснуті до низу -->
     <div class="tourgame-bottom">
