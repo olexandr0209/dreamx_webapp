@@ -1,9 +1,29 @@
 // tournament_game.js
 // Логіка "турнірної" гри: ти vs суперник у 3 іграх раунду
+// Зараз: гра проти бота + приєднання до турніру через API
 
 // ======================
-//  Налаштування
+//  Налаштування API
 // ======================
+
+// Базовий URL API (можеш замінити на свій домен Render)
+const API_BASE =
+  window.DREAMX_API_BASE ||
+  "https://dreamx-api.onrender.com";
+
+// ID турніру з URL (?tournament_id=...)
+const urlParams = new URLSearchParams(window.location.search);
+const TOURNAMENT_ID = urlParams.get("tournament_id")
+  ? parseInt(urlParams.get("tournament_id"), 10)
+  : null;
+
+// user_id беремо через загальний core
+const USER_ID = window.DreamX ? window.DreamX.getUserId() : null;
+
+// ======================
+//  Налаштування раунду
+// ======================
+
 const STATUS_TIME = 6;          // сек на хід
 const MAX_GAMES = 3;            // 3 гри в раунді
 
@@ -108,7 +128,7 @@ function stopTurnTimer() {
 }
 
 // ======================
-//  Логіка ходу
+//  Логіка ходу (поки офлайн vs бот)
 // ======================
 
 function randomChoiceKey() {
@@ -130,7 +150,7 @@ function handlePlayerChoice(choiceKey) {
   turnLocked = true;
   stopTurnTimer();
 
-  // Вибір суперника (поки рандом)
+  // Вибір суперника (поки рандом — “бот”)
   const opponentKey = randomChoiceKey();
 
   // Визначаємо результат
@@ -146,9 +166,7 @@ function handlePlayerChoice(choiceKey) {
   // Оновлюємо квадратики історії
   setHistoryCells(currentGameIndex, opponentKey, choiceKey, result);
 
-  // ===========================
-  //   CИСТЕМА БАЛІВ: win=2, draw=1, lose=0
-  // ===========================
+  // CИСТЕМА БАЛІВ: win=2, draw=1, lose=0
   if (result === 1) {
     roundScoreMe += 2;
   } else if (result === 0) {
@@ -220,6 +238,51 @@ function disableButtons() {
 }
 
 // ======================
+//  Приєднання до турніру через API
+// ======================
+
+async function joinTournamentIfPossible() {
+  if (!TOURNAMENT_ID || !USER_ID) {
+    // Якщо немає даних — просто тренувальний режим
+    console.log("Tournament or user_id not found — тренувальна гра проти бота.");
+    if (statusEl && !TOURNAMENT_ID) {
+      statusEl.textContent = "Тренувальний режим: турнір не вибрано.";
+    }
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/api/join_tournament`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        tournament_id: TOURNAMENT_ID,
+        user_id: USER_ID,
+      }),
+    });
+
+    if (!res.ok) {
+      throw new Error("HTTP " + res.status);
+    }
+
+    const data = await res.json();
+    console.log("join_tournament result:", data);
+
+    if (statusEl) {
+      statusEl.textContent = "Ти приєднався до турніру. Зіграємо раунд проти суперника!";
+    }
+  } catch (err) {
+    console.error("join_tournament error:", err);
+    if (statusEl) {
+      statusEl.textContent =
+        "Не вдалося приєднатись до турніру. Але ти все одно можеш потренуватись проти бота 😉";
+    }
+  }
+}
+
+// ======================
 //  Ініціалізація
 // ======================
 
@@ -231,14 +294,18 @@ function resetButtons() {
   });
 }
 
-function initTournamentGame() {
+async function initTournamentGame() {
   if (!rockBtn || !scissorsBtn || !paperBtn) return;
 
+  // 1) Спочатку намагаємось приєднатися до турніру в бекенді
+  await joinTournamentIfPossible();
+
+  // 2) Навішуємо обробники кнопок
   rockBtn.addEventListener("click", () => handlePlayerChoice("rock"));
   scissorsBtn.addEventListener("click", () => handlePlayerChoice("scissors"));
   paperBtn.addEventListener("click", () => handlePlayerChoice("paper"));
 
-  // Початковий стан
+  // 3) Початковий стан раунду
   turnLocked = false;
   currentGameIndex = 0;
   roundScoreMe = 0;
@@ -259,4 +326,6 @@ function initTournamentGame() {
   startTurnTimer();
 }
 
-document.addEventListener("DOMContentLoaded", initTournamentGame);
+document.addEventListener("DOMContentLoaded", () => {
+  initTournamentGame();
+});
