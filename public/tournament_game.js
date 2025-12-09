@@ -2,6 +2,7 @@
 // Логіка "турнірної" гри: ти vs суперник у 3 іграх раунду
 // Зараз: гра проти бота + приєднання до турніру через API
 // ДОДАНО: завантаження даних турніру з БД + перевірка кількості гравців
+// + динамічний список учасників із нікнеймами
 
 // ======================
 //  Налаштування API
@@ -20,14 +21,26 @@ const TOURNAMENT_ID = urlParams.get("tournament_id")
 // user_id беремо через загальний core
 const USER_ID = window.DreamX ? window.DreamX.getUserId() : null;
 
+// username беремо звідусіль, де можемо
+const USERNAME =
+  (window.DreamX &&
+    typeof window.DreamX.getUsername === "function" &&
+    window.DreamX.getUsername()) ||
+  (window.Telegram &&
+    window.Telegram.WebApp &&
+    window.Telegram.WebApp.initDataUnsafe &&
+    window.Telegram.WebApp.initDataUnsafe.user &&
+    window.Telegram.WebApp.initDataUnsafe.user.username) ||
+  null;
+
 // ======================
 //  Налаштування раунду
 // ======================
 
-const STATUS_TIME = 6;          // сек на хід
-const MAX_GAMES = 3;            // 3 гри в раунді
+const STATUS_TIME = 6; // сек на хід
+const MAX_GAMES = 3;   // 3 гри в раунді
 
-let currentGameIndex = 0;       // 0,1,2
+let currentGameIndex = 0; // 0,1,2
 let roundScoreMe = 0;
 let roundScoreOpp = 0;
 let turnLocked = false;
@@ -42,6 +55,18 @@ let timeLeft = STATUS_TIME;
 const tNameEl = document.getElementById("tourgame-tournament-name");
 const tHostEl = document.getElementById("tourgame-tournament-host");
 const tProgressEl = document.getElementById("tourgame-tournament-progress");
+
+// блок групи/учасників
+const groupListEl = document.getElementById("tourgame-group-list");
+const groupSubtitleEl = document.getElementById("tourgame-group-subtitle");
+
+// імена в центрі
+const opponentNameEl = document.getElementById("tourgame-opponent-name");
+const meNameEl = document.getElementById("tourgame-me-name");
+
+// імена в історії
+const historyOpponentNickEl = document.getElementById("history-opponent-nick");
+const historyMeNickEl = document.getElementById("history-me-nick");
 
 const statusEl = document.getElementById("tourgame-status-text");
 const timerBarEl = document.getElementById("tourgame-timer-progress");
@@ -83,6 +108,66 @@ const CHOICES = {
   scissors: { icon: "✂️", beats: "paper" },
   paper: { icon: "📄", beats: "rock" },
 };
+
+// ======================
+//  Хелпери для нікнеймів
+// ======================
+
+function normalizeAt(raw) {
+  if (!raw) return null;
+  const s = raw.toString();
+  return s.startsWith("@") ? s : `@${s}`;
+}
+
+// дістати нік із обʼєкта гравця
+function getNickFromPlayerObj(p) {
+  if (!p) return null;
+
+  const raw =
+    p.username ||
+    p.nick ||
+    p.telegram_username ||
+    p.tg_username ||
+    p.user_name ||
+    null;
+
+  if (raw) return normalizeAt(raw);
+  return null;
+}
+
+// чи цей player = поточний користувач
+function isThisMe(playerObj) {
+  if (!playerObj || !USER_ID) return false;
+  const pid =
+    playerObj.user_id ||
+    playerObj.telegram_id ||
+    playerObj.tg_id ||
+    playerObj.player_id ||
+    null;
+
+  return pid && String(pid) === String(USER_ID);
+}
+
+// красиве імʼя з урахуванням "Ти" і "Гравець #N"
+function buildDisplayNameForPlayer(playerObj, indexInList) {
+  const me = isThisMe(playerObj);
+
+  // спершу пробуємо взяти нік з обʼєкта
+  let nick = getNickFromPlayerObj(playerObj);
+
+  // якщо це ми, але у записі немає ніка — беремо username з Telegram
+  if (me && !nick && USERNAME) {
+    nick = normalizeAt(USERNAME);
+  }
+
+  if (nick) {
+    return me ? `${nick} (Ти)` : nick;
+  }
+
+  // немає ніка взагалі → «Гравець #N»
+  const label = `Гравець #${indexInList + 1}`;
+  return me && USERNAME ? `${normalizeAt(USERNAME)} (Ти)` : label;
+}
 
 // ======================
 //  Таймер
@@ -278,33 +363,130 @@ async function loadTournamentInfo() {
         null;
 
       if (rawHost) {
-        const clean = rawHost.toString().startsWith("@")
-          ? rawHost.toString().slice(1)
-          : rawHost.toString();
-        tHostEl.textContent = `Організатор: @${clean}`;
+        tHostEl.textContent = `Організатор: ${normalizeAt(rawHost)}`;
       } else {
         tHostEl.textContent = "Організатор: невідомо";
       }
     }
 
-    // Прогрес: було → залишилось / або просто кількість
-    if (tProgressEl) {
-      const total =
-        t.players_total ||
-        t.players_count ||
-        t.total_players ||
-        0;
-      const pass =
-        t.players_pass ||
-        t.pass_count ||
-        null;
+    // Масив гравців з відповіді (назви полів — на всякий випадок кілька варіантів)
+    const players =
+      t.players ||
+      t.participants ||
+      t.entries ||
+      [];
 
-      if (total && pass !== null && pass !== undefined) {
-        tProgressEl.textContent = `Було ${total} → Залишилось ${pass}`;
-      } else if (total) {
+    t._players = players;
+    t._players_count = Array.isArray(players) ? players.length : 0;
+
+    // Прогрес: загальна кількість учасників
+    if (tProgressEl) {
+      const totalFromArray = Array.isArray(players) ? players.length : 0;
+      const totalFromFields =
+        t.players_total || t.players_count || t.total_players || 0;
+
+      const total = totalFromArray || totalFromFields;
+
+      if (total) {
         tProgressEl.textContent = `Учасників: ${total}`;
       } else {
         tProgressEl.textContent = "Учасників поки немає";
+      }
+    }
+
+    // --- РЕНДЕР СПИСКУ УЧАСНИКІВ (ПРАВА КАРТОЧКА) ---
+
+    if (groupListEl) {
+      groupListEl.innerHTML = "";
+
+      if (Array.isArray(players) && players.length > 0) {
+        players.forEach((p, index) => {
+          const li = document.createElement("li");
+          li.className = "tourgame-group-player";
+
+          const isMeFlag = isThisMe(p);
+          if (isMeFlag) {
+            li.classList.add("me");
+          }
+
+          const nameSpan = document.createElement("span");
+          nameSpan.className = "tourgame-player-name";
+          nameSpan.textContent = buildDisplayNameForPlayer(p, index);
+
+          const scoreSpan = document.createElement("span");
+          scoreSpan.className = "tourgame-player-score";
+          scoreSpan.textContent = "0 балів";
+
+          li.appendChild(nameSpan);
+          li.appendChild(scoreSpan);
+          groupListEl.appendChild(li);
+        });
+      } else {
+        // якщо API не дав жодного учасника
+        const li = document.createElement("li");
+        li.className = "tourgame-group-player";
+        const nameSpan = document.createElement("span");
+        nameSpan.className = "tourgame-player-name";
+        nameSpan.textContent = "Поки немає учасників";
+        const scoreSpan = document.createElement("span");
+        scoreSpan.className = "tourgame-player-score";
+        scoreSpan.textContent = "";
+        li.appendChild(nameSpan);
+        li.appendChild(scoreSpan);
+        groupListEl.appendChild(li);
+      }
+    }
+
+    // Підзаголовок: "1 учасник" / "2 учасники" / ...
+    if (groupSubtitleEl) {
+      const pc = t._players_count || 0;
+      if (pc === 0) {
+        groupSubtitleEl.textContent = "Поки немає учасників";
+      } else if (pc === 1) {
+        groupSubtitleEl.textContent = "1 учасник · чекаємо опонента";
+      } else {
+        groupSubtitleEl.textContent = `${pc} учасники(-ів)`;
+      }
+    }
+
+    // --- ІМЕНА В ЦЕНТРАЛЬНОМУ ДВОБІЇ ---
+
+    if (Array.isArray(players) && players.length > 0) {
+      let mePlayer = null;
+      let oppPlayer = null;
+
+      // шукаємо мене
+      mePlayer = players.find((p) => isThisMe(p)) || null;
+      if (!mePlayer) {
+        // якщо мене не знайшло по user_id — вважаємо першим
+        mePlayer = players[0];
+      }
+
+      // шукаємо суперника (будь-який інший)
+      oppPlayer = players.find((p) => p !== mePlayer) || null;
+
+      // Мої імена
+      const meDisplay = buildDisplayNameForPlayer(
+        mePlayer,
+        players.indexOf(mePlayer)
+      );
+      const meNick = getNickFromPlayerObj(mePlayer) || normalizeAt(USERNAME) || "Ти";
+
+      if (meNameEl) meNameEl.textContent = meNick;
+      if (historyMeNickEl) historyMeNickEl.textContent = meNick;
+
+      // Суперник
+      if (oppPlayer) {
+        const oppNick =
+          getNickFromPlayerObj(oppPlayer) ||
+          `Гравець #${players.indexOf(oppPlayer) + 1}`;
+        if (opponentNameEl) opponentNameEl.textContent = oppNick;
+        if (historyOpponentNickEl) historyOpponentNickEl.textContent = oppNick;
+      } else {
+        // ще немає другого гравця
+        if (opponentNameEl) opponentNameEl.textContent = "Очікуємо суперника";
+        if (historyOpponentNickEl)
+          historyOpponentNickEl.textContent = "Суперник";
       }
     }
 
@@ -382,20 +564,18 @@ async function initTournamentGame() {
   // 1) Спочатку намагаємось приєднатися до турніру в бекенді
   await joinTournamentIfPossible();
 
-  // 2) Завантажуємо інформацію про турнір (назва, організатор, кількість учасників)
+  // 2) Завантажуємо інформацію про турнір (назва, організатор, КОНКРЕТНІ УЧАСНИКИ)
   const t = await loadTournamentInfo();
 
   // Скільки учасників зареєстровано в турнірі
   const playersCount =
+    (t && t._players_count) ||
     (t &&
-      (t.players_total ||
-        t.players_count ||
-        t.total_players)) ||
+      (t.players_total || t.players_count || t.total_players)) ||
     0;
 
   if (!TOURNAMENT_ID || !USER_ID) {
-    // Якщо немає турніру або user_id — залишаємо просто тренувальний режим,
-    // але без чеків на кількість.
+    // Якщо немає турніру або user_id — тренувальний режим
     if (statusEl) {
       statusEl.textContent =
         "Тренувальний режим: турнір не вибрано або користувач не визначений.";
