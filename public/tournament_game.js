@@ -1,6 +1,7 @@
 // tournament_game.js
 // Логіка "турнірної" гри: ти vs суперник у 3 іграх раунду
 // Зараз: гра проти бота + приєднання до турніру через API
+// ДОДАНО: завантаження даних турніру з БД + перевірка кількості гравців
 
 // ======================
 //  Налаштування API
@@ -8,8 +9,7 @@
 
 // Базовий URL API (можеш замінити на свій домен Render)
 const API_BASE =
-  window.DREAMX_API_BASE ||
-  "https://dreamx-api.onrender.com";
+  window.DREAMX_API_BASE || "https://dreamx-api.onrender.com";
 
 // ID турніру з URL (?tournament_id=...)
 const urlParams = new URLSearchParams(window.location.search);
@@ -37,6 +37,11 @@ let timeLeft = STATUS_TIME;
 // ======================
 //  DOM-елементи
 // ======================
+
+// верхня шапка турніру
+const tNameEl = document.getElementById("tourgame-tournament-name");
+const tHostEl = document.getElementById("tourgame-tournament-host");
+const tProgressEl = document.getElementById("tourgame-tournament-progress");
 
 const statusEl = document.getElementById("tourgame-status-text");
 const timerBarEl = document.getElementById("tourgame-timer-progress");
@@ -67,7 +72,9 @@ const meCells = meRow
 const meTotalCell = meRow ? meRow.querySelector(".history-total") : null;
 
 // центральні рахунки "Цей раунд"
-const oppRoundScoreEl = document.getElementById("tourgame-opponent-round-score");
+const oppRoundScoreEl = document.getElementById(
+  "tourgame-opponent-round-score"
+);
 const meRoundScoreEl = document.getElementById("tourgame-me-round-score");
 
 // Мапа фігур
@@ -238,17 +245,93 @@ function disableButtons() {
 }
 
 // ======================
+//  Дані турніру з API
+// ======================
+
+async function loadTournamentInfo() {
+  if (!TOURNAMENT_ID) return null;
+
+  try {
+    const res = await fetch(
+      `${API_BASE}/api/get_tournament?id=${encodeURIComponent(TOURNAMENT_ID)}`
+    );
+    if (!res.ok) {
+      throw new Error("HTTP " + res.status);
+    }
+
+    const data = await res.json();
+    const t = data.tournament || null;
+    if (!t) return null;
+
+    // Назва турніру
+    if (tNameEl && t.title) {
+      tNameEl.textContent = t.title;
+    }
+
+    // Організатор (пробуємо кілька можливих полів)
+    if (tHostEl) {
+      const rawHost =
+        t.host_username ||
+        t.host_nick ||
+        t.owner_username ||
+        t.owner_nick ||
+        null;
+
+      if (rawHost) {
+        const clean = rawHost.toString().startsWith("@")
+          ? rawHost.toString().slice(1)
+          : rawHost.toString();
+        tHostEl.textContent = `Організатор: @${clean}`;
+      } else {
+        tHostEl.textContent = "Організатор: невідомо";
+      }
+    }
+
+    // Прогрес: було → залишилось / або просто кількість
+    if (tProgressEl) {
+      const total =
+        t.players_total ||
+        t.players_count ||
+        t.total_players ||
+        0;
+      const pass =
+        t.players_pass ||
+        t.pass_count ||
+        null;
+
+      if (total && pass !== null && pass !== undefined) {
+        tProgressEl.textContent = `Було ${total} → Залишилось ${pass}`;
+      } else if (total) {
+        tProgressEl.textContent = `Учасників: ${total}`;
+      } else {
+        tProgressEl.textContent = "Учасників поки немає";
+      }
+    }
+
+    return t;
+  } catch (err) {
+    console.error("loadTournamentInfo error:", err);
+    if (statusEl) {
+      statusEl.textContent = "Не вдалося завантажити дані турніру.";
+    }
+    return null;
+  }
+}
+
+// ======================
 //  Приєднання до турніру через API
 // ======================
 
 async function joinTournamentIfPossible() {
   if (!TOURNAMENT_ID || !USER_ID) {
     // Якщо немає даних — просто тренувальний режим
-    console.log("Tournament or user_id not found — тренувальна гра проти бота.");
+    console.log(
+      "Tournament or user_id not found — тренувальна гра проти бота."
+    );
     if (statusEl && !TOURNAMENT_ID) {
       statusEl.textContent = "Тренувальний режим: турнір не вибрано.";
     }
-    return;
+    return null;
   }
 
   try {
@@ -270,15 +353,14 @@ async function joinTournamentIfPossible() {
     const data = await res.json();
     console.log("join_tournament result:", data);
 
-    if (statusEl) {
-      statusEl.textContent = "Ти приєднався до турніру. Зіграємо раунд проти суперника!";
-    }
+    return data;
   } catch (err) {
     console.error("join_tournament error:", err);
     if (statusEl) {
       statusEl.textContent =
         "Не вдалося приєднатись до турніру. Але ти все одно можеш потренуватись проти бота 😉";
     }
+    return null;
   }
 }
 
@@ -300,12 +382,55 @@ async function initTournamentGame() {
   // 1) Спочатку намагаємось приєднатися до турніру в бекенді
   await joinTournamentIfPossible();
 
-  // 2) Навішуємо обробники кнопок
+  // 2) Завантажуємо інформацію про турнір (назва, організатор, кількість учасників)
+  const t = await loadTournamentInfo();
+
+  // Скільки учасників зареєстровано в турнірі
+  const playersCount =
+    (t &&
+      (t.players_total ||
+        t.players_count ||
+        t.total_players)) ||
+    0;
+
+  if (!TOURNAMENT_ID || !USER_ID) {
+    // Якщо немає турніру або user_id — залишаємо просто тренувальний режим,
+    // але без чеків на кількість.
+    if (statusEl) {
+      statusEl.textContent =
+        "Тренувальний режим: турнір не вибрано або користувач не визначений.";
+    }
+    setupRoundLocal();
+    return;
+  }
+
+  if (playersCount < 2) {
+    // ТИ ПЕРШИЙ УЧАСНИК → ЧЕКАЄМО ІНШОГО, НІЧОГО НЕ ВІДБУВАЄТЬСЯ
+    if (statusEl) {
+      statusEl.textContent =
+        "Ти перший учасник цього турніру. Зачекай, поки приєднається ще один гравець…";
+    }
+    disableButtons();
+    stopTurnTimer();
+    return;
+  }
+
+  // Якщо учасників уже 2+ → дозволяємо локальну гру (поки ще vs бот)
+  if (statusEl) {
+    statusEl.textContent =
+      "Гравців достатньо. Можеш зіграти тренувальний раунд перед офіційним боєм.";
+  }
+  setupRoundLocal();
+}
+
+// окремо винесено старт локального раунду
+function setupRoundLocal() {
+  // Навішуємо обробники кнопок (один раз)
   rockBtn.addEventListener("click", () => handlePlayerChoice("rock"));
   scissorsBtn.addEventListener("click", () => handlePlayerChoice("scissors"));
   paperBtn.addEventListener("click", () => handlePlayerChoice("paper"));
 
-  // 3) Початковий стан раунду
+  // Початковий стан раунду
   turnLocked = false;
   currentGameIndex = 0;
   roundScoreMe = 0;
