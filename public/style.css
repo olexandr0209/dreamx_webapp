@@ -1984,11 +1984,18 @@ body.tournament-screen .bottom-nav {
    КАРТОЧКА ТУРНІРУ
 =================================*/
 .mode-card.tournament-card {
-    background: radial-gradient(circle at top left, #191929 0, #090910 60%);
-    border-color: #3b82f6;
-    padding: 14px 16px;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+
+    background: radial-gradient(circle at top left, #1c1f2f 0, #05060b 55%);
+    border: 1px solid rgba(59, 130, 246, 0.9);
+    box-shadow: 0 14px 32px rgba(15, 23, 42, 0.85);
+
+    padding: 16px 18px 14px;
     margin: 12px 0;
-    border-radius: 18px;
+    border-radius: 20px;
+
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -2020,134 +2027,34 @@ body.tournament-screen .bottom-nav {
     line-height: 1.3;
 }
 
-/* Низ: старт + кнопка */
-.tour-card-bottom {
-    margin-top: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-/* Ліворуч — старт */
-.tour-start-label {
-    font-size: 12px;
-    opacity: 0.85;
-}
-
-/* Праворуч — таймер */
-.tour-card-countdown {
-    font-weight: 700;
-    color: #f0b43a;
-    font-variant-numeric: tabular-nums;
-}
-
-/* Плейсхолдер "немає турнірів" */
-.tour-empty {
-    padding: 14px 16px;
-    border-radius: 12px;
-    background: rgba(15, 23, 42, 0.9);
-    border: 1px dashed rgba(148, 163, 184, 0.5);
-    font-size: 13px;
-    opacity: 0.85;
-    margin-top: 12px;
-}
-
-/* ====================================
-    КНОПКА "ВІДКРИТИ ТУРНІР"
-==================================== */
-.tour-join-btn {
-    margin-top: 10px;
-
-    width: 100%;
-    max-width: calc(100% - 4px);
-
-    padding: 10px 14px;
-    border-radius: 999px;
-    border: 1px solid #f0b43a;
-    background: transparent;
-    color: #f0b43a;
-    font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-
-    cursor: pointer;
-    text-align: center;
-
-    display: inline-block;
-    box-sizing: border-box;
-}
-
-/* красиве натискання */
-.tour-join-btn:active {
-    transform: scale(0.97);
-    opacity: 0.9;
-}
 /* Список турнірів усередині екрана */
 #tournaments-list {
     width: 100%;
     box-sizing: border-box;
 }
 
-/* ================================
-   КАРТОЧКА ТУРНІРУ
-=================================*/
-.mode-card.tournament-card {
-    width: 100%;
-    max-width: 100%;
-    box-sizing: border-box; /* ✅ щоб padding + border не вилазили за 100% */
-
-    background: radial-gradient(circle at top left, #191929 0, #090910 60%);
-    border-color: #3b82f6;
-
-    padding: 14px 16px;
-    margin: 10px 0;          /* вертикальні відступи між картками */
-    border-radius: 18px;
-
+/* Низ: старт + кнопка (колонкою) */
+.tour-card-bottom {
+    margin-top: 8px;
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-/* Верх: назва + тег */
-.tour-card-top {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+    flex-direction: column; /* таймер зверху, кнопка знизу */
+    align-items: flex-start;
     gap: 8px;
 }
 
-.tour-card-tag {
-    font-size: 10px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    padding: 3px 8px;
-    border-radius: 999px;
-    border: 1px solid rgba(59, 130, 246, 0.6);
-    color: #bfdbfe;
-    background: rgba(15, 23, 42, 0.9);
-}
-
-/* Середина — підзаголовок */
-.mode-sub {
-    font-size: 13px;
-    opacity: 0.9;
-    line-height: 1.3;
-}
-
-/* Низ: старт + таймер */
-.tour-card-bottom {
-    margin-top: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
+/* Таймер / статус старту */
 .tour-start-label {
-    font-size: 12px;
-    opacity: 0.85;
+    font-size: 14px;
+    font-weight: 600;
+    color: #fbbf24;                     /* золото */
+    font-variant-numeric: tabular-nums; /* рівні цифри */
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    opacity: 1;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.4);
 }
 
+/* Якщо десь ще використаєш окремий блок під числовий таймер */
 .tour-card-countdown {
     font-weight: 700;
     color: #f0b43a;
@@ -2169,48 +2076,56 @@ body.tournament-screen .bottom-nav {
     КНОПКА "ВІДКРИТИ ТУРНІР"
 ==================================== */
 .tour-join-btn {
-    margin-top: 10px;
+    margin-top: 2px;
 
     width: 100%;
     max-width: 100%;
     box-sizing: border-box;
 
-    padding: 10px 14px;
+    padding: 11px 16px;
     border-radius: 999px;
-    border: 1px solid #f0b43a;
-    background: transparent;
-    color: #f0b43a;
+    border: 1px solid rgba(251, 191, 36, 0.9);
+    background: linear-gradient(
+        135deg,
+        rgba(251, 191, 36, 0.18),
+        rgba(251, 191, 36, 0.05)
+    );
+
+    color: #fefce8;
     font-size: 11px;
-    font-weight: 600;
-    letter-spacing: 0.06em;
+    font-weight: 700;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
 
     cursor: pointer;
     text-align: center;
 
     display: inline-block;
+    transition: transform 0.12s ease-out, box-shadow 0.12s ease-out, background 0.12s ease-out;
 }
 
-/* красиве натискання */
 .tour-join-btn:active {
     transform: scale(0.97);
-    opacity: 0.9;
+    opacity: 0.95;
+    box-shadow: 0 0 18px rgba(251, 191, 36, 0.45);
 }
 
-/* Таймер над кнопками */
+/* Таймер-бар над кнопками (якщо будеш використовувати) */
 .tourgame-timer-bar {
     position: relative;
     width: 100%;
-    height: 4px;
+    height: 6px;
     border-radius: 999px;
-    background: rgba(31, 41, 55, 0.9);
+    background: rgba(15, 23, 42, 0.95);
     overflow: hidden;
-    margin-bottom: 12px;
+    margin: 6px 0 10px;
+    box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.9);
 }
 
 .tourgame-timer-progress {
     height: 100%;
-    width: 100%; /* 🔁 міняй через JS: 100% → 0% */
-    background: linear-gradient(90deg, #22c55e, #f97316, #ef4444);
+    width: 100%; /* змінюєш через JS */
+    background: linear-gradient(90deg, #22c55e, #eab308, #f97316, #ef4444);
+    transform-origin: left center;
     transition: width 0.2s linear;
 }
