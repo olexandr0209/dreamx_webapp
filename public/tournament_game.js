@@ -370,11 +370,37 @@ async function loadTournamentInfo() {
     }
 
     // Масив гравців з відповіді (назви полів — на всякий випадок кілька варіантів)
-    const players =
+        // Масив гравців з відповіді (назви полів — на всякий випадок кілька варіантів)
+    let players =
       t.players ||
       t.participants ||
       t.entries ||
       [];
+
+    if (!Array.isArray(players)) {
+      players = [];
+    }
+
+    // 🔥 Гарантуємо, що ти є в списку гравців локально
+    if (USER_ID) {
+      const hasMe = players.some((p) => {
+        const pid =
+          p.user_id ||
+          p.telegram_id ||
+          p.tg_id ||
+          p.player_id ||
+          null;
+        return pid && String(pid) === String(USER_ID);
+      });
+
+      if (!hasMe) {
+        players.push({
+          user_id: USER_ID,
+          username: USERNAME || null,
+        });
+      }
+    }
+
 
     t._players = players;
     t._players_count = Array.isArray(players) ? players.length : 0;
