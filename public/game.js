@@ -1288,6 +1288,7 @@ function renderHomeTournamentCard(t) {
 }
 
 // Завантаження ближчих турнірів (до 1 години)
+// Завантаження ближчих турнірів (до 1 години)
 async function loadHomeTournaments() {
     const listEl = document.getElementById("home-tournaments-list");
     if (!listEl) return;
@@ -1319,7 +1320,7 @@ async function loadHomeTournaments() {
             return soonEnough && notExpired;
         });
 
-                if (!nearTournaments.length) {
+        if (!nearTournaments.length) {
             listEl.textContent = "Наразі немає турнірів у найближчу годину.";
             return;
         }
@@ -1345,9 +1346,13 @@ async function loadHomeTournaments() {
             cards.forEach((card) => updateHomeTournamentCardTimer(card));
         }, 1000);
 
+    } catch (err) {
+        console.error("loadHomeTournaments error:", err);
+        listEl.textContent = "Не вдалося завантажити турніри.";
+    }
+}
 
 // Підключаємо до вже існуючого DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {
     loadHomeTournaments();
 });
-
