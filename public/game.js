@@ -622,7 +622,6 @@ function createCardFromBackend(card) {
 }
 
 
-
 async function renderGiveawayList() {
     const list = document.getElementById("giveaway-list");
     if (!list) return; // на game.html просто вийде
@@ -652,12 +651,15 @@ async function renderGiveawayList() {
                 list.appendChild(el);
             });
         } else {
-            // Якщо активних карток немає — показуємо просте повідомлення
+            // Якщо активних карток немає — показуємо просте повідомлення,
+            // але тільки якщо потім не зʼявляться турніри
             const empty = document.createElement("div");
+            empty.id = "no-giveaways-message";              // 👈 важливо
             empty.style.padding = "80px 16px 0";
             empty.style.textAlign = "center";
             empty.style.opacity = "0.8";
-            empty.innerHTML = "Наразі активних розіграшів немає.<br/>Заглянь пізніше 😉";
+            empty.innerHTML =
+                "Наразі активних розіграшів немає.<br/>Заглянь пізніше 😉";
             list.appendChild(empty);
         }
 
@@ -668,7 +670,8 @@ async function renderGiveawayList() {
         error.style.padding = "80px 16px 0";
         error.style.textAlign = "center";
         error.style.opacity = "0.8";
-        error.innerHTML = "Сталася помилка при завантаженні.<br/>Спробуй трохи пізніше 🙏";
+        error.innerHTML =
+            "Сталася помилка при завантаженні.<br/>Спробуй трохи пізніше 🙏";
         list.appendChild(error);
 
     } finally {
@@ -1316,7 +1319,7 @@ async function loadHomeTournaments() {
             return soonEnough && notExpired;
         });
 
-        if (!nearTournaments.length) {
+                if (!nearTournaments.length) {
             listEl.textContent = "Наразі немає турнірів у найближчу годину.";
             return;
         }
@@ -1327,6 +1330,13 @@ async function loadHomeTournaments() {
             listEl.appendChild(card);
         });
 
+        // 🔥 Якщо є хоч один турнір — прибираємо текст
+        // "Наразі активних розіграшів немає..."
+        const noMsg = document.getElementById("no-giveaways-message");
+        if (noMsg) {
+            noMsg.remove();
+        }
+
         // Оновлення таймерів раз на секунду
         setInterval(() => {
             const cards = document.querySelectorAll(
@@ -1334,11 +1344,7 @@ async function loadHomeTournaments() {
             );
             cards.forEach((card) => updateHomeTournamentCardTimer(card));
         }, 1000);
-    } catch (err) {
-        console.error("loadHomeTournaments error:", err);
-        listEl.textContent = "Не вдалося завантажити турніри.";
-    }
-}
+
 
 // Підключаємо до вже існуючого DOMContentLoaded
 document.addEventListener("DOMContentLoaded", () => {
