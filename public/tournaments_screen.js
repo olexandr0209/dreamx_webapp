@@ -276,6 +276,18 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  const onlineBtn = document.getElementById("mode-online-1v1");
+      if (onlineBtn) {
+          onlineBtn.addEventListener("click", () => {
+              const params = new URLSearchParams(window.location.search);
+              params.delete("points");
+              const qs = params.toString();
+              window.location.href = qs
+                  ? `online_1v1.html?${qs}`
+                  : "online_1v1.html";
+          });
+      }
+  
   // Кнопка "Назад" на головний екран
   const backBtn = document.getElementById("back-home");
   if (backBtn) {
