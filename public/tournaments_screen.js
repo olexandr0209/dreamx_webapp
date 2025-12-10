@@ -34,6 +34,7 @@ function formatDiffToText(diffMs) {
     return `${hh}:${mm}:${ss}`;
 }
 
+
 // Оновлення таймера для однієї карточки
 function updateCardTimer(card) {
     const startIso = card.dataset.startAt;
@@ -42,14 +43,21 @@ function updateCardTimer(card) {
     const label = card.querySelector(".tour-start-label");
     if (!label) return;
 
+    const btn = card.querySelector(".tour-join-btn");
+
     const now = Date.now();
     const startMs = Date.parse(startIso);
     if (Number.isNaN(startMs)) {
         label.textContent = "Помилка часу";
+        if (btn) {
+            btn.disabled = true;
+            btn.classList.add("tour-join-btn-disabled");
+        }
         return;
     }
 
     const fiveMinutesMs = 5 * 60 * 1000;
+    const twoMinutesMs = 2 * 60 * 1000;
     const endWindow = startMs + fiveMinutesMs;
 
     // Якщо минуло більше 5 хв після старту – прибираємо турнір
@@ -58,15 +66,42 @@ function updateCardTimer(card) {
         return;
     }
 
-    // Вікно: старт... +5 хв -> замість таймера текст
-    if (now >= startMs && now <= endWindow) {
-        label.textContent = "СТАРТУЄМО!";
+    // Якщо ще далеко до старту (більше 2 хвилин) — показуємо таймер, але кнопка заблокована
+    if (now < startMs - twoMinutesMs) {
+        const diff = startMs - now;
+        label.textContent = formatDiffToText(diff);
+
+        if (btn) {
+            btn.disabled = true;
+            btn.classList.add("tour-join-btn-disabled");
+            btn.textContent = "СКОРО СТАРТ";
+        }
         return;
     }
 
-    // Ще не стартував — рахуємо, скільки лишилось
-    const diff = startMs - now;
-    label.textContent = formatDiffToText(diff);
+    // Вікно за 2 хв до старту — таймер іде, кнопку дозволяємо
+    if (now >= startMs - twoMinutesMs && now < startMs) {
+        const diff = startMs - now;
+        label.textContent = formatDiffToText(diff);
+
+        if (btn) {
+            btn.disabled = false;
+            btn.classList.remove("tour-join-btn-disabled");
+            btn.textContent = "ВІДКРИТИ ТУРНІР";
+        }
+        return;
+    }
+
+    // Вікно: від старту до +5 хв – показуємо "СТАРТУЄМО!", кнопка активна
+    if (now >= startMs && now <= endWindow) {
+        label.textContent = "СТАРТУЄМО!";
+        if (btn) {
+            btn.disabled = false;
+            btn.classList.remove("tour-join-btn-disabled");
+            btn.textContent = "ВІДКРИТИ ТУРНІР";
+        }
+        return;
+    }
 }
 
 // Оновлюємо тільки текст таймерів на вже намальованих картках
