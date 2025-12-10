@@ -1,0 +1,13 @@
+/* online_1v1.css */
+
+/* Підтягуємо базові стилі, щоб вигляд був таким, як на tournament_game.html */
+@import url("style.css");
+
+/* Тут можна буде додати унікальні стилі саме для Online 1 vs 1 */
+
+/*
+.online-queue-status {
+    font-size: 13px;
+    opacity: 0.8;
+}
+*/
