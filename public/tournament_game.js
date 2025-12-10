@@ -475,7 +475,7 @@ async function loadTournamentInfo() {
       }
     }
 
-    // --- ІМЕНА В ЦЕНТРАЛЬНОМУ ДВОБІЇ ---
+       // --- ІМЕНА В ЦЕНТРАЛЬНОМУ ДВОБІЇ ---
 
     if (Array.isArray(players) && players.length > 0) {
       let mePlayer = null;
@@ -492,11 +492,10 @@ async function loadTournamentInfo() {
       oppPlayer = players.find((p) => p !== mePlayer) || null;
 
       // Мої імена
-      const meDisplay = buildDisplayNameForPlayer(
-        mePlayer,
-        players.indexOf(mePlayer)
-      );
-      const meNick = getNickFromPlayerObj(mePlayer) || normalizeAt(USERNAME) || "Ти";
+      const meNick =
+        getNickFromPlayerObj(mePlayer) ||
+        normalizeAt(USERNAME) ||
+        "Ти";
 
       if (meNameEl) meNameEl.textContent = meNick;
       if (historyMeNickEl) historyMeNickEl.textContent = meNick;
@@ -514,6 +513,14 @@ async function loadTournamentInfo() {
         if (historyOpponentNickEl)
           historyOpponentNickEl.textContent = "Суперник";
       }
+    } else {
+      // 🔥 Якщо масив players порожній, але в нас є USERNAME —
+      // все одно показуємо твій нік і "Очікуємо суперника"
+      const myNick = normalizeAt(USERNAME) || "Ти";
+      if (meNameEl) meNameEl.textContent = myNick;
+      if (historyMeNickEl) historyMeNickEl.textContent = myNick;
+      if (opponentNameEl) opponentNameEl.textContent = "Очікуємо суперника";
+      if (historyOpponentNickEl) historyOpponentNickEl.textContent = "Суперник";
     }
 
     return t;
