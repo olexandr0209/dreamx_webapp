@@ -1,0 +1,171 @@
+<!-- online_1v1.html -->
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8" />
+    <title>DreamX — Онлайн 1 vs 1</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- Базові стилі гри -->
+    <link rel="stylesheet" href="style.css" />
+    <!-- Додатковий файл для цього екрану (можна поки що майже пустий) -->
+    <link rel="stylesheet" href="online_1v1.css" />
+
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="dreamx_core.js"></script>
+    <script defer src="online_1v1.js"></script>
+</head>
+
+<body class="tournament-game-screen">
+
+    <!-- ВЕРХНІЙ БАР (як на інших екранах) -->
+    <div class="top-bar-home">
+        <div class="logo-main-top">DreamX</div>
+        <!-- За потреби можна додати кнопку Назад -->
+        <!-- <button class="top-back-btn" id="online-1v1-back">Назад</button> -->
+    </div>
+
+    <!-- ВЕРХ: інформація про кімнату + список гравців -->
+    <div class="tourgame-header-card">
+        <div class="tourgame-top">
+            <!-- Ліва частина: інформація про режим -->
+            <div class="tourgame-tournament-block">
+                <div class="tourgame-tournament-pill">
+                    LIVE • Онлайн 1 vs 1
+                </div>
+                <div class="tourgame-tournament-name" id="online-room-name">
+                    Кімната #1
+                </div>
+                <div class="tourgame-tournament-host" id="online-room-host">
+                    Організатор: @host
+                </div>
+                <div class="tourgame-tournament-progress" id="online-room-progress">
+                    У кімнаті: 1 гравець · чекаємо опонента
+                </div>
+            </div>
+
+            <!-- Права частина: таблиця гравців з сумарними балами -->
+            <div class="tourgame-group-block">
+                <div class="tourgame-group-header">
+                    <div class="tourgame-group-title">
+                        Онлайн кімната
+                    </div>
+                    <div class="tourgame-group-subtitle" id="online-room-subtitle">
+                        Хто більше набере балів — той перемагає
+                    </div>
+                </div>
+
+                <!-- Тут буде список гравців з сумарними балами -->
+                <ul class="tourgame-group-list" id="online-room-players">
+                    <!-- Приклад статичної розмітки (потім замінимо на живі дані) -->
+                    <li class="tourgame-group-player me">
+                        <span class="tourgame-player-name">@you (Ти)</span>
+                        <span class="tourgame-player-score">0 балів</span>
+                    </li>
+                    <li class="tourgame-group-player">
+                        <span class="tourgame-player-name">Очікуємо суперника…</span>
+                        <span class="tourgame-player-score">0 балів</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ЦЕНТР: арена — по суті копія tournament_game.html -->
+    <div class="tourgame-arena">
+        <!-- Заголовок раунду -->
+        <div class="tourgame-round-label" id="online-round-label">
+            РАУНД 1 / 1
+        </div>
+        <div class="tourgame-round-sub" id="online-round-sub">
+            Цей раунд: 3 гри
+        </div>
+
+        <!-- ДВОБІЙ: Ти vs Суперник -->
+        <div class="tourgame-duel">
+            <!-- Суперник -->
+            <div class="tourgame-player-card opponent">
+                <div class="tourgame-role-label">Суперник</div>
+                <div class="tourgame-name" id="online-opponent-name">
+                    Очікуємо суперника
+                </div>
+                <div class="tourgame-score-label">Цей раунд</div>
+                <div class="tourgame-score" id="online-opponent-round-score">0</div>
+            </div>
+
+            <div class="tourgame-vs">VS</div>
+
+            <!-- Ти -->
+            <div class="tourgame-player-card me">
+                <div class="tourgame-role-label">Ти</div>
+                <div class="tourgame-name" id="online-me-name">
+                    @you
+                </div>
+                <div class="tourgame-score-label">Цей раунд</div>
+                <div class="tourgame-score" id="online-me-round-score">0</div>
+            </div>
+        </div>
+
+        <!-- ІСТОРІЯ ВИБОРІВ (3 гри у раунді) -->
+        <div class="tourgame-history-box">
+            <div class="tourgame-history-row header">
+                <div class="history-label"></div>
+                <div class="history-cell history-cell-header">1</div>
+                <div class="history-cell history-cell-header">2</div>
+                <div class="history-cell history-cell-header">3</div>
+                <div class="history-cell history-cell-header">Σ</div>
+            </div>
+
+            <!-- Суперник -->
+            <div class="tourgame-history-row opponent">
+                <div class="history-label">
+                    <div class="history-role">Суперник</div>
+                    <div class="history-nick" id="online-history-opponent">@opponent</div>
+                </div>
+                <div class="history-cell" data-player="opponent" data-round="1"></div>
+                <div class="history-cell" data-player="opponent" data-round="2"></div>
+                <div class="history-cell" data-player="opponent" data-round="3"></div>
+                <div class="history-cell history-total" id="online-opponent-total">0</div>
+            </div>
+
+            <!-- Ти -->
+            <div class="tourgame-history-row me">
+                <div class="history-label">
+                    <div class="history-role">Ти</div>
+                    <div class="history-nick" id="online-history-me">@you</div>
+                </div>
+                <div class="history-cell" data-player="me" data-round="1"></div>
+                <div class="history-cell" data-player="me" data-round="2"></div>
+                <div class="history-cell" data-player="me" data-round="3"></div>
+                <div class="history-cell history-total" id="online-me-total">0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- НИЗ: таймер + вибір ходу -->
+    <div class="tourgame-bottom">
+        <div class="tourgame-timer-bar">
+            <div class="tourgame-timer-progress" id="online-timer-progress"></div>
+        </div>
+
+        <div class="tourgame-choices">
+            <button class="tourgame-rps-btn rps-rock" data-choice="rock">
+                <span class="tourgame-rps-icon">🪨</span>
+                <span class="tourgame-rps-text">Камінь</span>
+            </button>
+            <button class="tourgame-rps-btn rps-scissors" data-choice="scissors">
+                <span class="tourgame-rps-icon">✂️</span>
+                <span class="tourgame-rps-text">Ножиці</span>
+            </button>
+            <button class="tourgame-rps-btn rps-paper" data-choice="paper">
+                <span class="tourgame-rps-icon">📄</span>
+                <span class="tourgame-rps-text">Папір</span>
+            </button>
+        </div>
+
+        <div class="tourgame-status-line" id="online-status-text">
+            Очікуємо, поки в кімнату зайде ще один гравець…
+        </div>
+    </div>
+</body>
+</html>
