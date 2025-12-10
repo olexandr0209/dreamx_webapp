@@ -1,20 +1,20 @@
 // tournaments_screen.js
-// Логіка списку турнірів + кнопка з живим таймером до старту
+// Логіка списку турнірів + кнопка з таймером
 
 // 🔗 Базовий URL API.
 // Якщо в dreamx_core.js вже є глобальна змінна – використовуємо її.
 const API_BASE =
     window.DREAMX_API_BASE ||
-    "https://dreamx-api.onrender.com"; // 🔁 підстав свій домен бота, якщо треба
+    "https://dreamx-api.onrender.com"; // 🔁 підстав свій домен бота при потребі
 
-// =====================
+// ======================
 //  Хелпери для часу
-// =====================
+// ======================
 
-// Формат різниці в мс у вигляді:
+// Формат різниці в мс:
 // - якщо > 24 год: "1 д. 15:25:30"
 // - якщо <= 24 год: "15:25:30"
-function formatDiff(diffMs) {
+function formatDiffToText(diffMs) {
     if (diffMs <= 0) return "00:00:00";
 
     const totalSeconds = Math.floor(diffMs / 1000);
@@ -34,8 +34,8 @@ function formatDiff(diffMs) {
     return `${hh}:${mm}:${ss}`;
 }
 
-// Оновлюємо одну конкретну карточку турніру (лише таймер/статус)
-function updateTournamentCardTimer(card) {
+// Оновлення таймера для однієї карточки
+function updateCardTimer(card) {
     const startIso = card.dataset.startAt;
     if (!startIso) return;
 
@@ -52,35 +52,32 @@ function updateTournamentCardTimer(card) {
     const fiveMinutesMs = 5 * 60 * 1000;
     const endWindow = startMs + fiveMinutesMs;
 
-    // Якщо вікно "старту" вже більше 5 хв як закінчилось – картку можна ховати/видаляти
+    // Якщо минуло більше 5 хв після старту – прибираємо турнір
     if (now > endWindow) {
         card.remove();
         return;
     }
 
-    // Якщо вже настав час старту і ми ще в межах 5 хвилин після нього
+    // Вікно: старт... +5 хв -> замість таймера текст
     if (now >= startMs && now <= endWindow) {
         label.textContent = "СТАРТУЄМО!";
         return;
     }
 
-    // Інакше ще не стартувало — рахуємо, скільки лишилось
-    const diff = startMs - now; // > 0
-    label.textContent = formatDiff(diff);
+    // Ще не стартував — рахуємо, скільки лишилось
+    const diff = startMs - now;
+    label.textContent = formatDiffToText(diff);
 }
 
 // Оновлюємо тільки текст таймерів на вже намальованих картках
 function refreshCountdowns() {
     const cards = document.querySelectorAll(".tournament-card");
     cards.forEach((card) => {
-        updateTournamentCardTimer(card);
+        updateCardTimer(card);
     });
 }
 
-// =====================
-//  Рендер картки турніру
-// =====================
-
+// Малюємо одну карточку турніру
 function renderTournamentCard(t) {
     // Очікуємо, що бекенд повертає хоча б:
     // id, title, start_at (ISO-строка), players_total, players_pass
@@ -107,7 +104,7 @@ function renderTournamentCard(t) {
 
     const startLabel = document.createElement("div");
     startLabel.className = "tour-start-label";
-    startLabel.textContent = "..."; // одразу після рендеру перерахунок зробить refreshCountdowns()
+    startLabel.textContent = ""; // далі заповнить updateCardTimer
 
     const btn = document.createElement("button");
     btn.className = "tour-join-btn";
@@ -119,7 +116,7 @@ function renderTournamentCard(t) {
         const qs = params.toString();
         window.location.href = qs
             ? `tournament_game.html?${qs}`
-            : `tournament_game.html?t.id=${t.id}`;
+            : `tournament_game.html?tournament_id=${t.id}`;
     });
 
     bottomRow.appendChild(startLabel);
@@ -129,23 +126,20 @@ function renderTournamentCard(t) {
     wrapper.appendChild(sub);
     wrapper.appendChild(bottomRow);
 
-    // Одразу після створення — порахуємо таймер для поточного моменту
-    updateTournamentCardTimer(wrapper);
+    // Одразу виставимо початковий стан таймера
+    updateCardTimer(wrapper);
 
     return wrapper;
 }
 
-// =====================
-//  Завантаження турнірів з бекенда
-// =====================
-
+// Завантаження турнірів з бекенда
 async function loadTournaments() {
     const listEl = document.getElementById("tournaments-list");
     if (!listEl) return;
 
     listEl.innerHTML = "Завантаження турнірів…";
 
-    try:
+    try {
         const res = await fetch(`${API_BASE}/api/get_tournaments`);
         if (!res.ok) throw new Error("http " + res.status);
 
@@ -155,13 +149,14 @@ async function loadTournaments() {
         const now = Date.now();
         const fiveMinutesMs = 5 * 60 * 1000;
 
-        // Фільтруємо: якщо start_at + 5 хв < зараз — не показуємо турнір
+        // ⚠️ Фільтр:
+        // турніри, у яких start_at + 5 хв < зараз — НЕ показуємо
         const freshTournaments = tournaments.filter((t) => {
             if (!t.start_at) return false;
             const startMs = Date.parse(t.start_at);
             if (Number.isNaN(startMs)) return false;
             const endWindow = startMs + fiveMinutesMs;
-            return endWindow >= now; // тільки ті, що ще не "протухли"
+            return endWindow >= now;
         });
 
         if (!freshTournaments.length) {
@@ -184,12 +179,9 @@ async function loadTournaments() {
     }
 }
 
-// =====================
-//  Ініціалізація
-// =====================
-
+// Ініціалізація
 document.addEventListener("DOMContentLoaded", () => {
-    // Кнопка "Ти vs Компʼютер"
+    // Твої старі кнопки:
     const modeBtn = document.getElementById("mode-vs-computer");
     if (modeBtn) {
         modeBtn.addEventListener("click", () => {
@@ -200,7 +192,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Якщо лишився тест-кнопка для турнірної гри
     const tourTestBtn = document.getElementById("mode-tournament-test");
     if (tourTestBtn) {
         tourTestBtn.addEventListener("click", () => {
