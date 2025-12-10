@@ -1139,6 +1139,24 @@ setInterval(() => {
 //  БЛИЖЧІ ТУРНІРИ НА ГОЛОВНІЙ
 // ================================
 
+// Парсимо час з бекенду як UTC, незалежно від країни користувача
+function parseBackendTimeToMs(raw) {
+    if (!raw) return NaN;
+
+    let s = String(raw).trim();
+
+    // Якщо бекенд вже віддає ISO з тайзоною - просто парсимо
+    if (s.endsWith("Z") || /[+-]\d\d:\d\d$/.test(s)) {
+        return Date.parse(s);
+    }
+
+    // Варіант "2025-12-10 10:00:00" або "2025-12-10T10:00:00"
+    // Вважаємо, що це UTC і додаємо 'Z'
+    s = s.replace(" ", "T");
+    return Date.parse(s + "Z");
+}
+
+
 // Базовий URL API. Якщо є глобальна змінна – використовуємо її.
 const HOME_API_BASE =
     window.DREAMX_API_BASE || "https://dreamx-api.onrender.com";
@@ -1175,7 +1193,8 @@ function updateHomeTournamentCardTimer(card) {
     const btn = card.querySelector(".tour-join-btn");
 
     const now = Date.now();
-    const startMs = Date.parse(startIso);
+    const startMs = parseBackendTimeToMs(startIso);
+
     if (Number.isNaN(startMs)) {
         label.textContent = "Помилка часу";
         if (btn) {
@@ -1310,15 +1329,18 @@ async function loadHomeTournaments() {
         // + старт не далі, ніж за 1 годину
         const nearTournaments = tournaments.filter((t) => {
             if (!t.start_at) return false;
-            const startMs = Date.parse(t.start_at);
+        
+            const startMs = parseBackendTimeToMs(t.start_at);
             if (Number.isNaN(startMs)) return false;
+        
             const endWindow = startMs + fiveMinutesMs;
-
+        
             const soonEnough = startMs - now <= oneHourMs;
             const notExpired = endWindow >= now;
-
+        
             return soonEnough && notExpired;
         });
+
 
         if (!nearTournaments.length) {
             listEl.textContent = "Наразі немає турнірів у найближчу годину.";
