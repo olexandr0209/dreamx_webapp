@@ -1131,3 +1131,217 @@ setInterval(() => {
     savePointsToServer();
     saveTourPointsToServer();
 }, 5000);
+
+// ================================
+//  БЛИЖЧІ ТУРНІРИ НА ГОЛОВНІЙ
+// ================================
+
+// Базовий URL API. Якщо є глобальна змінна – використовуємо її.
+const HOME_API_BASE =
+    window.DREAMX_API_BASE || "https://dreamx-api.onrender.com";
+
+// Формат різниці в мс так само, як на екрані турнірів
+function homeFormatDiff(diffMs) {
+    if (diffMs <= 0) return "00:00:00";
+
+    const totalSeconds = Math.floor(diffMs / 1000);
+
+    const days = Math.floor(totalSeconds / 86400);
+    const hours = Math.floor((totalSeconds % 86400) / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    const hh = String(hours).padStart(2, "0");
+    const mm = String(minutes).padStart(2, "0");
+    const ss = String(seconds).padStart(2, "0");
+
+    if (days > 0) {
+        return `${days} д. ${hh}:${mm}:${ss}`;
+    }
+    return `${hh}:${mm}:${ss}`;
+}
+
+// Оновлення таймера на картці "домашнього" турніру
+function updateHomeTournamentCardTimer(card) {
+    const startIso = card.dataset.startAt;
+    if (!startIso) return;
+
+    const label = card.querySelector(".tour-start-label");
+    if (!label) return;
+
+    const btn = card.querySelector(".tour-join-btn");
+
+    const now = Date.now();
+    const startMs = Date.parse(startIso);
+    if (Number.isNaN(startMs)) {
+        label.textContent = "Помилка часу";
+        if (btn) {
+            btn.disabled = true;
+            btn.classList.add("tour-join-btn-disabled");
+        }
+        return;
+    }
+
+    const fiveMinutesMs = 5 * 60 * 1000;
+    const twoMinutesMs = 2 * 60 * 1000;
+    const endWindow = startMs + fiveMinutesMs;
+
+    // Якщо вікно старту вже повністю пройшло – просто ховаємо картку
+    if (now > endWindow) {
+        card.remove();
+        return;
+    }
+
+    // Далеко до старту (> 2 хв) — показуємо таймер, кнопка заблокована
+    if (now < startMs - twoMinutesMs) {
+        const diff = startMs - now;
+        label.textContent = homeFormatDiff(diff);
+
+        if (btn) {
+            btn.disabled = true;
+            btn.classList.add("tour-join-btn-disabled");
+            btn.textContent = "СКОРО СТАРТ";
+        }
+        return;
+    }
+
+    // За 2 хв до старту — таймер іде, кнопку дозволяємо
+    if (now >= startMs - twoMinutesMs && now < startMs) {
+        const diff = startMs - now;
+        label.textContent = homeFormatDiff(diff);
+
+        if (btn) {
+            btn.disabled = false;
+            btn.classList.remove("tour-join-btn-disabled");
+            btn.textContent = "ВІДКРИТИ ТУРНІР";
+        }
+        return;
+    }
+
+    // Вікно від старту до +5 хв — "СТАРТУЄМО!", кнопка активна
+    if (now >= startMs && now <= endWindow) {
+        label.textContent = "СТАРТУЄМО!";
+        if (btn) {
+            btn.disabled = false;
+            btn.classList.remove("tour-join-btn-disabled");
+            btn.textContent = "ВІДКРИТИ ТУРНІР";
+        }
+        return;
+    }
+}
+
+// Малюємо одну картку турніру на головній
+function renderHomeTournamentCard(t) {
+    const wrapper = document.createElement("div");
+    wrapper.className = "mode-card tournament-card";
+    wrapper.dataset.tournamentId = t.id;
+    wrapper.dataset.startAt = t.start_at; // ISO-час старту
+
+    const title = document.createElement("div");
+    title.className = "mode-title";
+    title.textContent = t.title || `Турнір #${t.id}`;
+
+    const sub = document.createElement("div");
+    sub.className = "mode-sub";
+    const playersInfo =
+        t.players_total && t.players_pass
+            ? `${t.players_total} учасників • ${t.players_pass} проходять`
+            : "Турнір DreamX";
+
+    sub.textContent = playersInfo;
+
+    const bottomRow = document.createElement("div");
+    bottomRow.className = "tour-card-bottom";
+
+    const startLabel = document.createElement("div");
+    startLabel.className = "tour-start-label";
+    startLabel.textContent = "";
+
+    const btn = document.createElement("button");
+    btn.className = "tour-join-btn";
+    btn.textContent = "ВІДКРИТИ ТУРНІР";
+    btn.addEventListener("click", () => {
+        if (btn.disabled) return;
+
+        const params = new URLSearchParams(window.location.search);
+        params.set("tournament_id", t.id);
+        const qs = params.toString();
+        window.location.href = qs
+            ? `tournament_game.html?${qs}`
+            : `tournament_game.html?tournament_id=${t.id}`;
+    });
+
+    bottomRow.appendChild(startLabel);
+    bottomRow.appendChild(btn);
+
+    wrapper.appendChild(title);
+    wrapper.appendChild(sub);
+    wrapper.appendChild(bottomRow);
+
+    // Початковий таймер
+    updateHomeTournamentCardTimer(wrapper);
+
+    return wrapper;
+}
+
+// Завантаження ближчих турнірів (до 1 години)
+async function loadHomeTournaments() {
+    const listEl = document.getElementById("home-tournaments-list");
+    if (!listEl) return;
+
+    listEl.innerHTML = "Завантаження турнірів…";
+
+    try {
+        const res = await fetch(`${HOME_API_BASE}/api/get_tournaments`);
+        if (!res.ok) throw new Error("http " + res.status);
+
+        const data = await res.json();
+        const tournaments = data.tournaments || [];
+
+        const now = Date.now();
+        const oneHourMs = 60 * 60 * 1000;
+        const fiveMinutesMs = 5 * 60 * 1000;
+
+        // Фільтр: живі турніри, вікно ще не закінчилось
+        // + старт не далі, ніж за 1 годину
+        const nearTournaments = tournaments.filter((t) => {
+            if (!t.start_at) return false;
+            const startMs = Date.parse(t.start_at);
+            if (Number.isNaN(startMs)) return false;
+            const endWindow = startMs + fiveMinutesMs;
+
+            const soonEnough = startMs - now <= oneHourMs;
+            const notExpired = endWindow >= now;
+
+            return soonEnough && notExpired;
+        });
+
+        if (!nearTournaments.length) {
+            listEl.textContent = "Наразі немає турнірів у найближчу годину.";
+            return;
+        }
+
+        listEl.innerHTML = "";
+        nearTournaments.forEach((t) => {
+            const card = renderHomeTournamentCard(t);
+            listEl.appendChild(card);
+        });
+
+        // Оновлення таймерів раз на секунду
+        setInterval(() => {
+            const cards = document.querySelectorAll(
+                "#home-tournaments-list .tournament-card"
+            );
+            cards.forEach((card) => updateHomeTournamentCardTimer(card));
+        }, 1000);
+    } catch (err) {
+        console.error("loadHomeTournaments error:", err);
+        listEl.textContent = "Не вдалося завантажити турніри.";
+    }
+}
+
+// Підключаємо до вже існуючого DOMContentLoaded
+document.addEventListener("DOMContentLoaded", () => {
+    loadHomeTournaments();
+});
+
