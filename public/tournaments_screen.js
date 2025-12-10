@@ -46,7 +46,8 @@ function updateCardTimer(card) {
     const btn = card.querySelector(".tour-join-btn");
 
     const now = Date.now();
-    const startMs = Date.parse(startIso);
+    const startMs = parseBackendTimeToMs(t.start_at);
+
     if (Number.isNaN(startMs)) {
         label.textContent = "Помилка часу";
         if (btn) {
