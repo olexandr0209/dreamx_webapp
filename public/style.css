@@ -2129,3 +2129,17 @@ body.tournament-screen .bottom-nav {
     transform-origin: left center;
     transition: width 0.2s linear;
 }
+
+.tour-join-btn:disabled,
+.tour-join-btn.tour-join-btn-disabled {
+    border-color: rgba(148, 163, 184, 0.6);
+    color: rgba(148, 163, 184, 0.85);
+    background: linear-gradient(
+        135deg,
+        rgba(30, 41, 59, 0.9),
+        rgba(15, 23, 42, 0.95)
+    );
+    cursor: default;
+    box-shadow: none;
+    opacity: 0.9;
+}
