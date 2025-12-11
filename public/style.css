@@ -1978,3 +1978,12 @@ body.tournament-screen .bottom-nav {
     box-shadow: none;
     opacity: 0.9;
 }
+
+
+/* Дозволяємо скрол саме для екрана онлайн-туру/1v1 */
+body.tournament-game-screen {
+    height: auto;  /* щоб висота могла бути більше екрана */
+    min-height: calc(var(--tg-viewport-height, 100vh));
+    overflow-y: auto;              /* вертикальний скрол */
+    -webkit-overflow-scrolling: touch; /* плавний скрол на iOS */
+}
