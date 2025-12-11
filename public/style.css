@@ -1554,20 +1554,19 @@ body.tournament-screen .bottom-nav {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    margin-top: 12px;
+    gap: 8px;
+    margin-top: 10px; /* трохи менше відступ */
 }
 
 .tourgame-player-card {
     flex: 1 1 0;
-    max-width: 140px;
-    padding: 8px 10px;
-    border-radius: 16px;
+    max-width: 120px;
+    padding: 6px 8px;              /* менший padding */
+    border-radius: 14px;           /* трохи менший радіус */
     background: rgba(15, 23, 42, 0.95);
     border: 1px solid rgba(148, 163, 184, 0.5);
     text-align: center;
 }
-
 .tourgame-player-card.opponent {
     background: radial-gradient(circle at top,
             rgba(59, 130, 246, 0.22),
@@ -1581,9 +1580,9 @@ body.tournament-screen .bottom-nav {
 }
 
 .tourgame-role-label {
-    font-size: 10px;
+    font-size: 9px;
     text-transform: uppercase;
-    letter-spacing: 0.16em;
+    letter-spacing: 0.14em;
     color: #9ca3af;
     margin-bottom: 2px;
 }
@@ -1601,9 +1600,9 @@ body.tournament-screen .bottom-nav {
 }
 
 .tourgame-score {
-    font-size: 18px;
+    font-size: 16px;              /* менший шрифт для 0 */
     font-weight: 700;
-    margin-top: 2px;
+    margin-top: 0;
     color: #fbbf24;
 }
 
